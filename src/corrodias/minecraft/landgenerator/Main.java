@@ -37,7 +37,7 @@ public class Main {
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
 	//private static final String javaPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
-	private static final String VERSION = "1.2.0";
+	private static final String VERSION = "1.3.0";  //Morlok8k: Updated
 	private int increment = 300;
 	private ProcessBuilder minecraft = null;
 	private String javaLine = null;
@@ -423,7 +423,7 @@ public class Main {
 			if (verbose) {
 				System.out.println(line);
 			}
-			if (line.contains("[INFO] Done!")) {
+			if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
 				System.out.println("Stopping server.");
 				byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
 				OutputStream outputStream = process.getOutputStream();
