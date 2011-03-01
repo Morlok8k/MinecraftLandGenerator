@@ -1,0 +1,81 @@
+Minecraft Land Generator version 1.2.0
+
+Post by Corrodias » Mon Nov 15, 2010 2:46 am
+
+This program lets you generate an area of land with your Minecraft Alpha SMP server (and is probably future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
+
+When a Minecraft server is launched, it automatically generates chunks within a square area of about 330x330 blocks, centered on the current spawn point. When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact. You can use the -x and -y switches to override the spawn offset and center the land generation on a different point.
+
+The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
+
+This program is public domain, and the source code is included in the .jar file.
+The JNLP library is included as lib\jnbt-1.1.jar. It is not public domain. Its license is included within its .jar file, as LICENSE.TXT.
+
+Version History:
+1.2.0
+- land generation now centers on the spawn point instead of [0, 0]
+- the server is launched once before the spawn point is changed, to verify that it can run and to create a world if one doesn't exist
+- added -printspawn [-ps] switch to print the current spawn coordinates to the console
+- added -x and -y switches to override the X and Y offsets
+- added -v switch, does the same as -verbose
+- improved status message spacing to make things easier to read
+- improved time estimation algorithm: it now averages the last 3 launches
+
+1.1.0
+- added MinecraftLandGenerator.conf file to hold the java command line and the server path
+- added -conf solo switch to generate a .conf file
+- added -verbose switch to output server output to the console (default is to ignore it)
+- added -i switch to allow customizing the block increment size (default is 300)
+- added instructions output in this version, i think
+- improved status message output to include current iteration and total iterations
+
+1.0.0
+- initial release
+
+
+
+    Minecraft Land Generator version 1.2.0
+    Uses a Minecraft server to generate square land of a specified size.
+
+    Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]
+
+    Arguments:
+               x : X range to generate
+               y : Y range to generate
+      serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)
+
+    Switches:
+        -verbose : causes the application to output the server's messages to the console
+              -v : same as -verbose
+             -i# : override the iteration spawn offset increment (default 300) (example: -i100)
+             -x# : set the X offset to generate land around (example: -x0)
+             -y# : set the X offset to generate land around (example: -y0)
+
+    Other options:
+      java -jar MinecraftLandGenerator.jar -printspawn
+      java -jar MinecraftLandGenerator.jar -ps
+            Outputs the current world's spawn point coordinates.
+
+      java -jar MinecraftLandGenerator.jar -conf
+            Generates a MinecraftLandGenerator.conf file.
+
+      java -jar MinecraftLandGenerator.jar -version
+      java -jar MinecraftLandGenerator.jar -help
+      java -jar MinecraftLandGenerator.jar /?
+            Prints this message.
+
+    When launched with the -conf switch, this application creates a MinecraftLandGenerator.conf file that contains configuration options.
+    If this file does not exist or does not contain all required properties, the application will not run.
+
+    MinecraftLandGenerator.conf properties:
+            java : the command line to use to launch the server
+      serverpath : the path to the directory in which the server runs (can be overridden by the serverpath argument)
+
+
+
+
+Notes:
+
+This does not currently touch the Nether. It may be possible to rig something up when that's working on SMP.
+
+I recommend using MCE to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level. It also lets you prune off chunks that are outside (or inside) of a box you specify, although the syntax for that is a bit tricky. My experience is that if you give it coords in the form "(x, y, z), (a, b, c)", it considers that to be a box "a" units wide and "c" units high with one corner at "(x, z)". So a box of 200 units centered on (0, 0) could be "(-100, 0, -100), (200, 1, 200)". From what i read, i expected something a little different, but it probably is perfectly reasonable, and i'm just dense.
