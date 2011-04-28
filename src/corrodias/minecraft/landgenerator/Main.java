@@ -16,9 +16,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+//import java.io.OutputStreamWriter;
+//import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,33 +32,40 @@ import org.jnbt.IntTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
+//import java.io.*;					//if we want to import everything...
+//import java.util.*;
 
 /**
  *
- * @author Corrodias
+ * @author Corrodias, Morlok8k
  */
 public class Main {
 
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
 	//private static final String javaPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
-	private static final String VERSION = "1.3.0";  //Morlok8k: Updated
+	private static final String VERSION = "1.4.0";
 	private int increment = 300;
 	private ProcessBuilder minecraft = null;
 	private String javaLine = null;
 	private String serverPath = null;
 	private String worldPath = null;
+	private String worldName = null;
+	private static String doneText = null;
+	private static String preparingText = null;
+	private String hell = null;
 	private int xRange = 0;
 	private int yRange = 0;
 	private Integer xOffset = null;
 	private Integer yOffset = null;
 	private boolean verbose = false;
+	private boolean alternate = false;
 
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		(new Main()).run(args);
+		(new Main()).run(args);  //Why?  idk, but merging this with run() creates errors, and i'm lazy!
 	}
 
 	private void run(String[] args) {
@@ -69,16 +81,18 @@ public class Main {
 			System.out.println("Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]");
 			System.out.println("");
 			System.out.println("Arguments:");
-			System.out.println("           x : X range to generate");
-			System.out.println("           y : Y range to generate");
-			System.out.println("  serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)");
+			System.out.println("             x : X range to generate");
+			System.out.println("             y : Y range to generate");
+			System.out.println("    serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)");
 			System.out.println("");
 			System.out.println("Switches:");
-			System.out.println("    -verbose : causes the application to output the server's messages to the console");
-			System.out.println("          -v : same as -verbose");
-			System.out.println("         -i# : override the iteration spawn offset increment (default 300) (example: -i100)");
-			System.out.println("         -x# : set the X offset to generate land around (example: -x0)");
-			System.out.println("         -y# : set the X offset to generate land around (example: -y0)");
+			System.out.println("      -verbose : causes the application to output the server's messages to the console");
+			System.out.println("            -v : same as -verbose");
+			//System.out.println("          -alt : alternate server launch sequence");
+			//System.out.println("            -a : same as -alt");
+			System.out.println("           -i# : override the iteration spawn offset increment (default 300) (example: -i100)");
+			System.out.println("           -x# : set the X offset to generate land around (example: -x0)");
+			System.out.println("           -y# : set the X offset to generate land around (example: -y0)");
 			System.out.println("");
 			System.out.println("Other options:");
 			System.out.println("  java -jar MinecraftLandGenerator.jar -printspawn");
@@ -97,8 +111,11 @@ public class Main {
 			System.out.println("If this file does not exist or does not contain all required properties, the application will not run.");
 			System.out.println("");
 			System.out.println("MinecraftLandGenerator.conf properties:");
-			System.out.println("        java : the command line to use to launch the server");
-			System.out.println("  serverpath : the path to the directory in which the server runs (can be overridden by the serverpath argument)");
+			System.out.println("          Java : The command line to use to launch the server");
+			System.out.println("    ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)");
+			System.out.println("     Done_Text : The output from the server that tells us that we are done");
+			System.out.println("Preparing_Text : The output from the server that tells us the percentage");
+
 			return;
 		}
 
@@ -106,14 +123,27 @@ public class Main {
 		//                         STARTUP AND CONFIG
 		// =====================================================================
 
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+        Date date = new Date();
+        //dateFormat.format(date);
+		
 		// the arguments are apparently okay so far. parse the conf file.
 		if (args[0].equalsIgnoreCase("-conf")) {
 			try {
 				File config = new File("MinecraftLandGenerator.conf");
 				BufferedWriter out = new BufferedWriter(new FileWriter(config));
-				out.write("java=java -Xms1024m -Xmx1024m -jar minecraft_server.jar nogui");
+				out.write("#Minecraft Land Generator Configuration File:");
 				out.newLine();
-				out.write("serverpath=.");
+				out.write("#Auto-Generated: " + dateFormat.format(date));
+				out.newLine();
+				out.write("Java=java -Djline.terminal=jline.UnsupportedTerminal -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui");
+					// I added the jline tag for future proofing...
+				out.newLine();
+				out.write("ServerPath=.");
+				out.newLine();
+				out.write("Done_Text=[INFO] Done");
+				out.newLine();
+				out.write("Preparing_Text=[INFO] Preparing spawn area:");
 				out.newLine();
 				out.close();
 				System.out.println("MinecraftLandGenerator.conf file created.");
@@ -137,20 +167,62 @@ public class Main {
 			String line;
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
+				int end = line.lastIndexOf('#');	//comments, ignored lines
+				
+				
+				if (end == -1){		// If we have no hash sign, then we read till the end of the line
+					end = line.length();
+				}
+				
+				if (end <= pos){	// If hash is before the '=', we may have a issue... it should be fine, cause we check for issues next, but lets make sure.
+					end = line.length();
+				}
+				
 				if (pos != -1) {
 					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1);
+						serverPath = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1);
+						javaLine = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
+						doneText = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
+						preparingText = line.substring(pos + 1, end);
 					}
 				}
 			}
 			in.close();
 
 			if (serverPath == null || javaLine == null) {
-				System.err.println("MinecraftLandGenerator.conf does not contain all requird properties. Please recreate it by running this application with no arguments.");
+				System.err.println("MinecraftLandGenerator.conf does not contain all required properties. Please recreate it by running this application with -conf.");
 				return;
 			}
+			
+			if (doneText == null || preparingText == null) {
+				System.err.println("Old Version of MinecraftLandGenerator.conf found.  Updating...");
+				try {
+					File configUpdate = new File("MinecraftLandGenerator.conf");
+					BufferedWriter out = new BufferedWriter(new FileWriter(configUpdate));
+					out.write("#Minecraft Land Generator Configuration File:");
+					out.newLine();
+					out.write("#Auto-Updated: " + dateFormat.format(date));
+					out.newLine();
+					out.write("Java=" + javaLine);
+					out.newLine();
+					out.write("ServerPath=" + serverPath);
+					out.newLine();
+					out.write("Done_Text=[INFO] Done");
+					out.newLine();
+					out.write("Preparing_Text=[INFO] Preparing spawn area:");
+					out.newLine();
+					out.close();
+					System.out.println("MinecraftLandGenerator.conf file created.");
+					return;
+				} catch (IOException ex) {
+					System.err.println("Could not create MinecraftLandGenerator.conf.");
+					return;
+				}
+			}
+			
 		} catch (FileNotFoundException ex) {
 			System.out.println("Could not find MinecraftLandGenerator.conf. It is recommended that you run the application with the -conf option to create it.");
 			return;
@@ -167,7 +239,10 @@ public class Main {
 			System.err.println("Invalid X or Y argument.");
 			return;
 		}
-
+		
+		verbose = false;		// Verifing that these vars are false
+		alternate = false;		// before changing them...
+		
 		// This is embarrassing. Don't look.
 		try {
 			for (int i = 0; i < args.length - 2; i++) {
@@ -176,6 +251,12 @@ public class Main {
 					verbose = true;
 				} else if (nextSwitch.startsWith("-i")) {
 					increment = Integer.parseInt(args[i + 2].substring(2));
+				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
+				//	System.out.println("Using Alternate Launching...");
+					System.out.println("Alternate Launch Disabled.");
+					// This is a failed attempt to fix issues with Windows XP 32bit.
+				//	alternate = true;
+					alternate = false; // force Alt to be off, just in case
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
 				} else if (nextSwitch.startsWith("-y")) {
@@ -207,7 +288,12 @@ public class Main {
 				if (pos != -1) {
 					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
 						worldPath = serverPath + separator + line.substring(pos + 1);
+						worldName = line.substring(pos + 1);
+					} else if (line.substring(0, pos).toLowerCase().equals("hellworld")) {
+						hell = line.substring(pos + 1);
+						hell = hell.toLowerCase(Locale.ENGLISH);
 					}
+					
 				}
 			}
 
@@ -233,6 +319,11 @@ public class Main {
 		// =====================================================================
 
 		System.out.println("Processing world \"" + worldPath + "\", in " + increment + " block increments, with: " + javaLine);
+		if (hell.contains("true")){
+			System.out.println("Processing The Nether of \"" + worldName + "\"... (DIM-1)");
+		} else if (hell.contains("false")) {
+			System.out.println("Processing \"" + worldName + "\"...");
+		}
 		System.out.println("");
 
 		// prepare our two ProcessBuilders
@@ -240,10 +331,12 @@ public class Main {
 		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.
 		minecraft.directory(new File(serverPath));
 		minecraft.redirectErrorStream(true);
+		
 
+		
 		try {
 			System.out.println("Launching server once to make sure there is a world.");
-			runMinecraft(minecraft, verbose);
+			runMinecraft(minecraft, verbose, alternate, javaLine);
 			System.out.println("");
 
 			File serverLevel = new File(worldPath + separator + "level.dat");
@@ -299,7 +392,7 @@ public class Main {
 					setSpawn(serverLevel, currentX + xOffset, 128, currentY + yOffset);
 
 					// Launch the server
-					runMinecraft(minecraft, verbose);
+					runMinecraft(minecraft, verbose, alternate, javaLine);
 					System.out.println("");
 				}
 			}
@@ -378,7 +471,7 @@ public class Main {
 			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
 			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
 			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
-			IntTag spawnX = (IntTag) newData.get("SpawnX");
+			IntTag spawnX = (IntTag) newData.get("SpawnX");		//we never use these...
 			IntTag spawnY = (IntTag) newData.get("SpawnY");
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 			newData.put("SpawnX", new IntTag("SpawnX", x));
@@ -411,26 +504,101 @@ public class Main {
 	 * @param verbose
 	 * @throws IOException
 	 */
-	protected static void runMinecraft(ProcessBuilder minecraft, boolean verbose) throws IOException {
+	protected static void runMinecraft(ProcessBuilder minecraft, boolean verbose, boolean alternate, String javaLine) throws IOException {
 		System.out.println("Starting server.");
-		Process process = minecraft.start();
-
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
-		BufferedReader pOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		String line;
-		while ((line = pOut.readLine()) != null) {
+		
+		// Damn it Java!  I hate you so much!
+		// I can't reuse code the way I want to, like in other langauges.
+		// So, here is a bunch of duplicate code...
+		// Stupid compile errors...
+		
+		if (alternate) {   //Alternate is currently disabled.
+		//	Runtime minecraftAlt = Runtime.getRuntime();
+		//	Process process = minecraftAlt.exec(javaLine.split("\\s"));		
+		//	//InputStream is = processAlt.getInputStream();
+		//			// this didn't work - Minecraft Server uses the error stream for almost all the output. 
+		//			// the input stream only reads the amount of recipes the server has, for instance, beta 1.4 reports: "144 recipes"
+		//			// with the standard way, ProcessBuilder, we can combine Error and Input.
+		//	//InputStreamReader isr = new InputStreamReader(is);
+		//  //BufferedReader pOut = new BufferedReader(isr);
+		//	BufferedReader pOut = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		//
+		//	String line = null;
+		//	
+		//	byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
+		//			//and no, i can't use a string here!
+		//	
+		//	while ((line = pOut.readLine()) != null) {
+		//		if (verbose) {
+		//			System.out.println(line);
+		//		}
+		//		if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
+		//			System.out.println("Stopping server.");
+		//			OutputStream outputStream = process.getOutputStream();
+		//			outputStream.write(stop);
+		//			outputStream.flush();
+		//			outputStream.close();
+		//		}
+		//		if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
+		//			System.out.println("Severe error found: Stopping server.");
+		//			OutputStream outputStream = process.getOutputStream();
+		//			outputStream.write(stop);
+		//			outputStream.flush();
+		//			outputStream.close();
+					System.exit(1);
+		//			//Quit!
+		//		}
+		//	}
+			
+		} else {  //start minecraft server normally!
+			Process process = minecraft.start();
 			if (verbose) {
-				System.out.println(line);
+				System.out.println("Started Server.");
 			}
-			if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
-				System.out.println("Stopping server.");
-				byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
-				OutputStream outputStream = process.getOutputStream();
-				outputStream.write(stop);
-				outputStream.flush();
+			BufferedReader pOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			if (verbose) {
+				System.out.println("Accessing Server Output...");
+			}
+
+			String line = null;
+			
+			byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
+					//and no, i can't use a string here!
+			
+			while ((line = pOut.readLine()) != null) {
+				if (verbose) {
+					if (line.contains("[INFO]")){
+						System.out.println(line.substring(line.lastIndexOf("]") + 2));
+					} else {
+						System.out.println(line);
+					}
+				} else if (line.contains(preparingText)){
+					System.out.println(line.substring(line.length() - 3, line.length()));
+				}
+								
+				if (line.contains(doneText)) {     // now this is configurable!
+					System.out.println("Stopping server.");
+					OutputStream outputStream = process.getOutputStream();
+					outputStream.write(stop);
+					outputStream.flush();
+					outputStream.close();
+				}
+				if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
+					System.out.println("Severe error found: Stopping server.");
+					OutputStream outputStream = process.getOutputStream();
+					outputStream.write(stop);
+					outputStream.flush();
+					outputStream.close();
+					System.exit(1);
+					//Quit!
+				}
 			}
 		}
+		
+		
+
 		// readLine() returns null when the process exits
 	}
 
@@ -464,12 +632,26 @@ public class Main {
 			BufferedReader in = new BufferedReader(new FileReader(config));
 			String line;
 			while ((line = in.readLine()) != null) {
+				int ignoreLine = line.indexOf('#');
+				if (ignoreLine == -1){
+					ignoreLine = 1;
+				} else if (ignoreLine == 0){
+					ignoreLine = 1;
+				} else if (ignoreLine == 1){
+					ignoreLine = 1;
+				} else {
+					ignoreLine = line.length();
+				}
+				if (ignoreLine != 1){
+					ignoreLine = line.length();
+				}
+								
 				int pos = line.indexOf('=');
 				if (pos != -1) {
 					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1);
+						serverPath = line.substring(pos + 1, ignoreLine);
 					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1);
+						javaLine = line.substring(pos + 1, ignoreLine);
 					}
 				}
 			}
