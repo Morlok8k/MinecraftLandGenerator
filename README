@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.3.0
+Minecraft Land Generator version 1.4.0
 
 Originally by Corrodias
 Tweaked by Morlok8k
@@ -13,6 +13,14 @@ This program is public domain, and the source code is included in the .jar file.
 The JNLP library is included as lib\jnbt-1.1.jar. It is not public domain. Its license is included within its .jar file, as LICENSE.TXT.
 
 Version History:
+1.4.0
+- Future Proofing
+- Configurble Server Message reading.  (If server updates and breaks MLG, you can add the new text!)
+- Updated config file, and auto updating from old format.
+- Added % of spawn area to non-verbose output.
+- Removed datetime stamps from server output in verbose mode
+- Other Misc fixes.
+
 1.3.0
 - Fixed Problems with Minecraft Beta 1.3 -- Morlok8k
 
