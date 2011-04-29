@@ -136,7 +136,7 @@ public class Main {
 				out.newLine();
 				out.write("#Auto-Generated: " + dateFormat.format(date));
 				out.newLine();
-				out.write("Java=java -Djline.terminal=jline.UnsupportedTerminal -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui");
+				out.write("Java=java -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui");
 					// I added the jline tag for future proofing...
 				out.newLine();
 				out.write("ServerPath=.");
