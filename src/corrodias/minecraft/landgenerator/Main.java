@@ -41,10 +41,13 @@ import org.jnbt.Tag;
  */
 public class Main {
 
+	//Version Number!
+	private static final String VERSION = "1.4.1";
+	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
 	//private static final String javaPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
-	private static final String VERSION = "1.4.0";
+
 	private int increment = 300;
 	private ProcessBuilder minecraft = null;
 	private String javaLine = null;
@@ -132,7 +135,9 @@ public class Main {
 			try {
 				File config = new File("MinecraftLandGenerator.conf");
 				BufferedWriter out = new BufferedWriter(new FileWriter(config));
-				out.write("#Minecraft Land Generator Configuration File:");
+				out.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION);
+				out.newLine();
+				out.write("#Authors: Corrodias, Morlok8k");
 				out.newLine();
 				out.write("#Auto-Generated: " + dateFormat.format(date));
 				out.newLine();
@@ -202,7 +207,9 @@ public class Main {
 				try {
 					File configUpdate = new File("MinecraftLandGenerator.conf");
 					BufferedWriter out = new BufferedWriter(new FileWriter(configUpdate));
-					out.write("#Minecraft Land Generator Configuration File:");
+					out.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION);
+					out.newLine();
+					out.write("#Authors: Corrodias, Morlok8k");
 					out.newLine();
 					out.write("#Auto-Updated: " + dateFormat.format(date));
 					out.newLine();
@@ -575,10 +582,11 @@ public class Main {
 						System.out.println(line);
 					}
 				} else if (line.contains(preparingText)){
-					System.out.println(line.substring(line.length() - 3, line.length()));
+					System.out.print(line.substring(line.length() - 3, line.length()) + "... ");
 				}
 								
 				if (line.contains(doneText)) {     // now this is configurable!
+					System.out.println("");
 					System.out.println("Stopping server.");
 					OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
@@ -586,6 +594,7 @@ public class Main {
 					outputStream.close();
 				}
 				if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
+					System.out.println("");
 					System.out.println("Severe error found: Stopping server.");
 					OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
