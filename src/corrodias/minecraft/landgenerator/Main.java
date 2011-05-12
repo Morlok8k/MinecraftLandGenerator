@@ -42,7 +42,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.4.1";
+	private static final String VERSION = "1.4.2";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -561,6 +561,7 @@ public class Main {
 			
 		} else {  //start minecraft server normally!
 			Process process = minecraft.start();
+			System.out.println("");
 			if (verbose) {
 				System.out.println("Started Server.");
 			}
@@ -568,7 +569,8 @@ public class Main {
 			if (verbose) {
 				System.out.println("Accessing Server Output...");
 			}
-
+			
+			
 			String line = null;
 			
 			byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
