@@ -42,7 +42,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.4.2";
+	private static final String VERSION = "1.4.3";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -513,6 +513,9 @@ public class Main {
 	 */
 	protected static void runMinecraft(ProcessBuilder minecraft, boolean verbose, boolean alternate, String javaLine) throws IOException {
 		System.out.println("Starting server.");
+		
+		boolean warning = false;
+		
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
 		
@@ -595,6 +598,16 @@ public class Main {
 					outputStream.flush();
 					outputStream.close();
 				}
+				if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
+					System.out.println("");
+					System.out.println("Warning found: Stopping Minecraft Land Generator");
+					System.out.println("");
+					OutputStream outputStream = process.getOutputStream();
+					outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice! (but since we write stop every time we see a warning, we should be fine.)
+					outputStream.flush();
+					outputStream.close();
+					warning = true;
+				}
 				if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
 					System.out.println("");
 					System.out.println("Severe error found: Stopping server.");
@@ -606,6 +619,11 @@ public class Main {
 					//Quit!
 				}
 			}
+			
+			if (warning == true){
+				System.exit(1);
+			}
+			
 		}
 		
 		
@@ -643,26 +661,27 @@ public class Main {
 			BufferedReader in = new BufferedReader(new FileReader(config));
 			String line;
 			while ((line = in.readLine()) != null) {
-				int ignoreLine = line.indexOf('#');
-				if (ignoreLine == -1){
-					ignoreLine = 1;
-				} else if (ignoreLine == 0){
-					ignoreLine = 1;
-				} else if (ignoreLine == 1){
-					ignoreLine = 1;
-				} else {
-					ignoreLine = line.length();
-				}
-				if (ignoreLine != 1){
-					ignoreLine = line.length();
-				}
-								
 				int pos = line.indexOf('=');
+				int end = line.lastIndexOf('#');	//comments, ignored lines
+				
+				
+				if (end == -1){		// If we have no hash sign, then we read till the end of the line
+					end = line.length();
+				}
+				
+				if (end <= pos){	// If hash is before the '=', we may have a issue... it should be fine, cause we check for issues next, but lets make sure.
+					end = line.length();
+				}
+				
 				if (pos != -1) {
 					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1, ignoreLine);
+						serverPath = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1, ignoreLine);
+						javaLine = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
+						doneText = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
+						preparingText = line.substring(pos + 1, end);
 					}
 				}
 			}
