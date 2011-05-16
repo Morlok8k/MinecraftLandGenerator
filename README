@@ -1,6 +1,6 @@
-Minecraft Land Generator version 1.4.3
+Minecraft Land Generator version 1.4.4
 
-Updated May 14, 2011
+Updated May 15, 2011
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
@@ -72,7 +72,7 @@ Corrodias:
 
 
 -----------------------------------------------
-Minecraft Land Generator version 1.4.2
+Minecraft Land Generator version 1.4.4
 Uses a Minecraft server to generate square land of a specified size.
 
 Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]
