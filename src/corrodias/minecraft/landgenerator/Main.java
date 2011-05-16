@@ -42,7 +42,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.4.3";
+	private static final String VERSION = "1.4.4";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -63,6 +63,8 @@ public class Main {
 	private Integer yOffset = null;
 	private boolean verbose = false;
 	private boolean alternate = false;
+	private static boolean ignoreWarnings = false;
+	
 
 	/**
 	 * @param args the command line arguments
@@ -91,6 +93,7 @@ public class Main {
 			System.out.println("Switches:");
 			System.out.println("      -verbose : causes the application to output the server's messages to the console");
 			System.out.println("            -v : same as -verbose");
+			System.out.println("            -w : Ignore [WARNING] and [SEVERE] messages.");
 			//System.out.println("          -alt : alternate server launch sequence");
 			//System.out.println("            -a : same as -alt");
 			System.out.println("           -i# : override the iteration spawn offset increment (default 300) (example: -i100)");
@@ -258,6 +261,8 @@ public class Main {
 					verbose = true;
 				} else if (nextSwitch.startsWith("-i")) {
 					increment = Integer.parseInt(args[i + 2].substring(2));
+				} else if (nextSwitch.startsWith("-w")) {
+					ignoreWarnings = true;
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
 				//	System.out.println("Using Alternate Launching...");
 					System.out.println("Alternate Launch Disabled.");
@@ -478,8 +483,11 @@ public class Main {
 			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
 			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
 			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
+			@SuppressWarnings("unused")
 			IntTag spawnX = (IntTag) newData.get("SpawnX");		//we never use these...
-			IntTag spawnY = (IntTag) newData.get("SpawnY");
+			@SuppressWarnings("unused")
+			IntTag spawnY = (IntTag) newData.get("SpawnY");		//but whatever...
+			@SuppressWarnings("unused")
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 			newData.put("SpawnX", new IntTag("SpawnX", x));
 			newData.put("SpawnY", new IntTag("SpawnY", y));
@@ -598,25 +606,27 @@ public class Main {
 					outputStream.flush();
 					outputStream.close();
 				}
-				if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
-					System.out.println("");
-					System.out.println("Warning found: Stopping Minecraft Land Generator");
-					System.out.println("");
-					OutputStream outputStream = process.getOutputStream();
-					outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice! (but since we write stop every time we see a warning, we should be fine.)
-					outputStream.flush();
-					outputStream.close();
-					warning = true;
-				}
-				if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
-					System.out.println("");
-					System.out.println("Severe error found: Stopping server.");
-					OutputStream outputStream = process.getOutputStream();
-					outputStream.write(stop);
-					outputStream.flush();
-					outputStream.close();
-					System.exit(1);
-					//Quit!
+				if (ignoreWarnings == false) {
+					if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
+						System.out.println("");
+						System.out.println("Warning found: Stopping Minecraft Land Generator");
+						System.out.println("");
+						OutputStream outputStream = process.getOutputStream();
+						outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice! (but since we write stop every time we see a warning, we should be fine.)
+						outputStream.flush();
+						outputStream.close();
+						warning = true;
+					}
+					if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
+						System.out.println("");
+						System.out.println("Severe error found: Stopping server.");
+						OutputStream outputStream = process.getOutputStream();
+						outputStream.write(stop);
+						outputStream.flush();
+						outputStream.close();
+						System.exit(1);
+						//Quit!
+					}
 				}
 			}
 			
