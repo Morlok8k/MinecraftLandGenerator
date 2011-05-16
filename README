@@ -26,6 +26,9 @@ The JNLP library is included (inside the .jar) as jnbt-1.1.jar. It is not public
 Version History:
 Morlok8k:
 
+1.4.4
+- Added ablilty to ignore [WARNING] and [SEVERE] errors with "-w"
+
 1.4.3
 - Fixed "-ps","-printspawn" as I had forgot I had broken it in 1.4.0 - due to config file change.
 
@@ -82,6 +85,7 @@ Arguments:
 Switches:
       -verbose : causes the application to output the server's messages to the console
             -v : same as -verbose
+            -w : Ignore [WARNING] and [SEVERE] messages.
            -i# : override the iteration spawn offset increment (default 300) (example: -i100)
            -x# : set the X offset to generate land around (example: -x0)
            -y# : set the X offset to generate land around (example: -y0)
