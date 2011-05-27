@@ -23,12 +23,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
+//import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
+import org.jnbt.LongTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
@@ -42,21 +43,31 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.4.4";
+	private static final String VERSION = "1.4.5  (pre-1.5.0)";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
 	//private static final String javaPath = System.getProperty("java.home") + separator + "bin" + separator + "java";
 
-	private int increment = 300;
+	private int increment = 380;
 	private ProcessBuilder minecraft = null;
 	private String javaLine = null;
 	private String serverPath = null;
 	private String worldPath = null;
-	private String worldName = null;
+	private static String worldName = "world";
 	private static String doneText = null;
 	private static String preparingText = null;
-	private String hell = null;
+	private static String preparingLevel = null;
+//	private static String level_0 = null;			//the world
+	private static String level_1 = null;			//the nether
+	private static String level_2 = null;			//future worlds
+	private static String level_3 = null;
+	private static String level_4 = null;
+	private static String level_5 = null;
+	private static String level_6 = null;
+	private static String level_7 = null;
+	private static String level_8 = null;
+	private static String level_9 = null;
 	private int xRange = 0;
 	private int yRange = 0;
 	private Integer xOffset = null;
@@ -64,6 +75,7 @@ public class Main {
 	private boolean verbose = false;
 	private boolean alternate = false;
 	private static boolean ignoreWarnings = false;
+	private static LongTag randomSeed = null;
 	
 
 	/**
@@ -86,19 +98,19 @@ public class Main {
 			System.out.println("Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]");
 			System.out.println("");
 			System.out.println("Arguments:");
-			System.out.println("             x : X range to generate");
-			System.out.println("             y : Y range to generate");
-			System.out.println("    serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)");
+			System.out.println("              x : X range to generate");
+			System.out.println("              y : Y range to generate");
+			System.out.println("     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)");
 			System.out.println("");
 			System.out.println("Switches:");
-			System.out.println("      -verbose : causes the application to output the server's messages to the console");
-			System.out.println("            -v : same as -verbose");
-			System.out.println("            -w : Ignore [WARNING] and [SEVERE] messages.");
-			//System.out.println("          -alt : alternate server launch sequence");
-			//System.out.println("            -a : same as -alt");
-			System.out.println("           -i# : override the iteration spawn offset increment (default 300) (example: -i100)");
-			System.out.println("           -x# : set the X offset to generate land around (example: -x0)");
-			System.out.println("           -y# : set the X offset to generate land around (example: -y0)");
+			System.out.println("       -verbose : causes the application to output the server's messages to the console");
+			System.out.println("             -v : same as -verbose");
+			System.out.println("             -w : Ignore [WARNING] and [SEVERE] messages.");
+			System.out.println("           -alt : alternate server launch sequence");
+			System.out.println("             -a : same as -alt");
+			System.out.println("            -i# : override the iteration spawn offset increment (default 300) (example: -i100)");
+			System.out.println("            -x# : set the X offset to generate land around (example: -x0)");
+			System.out.println("            -y# : set the X offset to generate land around (example: -y0)");
 			System.out.println("");
 			System.out.println("Other options:");
 			System.out.println("  java -jar MinecraftLandGenerator.jar -printspawn");
@@ -117,10 +129,20 @@ public class Main {
 			System.out.println("If this file does not exist or does not contain all required properties, the application will not run.");
 			System.out.println("");
 			System.out.println("MinecraftLandGenerator.conf properties:");
-			System.out.println("          Java : The command line to use to launch the server");
-			System.out.println("    ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)");
-			System.out.println("     Done_Text : The output from the server that tells us that we are done");
-			System.out.println("Preparing_Text : The output from the server that tells us the percentage");
+			System.out.println("           Java : The command line to use to launch the server");
+			System.out.println("     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)");
+			System.out.println("      Done_Text : The output from the server that tells us that we are done");
+			System.out.println(" Preparing_Text : The output from the server that tells us the percentage");
+			System.out.println("Preparing_Level : The output from the server that tells us the level it is working on");
+			System.out.println("          DIM-1 : Name of DIM-1: Nether");
+			System.out.println("          DIM-2 : Name of DIM-2: (Future Level)");
+			System.out.println("          DIM-3 : Name of DIM-3: (Future Level)");
+			System.out.println("          DIM-4 : Name of DIM-4: (Future Level)");
+			System.out.println("          DIM-5 : Name of DIM-5: (Future Level)");
+			System.out.println("          DIM-6 : Name of DIM-6: (Future Level)");
+			System.out.println("          DIM-7 : Name of DIM-7: (Future Level)");
+			System.out.println("          DIM-8 : Name of DIM-8: (Future Level)");
+			System.out.println("          DIM-9 : Name of DIM-9: (Future Level)");
 
 			return;
 		}
@@ -144,14 +166,43 @@ public class Main {
 				out.newLine();
 				out.write("#Auto-Generated: " + dateFormat.format(date));
 				out.newLine();
+				out.newLine();
+				out.write("#Line to run server:");
+				out.newLine();
 				out.write("Java=java -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui");
 					// I added the jline tag for future proofing...
 				out.newLine();
+				out.newLine();
+				out.write("#Location of server.  use \".\" for the same folder as MLG");
+				out.newLine();
 				out.write("ServerPath=.");
+				out.newLine();
+				out.newLine();
+				out.write("#Strings read from the server");
 				out.newLine();
 				out.write("Done_Text=[INFO] Done");
 				out.newLine();
 				out.write("Preparing_Text=[INFO] Preparing spawn area:");
+				out.newLine();
+				out.write("Preparing_Level=[INFO] Preparing start region for");
+				out.newLine();
+				out.write("DIM-1=Nether");
+				out.newLine();
+				out.write("DIM-2=DIM-2");
+				out.newLine();
+				out.write("DIM-3=DIM-3");
+				out.newLine();
+				out.write("DIM-4=DIM-4");
+				out.newLine();
+				out.write("DIM-5=DIM-5");
+				out.newLine();
+				out.write("DIM-6=DIM-6");
+				out.newLine();
+				out.write("DIM-7=DIM-7");
+				out.newLine();
+				out.write("DIM-8=DIM-8");
+				out.newLine();
+				out.write("DIM-9=DIM-9");
 				out.newLine();
 				out.close();
 				System.out.println("MinecraftLandGenerator.conf file created.");
@@ -176,16 +227,14 @@ public class Main {
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
 				int end = line.lastIndexOf('#');	//comments, ignored lines
-				
-				
+								
 				if (end == -1){		// If we have no hash sign, then we read till the end of the line
 					end = line.length();
 				}
-				
 				if (end <= pos){	// If hash is before the '=', we may have a issue... it should be fine, cause we check for issues next, but lets make sure.
 					end = line.length();
 				}
-				
+
 				if (pos != -1) {
 					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
 						serverPath = line.substring(pos + 1, end);
@@ -195,6 +244,26 @@ public class Main {
 						doneText = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
 						preparingText = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("preparing_level")) {
+						preparingLevel = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-1")) {
+						level_1 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-2")) {
+						level_2 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-3")) {
+						level_3 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-4")) {
+						level_4 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-5")) {
+						level_5 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-6")) {
+						level_6 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-7")) {
+						level_7	 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-8")) {
+						level_8 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("DIM-9")) {
+						level_9 = line.substring(pos + 1, end);
 					}
 				}
 			}
@@ -205,7 +274,7 @@ public class Main {
 				return;
 			}
 			
-			if (doneText == null || preparingText == null) {
+			if (doneText == null || preparingText == null || preparingLevel == null || level_1 == null || level_9 == null) {
 				System.err.println("Old Version of MinecraftLandGenerator.conf found.  Updating...");
 				try {
 					File configUpdate = new File("MinecraftLandGenerator.conf");
@@ -223,6 +292,26 @@ public class Main {
 					out.write("Done_Text=[INFO] Done");
 					out.newLine();
 					out.write("Preparing_Text=[INFO] Preparing spawn area:");
+					out.newLine();
+					out.write("Preparing_Level=[INFO] Preparing start region for");
+					out.newLine();
+					out.write("DIM-1=Nether");
+					out.newLine();
+					out.write("DIM-2=DIM-2");
+					out.newLine();
+					out.write("DIM-3=DIM-3");
+					out.newLine();
+					out.write("DIM-4=DIM-4");
+					out.newLine();
+					out.write("DIM-5=DIM-5");
+					out.newLine();
+					out.write("DIM-6=DIM-6");
+					out.newLine();
+					out.write("DIM-7=DIM-7");
+					out.newLine();
+					out.write("DIM-8=DIM-8");
+					out.newLine();
+					out.write("DIM-9=DIM-9");
 					out.newLine();
 					out.close();
 					System.out.println("MinecraftLandGenerator.conf file created.");
@@ -264,11 +353,8 @@ public class Main {
 				} else if (nextSwitch.startsWith("-w")) {
 					ignoreWarnings = true;
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
-				//	System.out.println("Using Alternate Launching...");
-					System.out.println("Alternate Launch Disabled.");
-					// This is a failed attempt to fix issues with Windows XP 32bit.
-				//	alternate = true;
-					alternate = false; // force Alt to be off, just in case
+					System.out.println("Using Alternate Launching...");
+					alternate = true;
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
 				} else if (nextSwitch.startsWith("-y")) {
@@ -301,9 +387,6 @@ public class Main {
 					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
 						worldPath = serverPath + separator + line.substring(pos + 1);
 						worldName = line.substring(pos + 1);
-					} else if (line.substring(0, pos).toLowerCase().equals("hellworld")) {
-						hell = line.substring(pos + 1);
-						hell = hell.toLowerCase(Locale.ENGLISH);
 					}
 					
 				}
@@ -331,11 +414,8 @@ public class Main {
 		// =====================================================================
 
 		System.out.println("Processing world \"" + worldPath + "\", in " + increment + " block increments, with: " + javaLine);
-		if (hell.contains("true")){
-			System.out.println("Processing The Nether of \"" + worldName + "\"... (DIM-1)");
-		} else if (hell.contains("false")) {
-			System.out.println("Processing \"" + worldName + "\"...");
-		}
+		//System.out.println("Processing \"" + worldName + "\"...");
+		
 		System.out.println("");
 
 		// prepare our two ProcessBuilders
@@ -343,9 +423,7 @@ public class Main {
 		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.
 		minecraft.directory(new File(serverPath));
 		minecraft.redirectErrorStream(true);
-		
 
-		
 		try {
 			System.out.println("Launching server once to make sure there is a world.");
 			runMinecraft(minecraft, verbose, alternate, javaLine);
@@ -386,6 +464,9 @@ public class Main {
 			for (int currentX = 0 - xRange / 2; currentX <= xRange / 2; currentX += increment) {
 				for (int currentY = 0 - yRange / 2; currentY <= yRange / 2; currentY += increment) {
 					currentIteration++;
+					
+					System.out.println(Integer.toString(currentIteration / totalIterations) + "% Done");
+					
 					System.out.println("Setting spawn to [" + Integer.toString(currentX + xOffset) + ", " + Integer.toString(currentY + yOffset) + "] (" + currentIteration + "/" + totalIterations + ")");
 
 					// Time Remaining estimate
@@ -431,7 +512,12 @@ public class Main {
 			IntTag spawnX = (IntTag) newData.get("SpawnX");
 			IntTag spawnY = (IntTag) newData.get("SpawnY");
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
-
+			
+			randomSeed = (LongTag) newData.get("RandomSeed");
+			if (randomSeed.getValue() != 0) {
+				System.out.println("Seed: " + randomSeed.getValue());	//lets output the seed, cause why not?
+			}
+			
 			Integer[] ret = new Integer[]{spawnX.getValue(), spawnY.getValue(), spawnZ.getValue()};
 			return ret;
 		} catch (ClassCastException ex) {
@@ -442,7 +528,7 @@ public class Main {
 	}
 
 	/**
-	 * Changes the spawn point in the given Alpha level to the given coordinates.
+	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.
 	 * Note that, in Minecraft levels, the Y coordinate is height, while Z is
 	 * what may normally be thought of as Y.
 	 * @param level the level file to change the spawn point in
@@ -474,7 +560,7 @@ public class Main {
 //    * TAG_Int("SpawnX"): X coordinate of the player's spawn position. Default is 0.
 //    * TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.
 //    * TAG_Int("SpawnZ"): Z coordinate of the player's spawn position. Default is 0.
-//    * TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
+//    * TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode							//Old!
 //    * TAG_Long("SizeOnDisk"): Estimated size of the entire world in bytes.
 //    * TAG_Long("RandomSeed"): Random number providing the Random Seed for the terrain.
 // </editor-fold>
@@ -483,12 +569,14 @@ public class Main {
 			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
 			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
 			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
+
 			@SuppressWarnings("unused")
-			IntTag spawnX = (IntTag) newData.get("SpawnX");		//we never use these...
+			IntTag spawnX = (IntTag) newData.get("SpawnX");		// we never use these...   Its only here for potential debugging.
 			@SuppressWarnings("unused")
-			IntTag spawnY = (IntTag) newData.get("SpawnY");		//but whatever...
+			IntTag spawnY = (IntTag) newData.get("SpawnY");		// but whatever...  so I (Morlok8k) suppressed these warnings.
 			@SuppressWarnings("unused")
-			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
+			IntTag spawnZ = (IntTag) newData.get("SpawnZ");		// I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
+			
 			newData.put("SpawnX", new IntTag("SpawnX", x));
 			newData.put("SpawnY", new IntTag("SpawnY", y));
 			newData.put("SpawnZ", new IntTag("SpawnZ", z));
@@ -532,43 +620,25 @@ public class Main {
 		// So, here is a bunch of duplicate code...
 		// Stupid compile errors...
 		
-		if (alternate) {   //Alternate is currently disabled.
-		//	Runtime minecraftAlt = Runtime.getRuntime();
-		//	Process process = minecraftAlt.exec(javaLine.split("\\s"));		
-		//	//InputStream is = processAlt.getInputStream();
-		//			// this didn't work - Minecraft Server uses the error stream for almost all the output. 
-		//			// the input stream only reads the amount of recipes the server has, for instance, beta 1.4 reports: "144 recipes"
-		//			// with the standard way, ProcessBuilder, we can combine Error and Input.
-		//	//InputStreamReader isr = new InputStreamReader(is);
-		//  //BufferedReader pOut = new BufferedReader(isr);
-		//	BufferedReader pOut = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-		//
-		//	String line = null;
-		//	
-		//	byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
-		//			//and no, i can't use a string here!
-		//	
-		//	while ((line = pOut.readLine()) != null) {
-		//		if (verbose) {
-		//			System.out.println(line);
-		//		}
-		//		if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
-		//			System.out.println("Stopping server.");
-		//			OutputStream outputStream = process.getOutputStream();
-		//			outputStream.write(stop);
-		//			outputStream.flush();
-		//			outputStream.close();
-		//		}
-		//		if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
-		//			System.out.println("Severe error found: Stopping server.");
-		//			OutputStream outputStream = process.getOutputStream();
-		//			outputStream.write(stop);
-		//			outputStream.flush();
-		//			outputStream.close();
-					System.exit(1);
-		//			//Quit!
-		//		}
-		//	}
+		if (alternate) {   //Alternate - a replication of MLG 1.3.0's code.  simplest code possible.
+			System.out.println("Starting server.");
+			Process process = minecraft.start();
+
+			// monitor output and print to console where required.
+			// STOP the server when it's done.
+			BufferedReader pOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = pOut.readLine()) != null) {
+				System.out.println(line);
+				if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
+					System.out.println("Stopping server.");
+					byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
+					OutputStream outputStream = process.getOutputStream();
+					outputStream.write(stop);
+					outputStream.flush();
+				}
+			}
+			// readLine() returns null when the process exits
 			
 		} else {  //start minecraft server normally!
 			Process process = minecraft.start();
@@ -581,12 +651,14 @@ public class Main {
 				System.out.println("Accessing Server Output...");
 			}
 			
-			
 			String line = null;
 			
 			byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
 					//and no, i can't use a string here!
 			
+			OutputStream outputStream = process.getOutputStream();		//moved here to remove some redundancy
+			
+
 			while ((line = pOut.readLine()) != null) {
 				if (verbose) {
 					if (line.contains("[INFO]")){
@@ -596,51 +668,82 @@ public class Main {
 					}
 				} else if (line.contains(preparingText)){
 					System.out.print(line.substring(line.length() - 3, line.length()) + "... ");
+				} else if (line.contains(preparingLevel)){
+					if (line.contains("level 0")) {				//"Preparing start region for level 0"
+						System.out.println("\r\n" + worldName + ":");
+					} else if (line.contains("level 1")) {		//"Preparing start region for level 1"
+						System.out.println("\r\n" + level_1 + ":");
+					} else if (line.contains("level 2")) {		//"Preparing start region for level 2"
+						System.out.println("\r\n" + level_2 + ":");
+					} else if (line.contains("level 3")) {		//"Preparing start region for level 3"
+						System.out.println("\r\n" + level_3 + ":");
+					} else if (line.contains("level 4")) {		//"Preparing start region for level 4"
+						System.out.println("\r\n" + level_4 + ":");
+					} else if (line.contains("level 5")) {		//"Preparing start region for level 5"
+						System.out.println("\r\n" + level_5 + ":");
+					} else if (line.contains("level 6")) {		//"Preparing start region for level 6"
+						System.out.println("\r\n" + level_6 + ":");
+					} else if (line.contains("level 7")) {		//"Preparing start region for level 7"
+						System.out.println("\r\n" + level_7 + ":");
+					} else if (line.contains("level 8")) {		//"Preparing start region for level 8"
+						System.out.println("\r\n" + level_8 + ":");
+					} else if (line.contains("level 9")) {		//"Preparing start region for level 9"
+						System.out.println("\r\n" + level_9 + ":");
+					}
 				}
-								
+				
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
 					System.out.println("Stopping server.");
-					OutputStream outputStream = process.getOutputStream();
+					//OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
 					outputStream.flush();
-					outputStream.close();
+					//outputStream.close();
 				}
 				if (ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
 						System.out.println("");
 						System.out.println("Warning found: Stopping Minecraft Land Generator");
 						System.out.println("");
-						OutputStream outputStream = process.getOutputStream();
-						outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice! (but since we write stop every time we see a warning, we should be fine.)
+						//OutputStream outputStream = process.getOutputStream();
+						outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice!
 						outputStream.flush();
-						outputStream.close();
+						outputStream.write(stop);
+						outputStream.flush();
+						//outputStream.close();
 						warning = true;
+						//System.exit(1);  
 					}
 					if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
 						System.out.println("");
 						System.out.println("Severe error found: Stopping server.");
-						OutputStream outputStream = process.getOutputStream();
+						System.out.println("");
+						//OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);
 						outputStream.flush();
-						outputStream.close();
-						System.exit(1);
+						outputStream.write(stop);	//sometimes we need to do stop twice...
+						outputStream.flush();
+						//outputStream.close();
+						warning = true;
+						//System.exit(1);
 						//Quit!
 					}
 				}
 			}
 			
-			if (warning == true){
+			if (warning == true){			//in 1.4.4 we had a issue.  tried to write stop twice, but we had closed the stream already.  this, and other lines should fix this.
+				outputStream.flush();
+				outputStream.close();
 				System.exit(1);
 			}
 			
+			outputStream.close();
 		}
 		
-		
-
 		// readLine() returns null when the process exits
 	}
-
+	
+	// Corrodias:
 	// I'd love to use nio, but it requires Java 7.
 	// I could use Apache Commons, but i don't want to include a library for one little thing.
 	// Copies src file to dst file.
