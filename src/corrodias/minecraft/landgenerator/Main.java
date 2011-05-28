@@ -43,7 +43,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.4.5  (pre-1.5.0)";
+	private static final String VERSION = "1.5.0";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -54,7 +54,7 @@ public class Main {
 	private String javaLine = null;
 	private String serverPath = null;
 	private String worldPath = null;
-	private static String worldName = "world";
+	private static String worldName = null;
 	private static String doneText = null;
 	private static String preparingText = null;
 	private static String preparingLevel = null;
@@ -77,6 +77,11 @@ public class Main {
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
 	
+	private static final boolean testing = false;	// a constant to display more output when debugging
+	
+	// REMINDER: because I always forget/mix up languages:
+	// "static" in java means "global"
+	// "final" means "constant"
 
 	/**
 	 * @param args the command line arguments
@@ -246,35 +251,53 @@ public class Main {
 						preparingText = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("preparing_level")) {
 						preparingLevel = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-1")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-1")) {
 						level_1 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-2")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-2")) {
 						level_2 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-3")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-3")) {
 						level_3 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-4")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-4")) {
 						level_4 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-5")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-5")) {
 						level_5 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-6")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-6")) {
 						level_6 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-7")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-7")) {
 						level_7	 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-8")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-8")) {
 						level_8 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("DIM-9")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-9")) {
 						level_9 = line.substring(pos + 1, end);
 					}
 				}
 			}
 			in.close();
 
+			if (testing) {
+				System.out.println("[TEST] Test Output: Reading of Config File ");
+				System.out.println("[TEST]     serverPath: " + serverPath);
+				System.out.println("[TEST]       javaLine: " + javaLine);
+				System.out.println("[TEST]       doneText: " + doneText);
+				System.out.println("[TEST]  preparingText: " + preparingText);
+				System.out.println("[TEST] preparingLevel: " + preparingLevel);
+				System.out.println("[TEST]        level_1: " + level_1);
+				System.out.println("[TEST]        level_2: " + level_2);
+				System.out.println("[TEST]        level_3: " + level_3);
+				System.out.println("[TEST]        level_4: " + level_4);
+				System.out.println("[TEST]        level_5: " + level_5);
+				System.out.println("[TEST]        level_6: " + level_6);
+				System.out.println("[TEST]        level_7: " + level_7);
+				System.out.println("[TEST]        level_8: " + level_8);
+				System.out.println("[TEST]        level_9: " + level_9);
+			}
+			
 			if (serverPath == null || javaLine == null) {
 				System.err.println("MinecraftLandGenerator.conf does not contain all required properties. Please recreate it by running this application with -conf.");
 				return;
 			}
 			
-			if (doneText == null || preparingText == null || preparingLevel == null || level_1 == null || level_9 == null) {
+			if ((doneText == null && preparingText == null) || (preparingLevel == null && level_1 == null)) {
 				System.err.println("Old Version of MinecraftLandGenerator.conf found.  Updating...");
 				try {
 					File configUpdate = new File("MinecraftLandGenerator.conf");
@@ -465,11 +488,9 @@ public class Main {
 				for (int currentY = 0 - yRange / 2; currentY <= yRange / 2; currentY += increment) {
 					currentIteration++;
 					
-					System.out.println(Integer.toString(currentIteration / totalIterations) + "% Done");
 					
-					System.out.println("Setting spawn to [" + Integer.toString(currentX + xOffset) + ", " + Integer.toString(currentY + yOffset) + "] (" + currentIteration + "/" + totalIterations + ")");
-
-					// Time Remaining estimate
+					
+					System.out.println("Setting spawn to [" + Integer.toString(currentX + xOffset) + ", " + Integer.toString(currentY + yOffset) + "] (" + currentIteration + "/" + totalIterations + ") " + Float.toString((Float.parseFloat(Integer.toString(currentIteration)) / Float.parseFloat(Integer.toString(totalIterations))) * 100) + "% Done" );			// Time Remaining estimate
 					timeTracking[0] = timeTracking[1];
 					timeTracking[1] = timeTracking[2];
 					timeTracking[2] = timeTracking[3];
@@ -514,9 +535,8 @@ public class Main {
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 			
 			randomSeed = (LongTag) newData.get("RandomSeed");
-			if (randomSeed.getValue() != 0) {
-				System.out.println("Seed: " + randomSeed.getValue());	//lets output the seed, cause why not?
-			}
+			System.out.println("Seed: " + randomSeed.getValue());	//lets output the seed, cause why not?
+			
 			
 			Integer[] ret = new Integer[]{spawnX.getValue(), spawnY.getValue(), spawnZ.getValue()};
 			return ret;
@@ -620,8 +640,8 @@ public class Main {
 		// So, here is a bunch of duplicate code...
 		// Stupid compile errors...
 		
-		if (alternate) {   //Alternate - a replication of MLG 1.3.0's code.  simplest code possible.
-			System.out.println("Starting server.");
+		if (alternate) {   //Alternate - a replication (slightly stripped down) of MLG 1.3.0's code.  simplest code possible.
+			System.out.println("Alternate Launch");
 			Process process = minecraft.start();
 
 			// monitor output and print to console where required.
@@ -642,7 +662,6 @@ public class Main {
 			
 		} else {  //start minecraft server normally!
 			Process process = minecraft.start();
-			System.out.println("");
 			if (verbose) {
 				System.out.println("Started Server.");
 			}
@@ -689,6 +708,8 @@ public class Main {
 						System.out.println("\r\n" + level_8 + ":");
 					} else if (line.contains("level 9")) {		//"Preparing start region for level 9"
 						System.out.println("\r\n" + level_9 + ":");
+					} else {
+						System.out.println(line.substring(line.lastIndexOf("]") + 2));
 					}
 				}
 				
