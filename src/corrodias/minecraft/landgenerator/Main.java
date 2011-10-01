@@ -38,12 +38,12 @@ import org.jnbt.Tag;
 
 /**
  *
- * @author Corrodias, Morlok8k
+ * @author Corrodias, Morlok8k, pr0f1x
  */
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.5.0";
+	private static final String VERSION = "1.5.1";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -74,6 +74,7 @@ public class Main {
 	private Integer yOffset = null;
 	private boolean verbose = false;
 	private boolean alternate = false;
+	private boolean waitSave = false;
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
 	
@@ -148,6 +149,7 @@ public class Main {
 			System.out.println("          DIM-7 : Name of DIM-7: (Future Level)");
 			System.out.println("          DIM-8 : Name of DIM-8: (Future Level)");
 			System.out.println("          DIM-9 : Name of DIM-9: (Future Level)");
+			System.out.println("       WaitSave : Option to wait before saving.");
 
 			return;
 		}
@@ -209,6 +211,8 @@ public class Main {
 				out.newLine();
 				out.write("DIM-9=DIM-9");
 				out.newLine();
+				out.write("WaitSave=true");
+				out.newLine();
 				out.close();
 				System.out.println("MinecraftLandGenerator.conf file created.");
 				return;
@@ -269,6 +273,14 @@ public class Main {
 						level_8 = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("dim-9")) {
 						level_9 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("waitsave")) {
+						string wstmp = line.toLowerCase().substring(pos + 1, end);
+            if (wstmp == "true"){
+              waitSave = true;
+            } else {
+              waitSave = false;
+            }
+            
 					}
 				}
 			}
@@ -290,6 +302,7 @@ public class Main {
 				System.out.println("[TEST]        level_7: " + level_7);
 				System.out.println("[TEST]        level_8: " + level_8);
 				System.out.println("[TEST]        level_9: " + level_9);
+				System.out.println("[TEST]       waitSave: " + waitSave);
 			}
 			
 			if (serverPath == null || javaLine == null) {
@@ -336,6 +349,8 @@ public class Main {
 					out.newLine();
 					out.write("DIM-9=DIM-9");
 					out.newLine();
+					out.write("WaitSave=true");
+          out.newLine();
 					out.close();
 					System.out.println("MinecraftLandGenerator.conf file created.");
 					return;
@@ -650,34 +665,35 @@ public class Main {
 			String line;
 			while ((line = pOut.readLine()) != null) {
 				System.out.println(line);
-				if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
+				if (line.contains(doneText)) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
+					if (waitSave) {
+            System.out.println("Waiting 30 seconds to save.");
+            
+            try {
+              Thread.sleep( 30000 );
+            } catch ( InterruptedException e ) {
+              e.printStackTrace();
+            }
+					}
+					
 					System.out.println("Saving server data...");
 					byte[] saveall = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
 					outputStream.write(saveall);
 					outputStream.flush();
-					
-					System.out.println("Waiting 30 seconds to save.");
-					
-					try {
-						Thread.sleep( 30000 );
-					} catch ( InterruptedException e ) {
-						e.printStackTrace();
-					}
-					
 					byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
 					
 					System.out.println( "Stopping server..." );
 					
 					outputStream.write(stop);
 					outputStream.flush();
-					
-					System.out.println("Waiting 30 seconds to save.");
-					
-					try {
-						Thread.sleep( 10000 );
-					} catch ( InterruptedException e ) {
-						e.printStackTrace();
+					if (waitSave) {
+            System.out.println("Waiting 10 seconds for save.");
+            try {
+              Thread.sleep( 10000 );
+            } catch ( InterruptedException e ) {
+              e.printStackTrace();
+            }
 					}
 				}
 			}
@@ -697,6 +713,8 @@ public class Main {
 			
 			byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
 					//and no, i can't use a string here!
+			
+			byte[] saveAll = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
 			
 			OutputStream outputStream = process.getOutputStream();		//moved here to remove some redundancy
 			
@@ -738,36 +756,45 @@ public class Main {
 				
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
+					if (waitSave) {
+            System.out.println("Waiting 30 seconds for save.");
+            
+            try {
+              Thread.sleep( 30000 );
+            } catch ( InterruptedException e ) {
+              e.printStackTrace();
+            }
+          }
 					System.out.println("Saving server data.");
-					byte[] saveall = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
-					outputStream.write(saveall);
+					outputStream.write(saveAll);
 					outputStream.flush();
 					
-					System.out.println("Waiting 30 seconds for save.");
-					
-					try {
-						Thread.sleep( 30000 );
-					} catch ( InterruptedException e ) {
-						e.printStackTrace();
-					}
-					
-					System.out.println( "Stopping server..." );
+					System.out.println("Stopping server.");
+					//OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
 					outputStream.flush();
-					
-					System.out.println("Waiting 10 seconds for save.");
-					try {
-						Thread.sleep( 10000 );
-					} catch ( InterruptedException e ) {
-						e.printStackTrace();
-					}
 					//outputStream.close();
+
+          if (waitSave) {
+            System.out.println("Waiting 10 seconds for save.");
+            try {
+              Thread.sleep( 10000 );
+            } catch ( InterruptedException e ) {
+              e.printStackTrace();
+            }
+					}
 				}
 				if (ignoreWarnings == false) {
-					if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
+					if (line.contains("[WARNING]")) {		//If we have a warning, stop...
 						System.out.println("");
 						System.out.println("Warning found: Stopping Minecraft Land Generator");
+						if (verbose == false) {   //If verbose is true, we already displayed it.
+              System.out.println(line);
+						}
 						System.out.println("");
+						System.out.println("Forcing Save...");
+            outputStream.write(saveAll);
+            outputStream.flush();
 						//OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice!
 						outputStream.flush();
@@ -780,7 +807,13 @@ public class Main {
 					if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
 						System.out.println("");
 						System.out.println("Severe error found: Stopping server.");
+            if (verbose == false) {   //If verbose is true, we already displayed it.
+              System.out.println(line);
+						}
 						System.out.println("");
+						System.out.println("Forcing Save...");
+            outputStream.write(saveAll);
+            outputStream.flush();
 						//OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);
 						outputStream.flush();
