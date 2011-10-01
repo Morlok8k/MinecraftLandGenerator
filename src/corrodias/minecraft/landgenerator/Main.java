@@ -651,11 +651,34 @@ public class Main {
 			while ((line = pOut.readLine()) != null) {
 				System.out.println(line);
 				if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
-					System.out.println("Stopping server.");
-					byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
 					OutputStream outputStream = process.getOutputStream();
+					System.out.println("Saving server data...");
+					byte[] saveall = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
+					outputStream.write(saveall);
+					outputStream.flush();
+					
+					System.out.println("Waiting 30 seconds to save.");
+					
+					try {
+						Thread.sleep( 30000 );
+					} catch ( InterruptedException e ) {
+						e.printStackTrace();
+					}
+					
+					byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
+					
+					System.out.println( "Stopping server..." );
+					
 					outputStream.write(stop);
 					outputStream.flush();
+					
+					System.out.println("Waiting 30 seconds to save.");
+					
+					try {
+						Thread.sleep( 10000 );
+					} catch ( InterruptedException e ) {
+						e.printStackTrace();
+					}
 				}
 			}
 			// readLine() returns null when the process exits
@@ -715,10 +738,29 @@ public class Main {
 				
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
-					System.out.println("Stopping server.");
-					//OutputStream outputStream = process.getOutputStream();
+					System.out.println("Saving server data.");
+					byte[] saveall = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
+					outputStream.write(saveall);
+					outputStream.flush();
+					
+					System.out.println("Waiting 30 seconds for save.");
+					
+					try {
+						Thread.sleep( 30000 );
+					} catch ( InterruptedException e ) {
+						e.printStackTrace();
+					}
+					
+					System.out.println( "Stopping server..." );
 					outputStream.write(stop);
 					outputStream.flush();
+					
+					System.out.println("Waiting 10 seconds for save.");
+					try {
+						Thread.sleep( 10000 );
+					} catch ( InterruptedException e ) {
+						e.printStackTrace();
+					}
 					//outputStream.close();
 				}
 				if (ignoreWarnings == false) {
