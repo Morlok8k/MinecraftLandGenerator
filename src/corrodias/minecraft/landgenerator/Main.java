@@ -74,7 +74,7 @@ public class Main {
 	private Integer yOffset = null;
 	private boolean verbose = false;
 	private boolean alternate = false;
-	private boolean waitSave = false;
+	private static boolean waitSave = false;
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
 	
@@ -274,13 +274,12 @@ public class Main {
 					} else if (line.substring(0, pos).toLowerCase().equals("dim-9")) {
 						level_9 = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("waitsave")) {
-						string wstmp = line.toLowerCase().substring(pos + 1, end);
-            if (wstmp == "true"){
-              waitSave = true;
-            } else {
-              waitSave = false;
-            }
-            
+						String wstmp = line.toLowerCase().substring(pos + 1, end);
+			            if (wstmp.equals( "true" ) ){
+			              waitSave = true;
+			            } else {
+			              waitSave = false;
+			            }
 					}
 				}
 			}
@@ -668,13 +667,13 @@ public class Main {
 				if (line.contains(doneText)) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
 					if (waitSave) {
-            System.out.println("Waiting 30 seconds to save.");
-            
-            try {
-              Thread.sleep( 30000 );
-            } catch ( InterruptedException e ) {
-              e.printStackTrace();
-            }
+			            System.out.println("Waiting 30 seconds to save.");
+			            
+			            try {
+			              Thread.sleep( 30000 );
+			            } catch ( InterruptedException e ) {
+			              e.printStackTrace();
+			            }
 					}
 					
 					System.out.println("Saving server data...");
@@ -688,12 +687,12 @@ public class Main {
 					outputStream.write(stop);
 					outputStream.flush();
 					if (waitSave) {
-            System.out.println("Waiting 10 seconds for save.");
-            try {
-              Thread.sleep( 10000 );
-            } catch ( InterruptedException e ) {
-              e.printStackTrace();
-            }
+			            System.out.println("Waiting 10 seconds for save.");
+			            try {
+			              Thread.sleep( 10000 );
+			            } catch ( InterruptedException e ) {
+			              e.printStackTrace();
+			            }
 					}
 				}
 			}
@@ -756,15 +755,15 @@ public class Main {
 				
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
-					if (waitSave) {
-            System.out.println("Waiting 30 seconds for save.");
-            
-            try {
-              Thread.sleep( 30000 );
-            } catch ( InterruptedException e ) {
-              e.printStackTrace();
-            }
-          }
+					if ( waitSave ) {
+						System.out.println( "Waiting 30 seconds for save." );
+
+						try {
+							Thread.sleep( 30000 );
+						} catch ( InterruptedException e ) {
+							e.printStackTrace();
+						}
+					}
 					System.out.println("Saving server data.");
 					outputStream.write(saveAll);
 					outputStream.flush();
@@ -775,13 +774,13 @@ public class Main {
 					outputStream.flush();
 					//outputStream.close();
 
-          if (waitSave) {
-            System.out.println("Waiting 10 seconds for save.");
-            try {
-              Thread.sleep( 10000 );
-            } catch ( InterruptedException e ) {
-              e.printStackTrace();
-            }
+					if ( waitSave ) {
+						System.out.println( "Waiting 10 seconds for save." );
+						try {
+							Thread.sleep( 10000 );
+						} catch ( InterruptedException e ) {
+							e.printStackTrace();
+						}
 					}
 				}
 				if (ignoreWarnings == false) {
