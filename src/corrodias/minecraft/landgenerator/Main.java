@@ -43,7 +43,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	//Version Number!
-	private static final String VERSION = "1.5.1";
+	private static final String VERSION = "1.5.0";
 	
 	private static final String separator = System.getProperty("file.separator");
 	//private static final String classpath = System.getProperty("java.class.path");
@@ -653,9 +653,7 @@ public class Main {
 				if (line.contains("[INFO] Done")) {     //EDITED By Morlok8k for Minecraft 1.3+ Beta
 					System.out.println("Stopping server.");
 					byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};
-					byte[] saveAll = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
 					OutputStream outputStream = process.getOutputStream();
-					outputStream.write(saveAll);
 					outputStream.write(stop);
 					outputStream.flush();
 				}
@@ -676,8 +674,6 @@ public class Main {
 			
 			byte[] stop = {'s', 't', 'o', 'p', '\r', '\n'};		//Moved here, so this code wont run every loop, thus Faster!
 					//and no, i can't use a string here!
-			
-			byte[] saveAll = {'s', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n'};
 			
 			OutputStream outputStream = process.getOutputStream();		//moved here to remove some redundancy
 			
@@ -719,9 +715,6 @@ public class Main {
 				
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
-					System.out.println("Forcing Save...");
-					outputStream.write(saveAll);
-					outputStream.flush();
 					System.out.println("Stopping server.");
 					//OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
@@ -729,16 +722,10 @@ public class Main {
 					//outputStream.close();
 				}
 				if (ignoreWarnings == false) {
-					if (line.contains("[WARNING]")) {		//If we have a warning, stop...
+					if (line.contains("[WARNING]")) {		//If we have a severe error, stop...
 						System.out.println("");
 						System.out.println("Warning found: Stopping Minecraft Land Generator");
-						if (verbose == false) {   //If verbose is true, we already displayed it.
-              System.out.println(line);
-						}
 						System.out.println("");
-						System.out.println("Forcing Save...");
-            outputStream.write(saveAll);
-            outputStream.flush();
 						//OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);	//if the warning was a fail to bind to port, we may need to write stop twice!
 						outputStream.flush();
@@ -751,13 +738,7 @@ public class Main {
 					if (line.contains("[SEVERE]")) {		//If we have a severe error, stop...
 						System.out.println("");
 						System.out.println("Severe error found: Stopping server.");
-            if (verbose == false) {   //If verbose is true, we already displayed it.
-              System.out.println(line);
-						}
 						System.out.println("");
-						System.out.println("Forcing Save...");
-            outputStream.write(saveAll);
-            outputStream.flush();
 						//OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);
 						outputStream.flush();
