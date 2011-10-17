@@ -1,0 +1,6 @@
+#!/bin/sh
+
+java -jar MinecraftLandGenerator.jar -version > readme.txt
+java -jar MinecraftLandGenerator.jar -conf
+
+

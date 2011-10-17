@@ -219,6 +219,7 @@ public class Main {
 				out.newLine();
 				out.newLine();
 				out.write("#Optional: Wait a few seconds after saving.");
+				out.newLine();
 				out.write("WaitSave=false");
 				out.newLine();
 				out.close();
@@ -406,8 +407,9 @@ public class Main {
 					out.newLine();
 					out.write("Level-9=Level 9 (Future Level)");
 					out.newLine();
-					out.newLine();
 					out.write("#Optional: Wait a few seconds after saving.");
+					out.newLine();
+					out.newLine();
 					out.write("WaitSave=false");
 					out.newLine();
 					out.close();
