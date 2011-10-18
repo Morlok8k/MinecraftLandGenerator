@@ -54,7 +54,7 @@ public class Main {
 	private int increment = 380;
 	private ProcessBuilder minecraft = null;
 	private String javaLine = null;
-	private static final String defaultJavaLine = "java -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui";
+	private static final String defaultJavaLine = "java -Djava.awt.headless=true -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui";
 	private String serverPath = null;
 	private String worldPath = null;
 	private static String worldName = null;
@@ -619,6 +619,18 @@ public class Main {
 						differenceTime *= 1 + (totalIterations - currentIteration);
 						System.out.println( MLG + String.format("Estimated time remaining: %dh%dm%ds",
 								differenceTime / (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60)) / (1000 * 60), ((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+					} else if (currentIteration == 3) {
+						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
+						differenceTime *= 1 + (totalIterations - currentIteration);
+						System.out.println( MLG + String.format("Estimated time remaining: %dh%dm%ds",
+								differenceTime / (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60)) / (1000 * 60), ((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+					} else if (currentIteration == 2) {
+						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
+						differenceTime *= 1 + (totalIterations - currentIteration);
+						System.out.println( MLG + String.format("Estimated time remaining: %dh%dm%ds",
+								differenceTime / (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60)) / (1000 * 60), ((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+					} else if (currentIteration <= 1) {
+						System.out.println( MLG + "Estimated time remaining: Caculating...");
 					}
 
 					// Set the spawn point
@@ -774,9 +786,9 @@ public class Main {
 					if (waitSave) {
 			            System.out.println( MLG + "Waiting 30 seconds to save.");
 			            
-			            int count = 0;
+			            int count = 1;
 						while (count <= 30) {
-							System.out.print(count + "sec ");
+							System.out.print(".");
 							
 							try {
 					              Thread.sleep( 1000 );
@@ -799,10 +811,10 @@ public class Main {
 					outputStream.write(stop);
 					outputStream.flush();
 					if (waitSave) {
-			            System.out.println( MLG + "Waiting 10 seconds for save.");
-			            int count = 0;
+			            System.out.println( MLG + "Waiting 10 seconds to save.");
+			            int count = 1;
 						while (count <= 10) {
-							System.out.print(count + "sec ");
+							System.out.print(".");
 							
 							try {
 					              Thread.sleep( 1000 );
@@ -848,25 +860,25 @@ public class Main {
 					System.out.print(line.substring(line.length() - 3, line.length()) + "... ");
 				} else if (line.contains(preparingLevel)){
 					if (line.contains("level 0")) {				//"Preparing start region for level 0"
-						System.out.println("\r\n" + worldName + "-" + level_0 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_0 + ":");
 					} else if (line.contains("level 1")) {		//"Preparing start region for level 1"
-						System.out.println("\r\n" + worldName + "-" + level_1 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_1 + ":");
 					} else if (line.contains("level 2")) {		//"Preparing start region for level 2"
-						System.out.println("\r\n" + worldName + "-" + level_2 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_2 + ":");
 					} else if (line.contains("level 3")) {		//"Preparing start region for level 3"
-						System.out.println("\r\n" + worldName + "-" + level_3 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_3 + ":");
 					} else if (line.contains("level 4")) {		//"Preparing start region for level 4"
-						System.out.println("\r\n" + worldName + "-" + level_4 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_4 + ":");
 					} else if (line.contains("level 5")) {		//"Preparing start region for level 5"
-						System.out.println("\r\n" + worldName + "-" + level_5 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_5 + ":");
 					} else if (line.contains("level 6")) {		//"Preparing start region for level 6"
-						System.out.println("\r\n" + worldName + "-" + level_6 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_6 + ":");
 					} else if (line.contains("level 7")) {		//"Preparing start region for level 7"
-						System.out.println("\r\n" + worldName + "-" + level_7 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_7 + ":");
 					} else if (line.contains("level 8")) {		//"Preparing start region for level 8"
-						System.out.println("\r\n" + worldName + "-" + level_8 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_8 + ":");
 					} else if (line.contains("level 9")) {		//"Preparing start region for level 9"
-						System.out.println("\r\n" + worldName + "-" + level_9 + ":");
+						System.out.println("\r\n" + worldName + ": " + level_9 + ":");
 					} else {
 						System.out.println(line.substring(line.lastIndexOf("]") + 2));
 					}
@@ -875,11 +887,11 @@ public class Main {
 				if (line.contains(doneText)) {     // now this is configurable!
 					System.out.println("");
 					if ( waitSave ) {
-						System.out.println( MLG +  "Waiting 30 seconds for save." );
+						System.out.println( MLG +  "Waiting 30 seconds to save." );
 
-						int count = 0;
+						int count = 1;
 						while (count <= 30) {
-							System.out.print(count + "sec ");
+							System.out.print(".");
 							
 							try {
 					              Thread.sleep( 1000 );
@@ -901,10 +913,10 @@ public class Main {
 					//outputStream.close();
 
 					if ( waitSave ) {
-						System.out.println( MLG +  "Waiting 10 seconds for save." );
-						int count = 0;
+						System.out.println( MLG +  "Waiting 10 seconds to save." );
+						int count = 1;
 						while (count <= 10) {
-							System.out.print(count + "sec ");
+							System.out.print(".");
 							
 							try {
 					              Thread.sleep( 1000 );
