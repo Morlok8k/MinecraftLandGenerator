@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 //import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -82,6 +83,12 @@ public class Main {
 	
 	private static String MLG = "[MLG] ";
 	
+	private static DateFormat dateFormat = null;
+	private static DateFormat dateFormatBuildID = null;
+	private static Date date = null;
+	private static Date MLG_Last_Modified_Date = null;
+	
+	
 	private static final boolean testing = false;	// a constant to display more output when debugging
 	
 	// REMINDER: because I always forget/mix up languages:
@@ -96,10 +103,34 @@ public class Main {
 	}
 
 	private void run(String[] args) {
+		
+		// Lets get a nice Date format for display, and a compact one for telling apart builds.
+		dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:m a zzzz", Locale.ENGLISH);
+		dateFormatBuildID = new SimpleDateFormat("'BuildID:' (yyMMdd.HHmmssZ)", Locale.ENGLISH);
+        date = new Date();
+        //dateFormat.format(date);
+		
+        //Here we attempt to get the last modified date of this compiled .class file from the filesystem!
+		try {
+			MLG_Last_Modified_Date = new Date(Main.class.getResource("Main.class").openConnection().getLastModified());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//The following displays no matter what happens, so we needed this date stuff to happen first.
+		
 		System.out.println("Minecraft Land Generator version " + VERSION);
+		System.out.println(dateFormatBuildID.format(MLG_Last_Modified_Date));
+		System.out.println("This version was last modified on " + dateFormat.format(MLG_Last_Modified_Date));
+		System.out.println("");
 		System.out.println("Uses a Minecraft server to generate square land of a specified size.");
 		System.out.println("");
+		System.out.println("");
 
+		
+		
+		
 		// =====================================================================
 		//                           INSTRUCTIONS
 		// =====================================================================
@@ -163,10 +194,7 @@ public class Main {
 		//                         STARTUP AND CONFIG
 		// =====================================================================
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
-        Date date = new Date();
-        //dateFormat.format(date);
-		
+				
 		// the arguments are apparently okay so far. parse the conf file.
 		if (args[0].equalsIgnoreCase("-conf")) {
 			try {
@@ -266,7 +294,7 @@ public class Main {
 						preparingLevel = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("dim-1")) {		//old, but still works
 						level_1 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("dim-2")) {
+					} else if (line.substring(0, pos).toLowerCase().equals("dim-2")) {		//to be removed later!
 						level_2 = line.substring(pos + 1, end);
 					} else if (line.substring(0, pos).toLowerCase().equals("dim-3")) {
 						level_3 = line.substring(pos + 1, end);
@@ -336,8 +364,8 @@ public class Main {
 			
 			boolean oldConf = false;				//This next section checks to see if we have a old configuration file (or none!)
 						
-			if (serverPath == null || javaLine == null) {			//MLG 1.2 Check for a valid conf file.  
-				System.err.println( MLG + "MinecraftLandGenerator.conf does not contain all required properties. Please recreate it by running this application with -conf.");
+			if (serverPath == null || javaLine == null) {			//MLG 1.2 Check for a valid .conf file.  
+				System.err.println( MLG + "MinecraftLandGenerator.conf does not contain all required properties.  Making New File!");		// Please recreate it by running this application with -conf.
 				//return;							//We no longer quit.  We generate a new one with defaults.
 				javaLine = defaultJavaLine;
 				serverPath = ".";
@@ -407,14 +435,29 @@ public class Main {
 					out.newLine();
 					out.write("Level-9=Level 9 (Future Level)");
 					out.newLine();
-					out.write("#Optional: Wait a few seconds after saving.");
 					out.newLine();
+					out.write("#Optional: Wait a few seconds after saving.");
 					out.newLine();
 					out.write("WaitSave=false");
 					out.newLine();
 					out.close();
 					System.out.println( MLG + "MinecraftLandGenerator.conf file created.");
+					
+					System.out.println("");
+					int count = 0;
+					while (count <= 100) {
+						System.out.print(count + "% ");
+						
+						try {
+				              Thread.sleep( 1000 );
+				        } catch ( InterruptedException e ) {
+				              e.printStackTrace();
+				        }
+						count += 10;
+					}
+					System.out.println("");
 					return;
+					
 				} catch (IOException ex) {
 					System.err.println( MLG + "Could not create MinecraftLandGenerator.conf.");
 					return;
@@ -731,11 +774,18 @@ public class Main {
 					if (waitSave) {
 			            System.out.println( MLG + "Waiting 30 seconds to save.");
 			            
-			            try {
-			              Thread.sleep( 30000 );
-			            } catch ( InterruptedException e ) {
-			              e.printStackTrace();
-			            }
+			            int count = 0;
+						while (count <= 30) {
+							System.out.print(count + "sec ");
+							
+							try {
+					              Thread.sleep( 1000 );
+					        } catch ( InterruptedException e ) {
+					              e.printStackTrace();
+					        }
+							count += 1;
+						}
+						System.out.println("");
 					}
 					
 					System.out.println( MLG + "Saving server data...");
@@ -750,11 +800,18 @@ public class Main {
 					outputStream.flush();
 					if (waitSave) {
 			            System.out.println( MLG + "Waiting 10 seconds for save.");
-			            try {
-			              Thread.sleep( 10000 );
-			            } catch ( InterruptedException e ) {
-			              e.printStackTrace();
-			            }
+			            int count = 0;
+						while (count <= 10) {
+							System.out.print(count + "sec ");
+							
+							try {
+					              Thread.sleep( 1000 );
+					        } catch ( InterruptedException e ) {
+					              e.printStackTrace();
+					        }
+							count += 1;
+						}
+						System.out.println("");
 					}
 				}
 			}
@@ -820,11 +877,18 @@ public class Main {
 					if ( waitSave ) {
 						System.out.println( MLG +  "Waiting 30 seconds for save." );
 
-						try {
-							Thread.sleep( 30000 );
-						} catch ( InterruptedException e ) {
-							e.printStackTrace();
+						int count = 0;
+						while (count <= 30) {
+							System.out.print(count + "sec ");
+							
+							try {
+					              Thread.sleep( 1000 );
+					        } catch ( InterruptedException e ) {
+					              e.printStackTrace();
+					        }
+							count += 1;
 						}
+						System.out.println("");
 					}
 					System.out.println( MLG + "Saving server data.");
 					outputStream.write(saveAll);
@@ -838,11 +902,18 @@ public class Main {
 
 					if ( waitSave ) {
 						System.out.println( MLG +  "Waiting 10 seconds for save." );
-						try {
-							Thread.sleep( 10000 );
-						} catch ( InterruptedException e ) {
-							e.printStackTrace();
+						int count = 0;
+						while (count <= 10) {
+							System.out.print(count + "sec ");
+							
+							try {
+					              Thread.sleep( 1000 );
+					        } catch ( InterruptedException e ) {
+					              e.printStackTrace();
+					        }
+							count += 1;
 						}
+						System.out.println("");
 					}
 				}
 				if (ignoreWarnings == false) {

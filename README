@@ -1,5 +1,9 @@
 Minecraft Land Generator version 1.5.1
+BuildID: (111017.222422-0700)
+This version was last modified on Monday, October 17, 2011 at 10:24 PM Pacific Daylight Time
+
 Uses a Minecraft server to generate square land of a specified size.
+
 
 Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]
 
