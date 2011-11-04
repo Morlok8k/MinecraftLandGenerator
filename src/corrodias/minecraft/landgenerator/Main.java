@@ -23,8 +23,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,11 +43,12 @@ import org.jnbt.Tag;
 /**
  * 
  * @author Corrodias, Morlok8k, pr0f1x
+ * 
  */
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 16";
+	private static final String VERSION = "1.6.0 Testing 21";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -103,6 +106,9 @@ public class Main {
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.conf";
 	private static final String github_MLG_BuildID_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MLG-BuildID";
+	private static final String github_MLG_jar_URL =
+			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.jar";
+
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
 
 	//////
@@ -1435,14 +1441,18 @@ public class Main {
 		}
 
 		try {
+			String line;
+
 			BufferedReader in = new BufferedReader(new FileReader(buildIDFile));
 			BufferedWriter out = new BufferedWriter(new FileWriter(buildIDFile + ".temp"));
-			String line;
+
 			while ((line = in.readLine()) != null) {
 
 				if (line.contains(MLG_Current_Hash)) {
 					notNew = true;
-					// System.out.println("[DEBUG] NotNew");
+					if (testing) {
+						System.out.println("[DEBUG] NotNew");
+					}
 				}
 
 				out.write(line);
@@ -1450,7 +1460,7 @@ public class Main {
 			}
 
 			if (notNew == false) {
-				out.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
+				out.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "# MLG v"
 						+ VERSION + INFO);
 				out.newLine();
 			}
@@ -1517,6 +1527,9 @@ public class Main {
 			}
 		}
 
+		int tsCount = 0;
+		ArrayList<String> timeStamps = new ArrayList<String>();
+
 		if (MLG_Last_Modified_Date == null) {
 			boolean foundLine = false;
 			try {
@@ -1525,25 +1538,33 @@ public class Main {
 
 				while ((line = in.readLine()) != null) {
 
+					int pos = line.indexOf('=');
+					int end = line.lastIndexOf('#'); // comments, ignored lines
+
+					if (end == -1) { // If we have no hash sign, then we read till the end of the line
+						end = line.length();
+					}
+					if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+						end = line.length();
+					}
+
+					timeStamps.add(line.substring(pos + 1, end));
+
+					if (testing) {
+						System.out.println(timeStamps.get(tsCount));
+					}
+
+					tsCount++;
+
 					if (line.contains(MLG_Current_Hash)) {
 						// System.out.println("[DEBUG] Found!");
 						foundLine = true;
-
-						int pos = line.indexOf('=');
-						int end = line.lastIndexOf('#'); // comments, ignored lines
-
-						if (end == -1) { // If we have no hash sign, then we read till the end of the line
-							end = line.length();
-						}
-						if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
-							end = line.length();
-						}
 
 						if (pos != -1) {
 							if (line.substring(0, pos).equals(MLG_Current_Hash)) {
 								MLG_Last_Modified_Date =
 										new Date(new Long(line.substring(pos + 1, end)));
-								return;
+								//return;
 							}
 
 						}
@@ -1551,6 +1572,50 @@ public class Main {
 
 				}
 				in.close();
+
+				Iterator<String> e = timeStamps.iterator();
+				String s;
+				int diff;
+				//boolean renameFailed = false;
+
+				while (e.hasNext()) {
+					s = e.next();
+					diff = MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
+					//System.out.println(diff);
+
+					if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
+						System.out
+								.println("There is a NEW VERSION Of Minecraft Land Generator available online!");
+
+						try {
+							File fileRename = new File("MinecraftLandGenerator.jar");
+							fileRename.renameTo(new File("MinecraftLandGenerator.jar" + ".old"));
+						} catch (Exception e1) {
+							System.out.println("Rename failed");
+							e1.printStackTrace();
+
+							try {
+								copyFile(new File("MinecraftLandGenerator.jar"), new File(
+										"MinecraftLandGenerator.jar" + ".old"));
+								File fileDelete = new File("MinecraftLandGenerator.jar");
+								fileDelete.delete();
+							} catch (Exception e2) {
+								System.out.println("Rename 2 failed");
+								e2.printStackTrace();
+								//renameFailed = true;
+								return;
+							}
+
+						}
+
+						boolean fileSuccess = downloadFile(github_MLG_jar_URL);
+						if (fileSuccess) {
+							System.out.println(MLG + "MinecraftLandGenerator.jar" + " downloaded.");
+							return;
+						}
+
+					}
+				}
 
 				if (foundLine == false) {
 					// System.out.println("[DEBUG] FoundLine False");
