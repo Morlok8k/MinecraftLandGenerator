@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Testing 12
+Minecraft Land Generator version 1.6.0 Testing 16
 
 Updated November 4, 2011
 
@@ -24,11 +24,11 @@ Version History:
 Morlok8k:
 
 1.6.0
-- TODO: add features
 - Added the ability to download files from the internet (specifically for the BuildID file, and conf file)
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
-- Some Refactoring
+- COde Refactoring
 - Code Formatting
+- Code Optimization
 
 1.5.1
 - pr0f1x: Added the "save-all" command to be sent to the server before shutting it down.
@@ -130,7 +130,8 @@ Other options:
         Outputs the current world's spawn point coordinates.
 
   java -jar MinecraftLandGenerator.jar -conf
-        Generates a MinecraftLandGenerator.conf file.
+  java -jar MinecraftLandGenerator.jar -conf download
+        Generates or downloads a MinecraftLandGenerator.conf file.
 
   java -jar MinecraftLandGenerator.jar -readme readme.txt
   java -jar MinecraftLandGenerator.jar -readme

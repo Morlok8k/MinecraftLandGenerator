@@ -45,7 +45,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 12";
+	private static final String VERSION = "1.6.0 Testing 16";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -97,15 +97,19 @@ public class Main {
 	private static String buildIDFile = "MLG-BuildID";
 	private static boolean isCompiledAsJar = false;
 	private static String MLG_Current_Hash = null;
+	private static int inf_loop_protect_BuildID = 0;
 
 	private static final String github_MLG_Conf_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.conf";
 	private static final String github_MLG_BuildID_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MLG-BuildID";
-
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
 
+	//////
+
 	private static final boolean testing = false;	// a constant to display more output when debugging
+
+	//////
 
 	// REMINDER: because I always forget/mix up languages:
 	// "static" in java means "global"
@@ -124,6 +128,7 @@ public class Main {
 	 * 
 	 * @author Corrodias, Morlok8k
 	 * @param args
+	 * 
 	 */
 	private void run(String[] args) {
 
@@ -168,10 +173,12 @@ public class Main {
 		// the arguments are apparently okay so far. parse the conf file.
 		if (args[0].equalsIgnoreCase("-conf")) {
 
-			boolean fileSuccess = downloadFile(github_MLG_Conf_URL);
-			if (fileSuccess) {
-				System.out.println(MLG + MinecraftLandGeneratorConf + " file downloaded.");
-				return;
+			if (args[0].equalsIgnoreCase("download")) {
+				boolean fileSuccess = downloadFile(github_MLG_Conf_URL);
+				if (fileSuccess) {
+					System.out.println(MLG + MinecraftLandGeneratorConf + " file downloaded.");
+					return;
+				}
 			}
 
 			try {
@@ -1195,11 +1202,11 @@ public class Main {
 				+ "Morlok8k:" + newLine
 				+ newLine
 				+ "1.6.0" + newLine
-				+ "- TODO: add features" + newLine //TODO
 				+ "- Added the ability to download files from the internet (specifically for the BuildID file, and conf file)" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
-				+ "- Some Refactoring" + newLine
+				+ "- COde Refactoring" + newLine
 				+ "- Code Formatting" + newLine
+				+ "- Code Optimization" + newLine
 				+ newLine
 				+ "1.5.1" + newLine
 				+ "- pr0f1x: Added the \"save-all\" command to be sent to the server before shutting it down." + newLine
@@ -1382,19 +1389,14 @@ public class Main {
 	 */
 	public static void buildID() {
 
-		// TODO: Decide to download BuildID from Github.
-
+		// download BuildID from Github.
 		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL);
 		if (fileSuccess) {
 			System.out.println(MLG + buildIDFile + " file downloaded.");
-		}
 
+		}
 		// If not available, create.
 		// After downloading, check to see if it matches hash.
-
-		// example:
-		// downloadFile(MinecraftLandGeneratorConfURL);
-		// downloadFile("https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/" + buildIDFile);
 
 		if (MLGFileName == null) {
 			try {
@@ -1488,6 +1490,12 @@ public class Main {
 	 */
 	private void readBuildID() {
 
+		if (inf_loop_protect_BuildID > 10) {
+			MLG_Last_Modified_Date = new Date(new Long(0));  //set the day to Jan 1, 1970 for failure
+			return;
+		}
+		inf_loop_protect_BuildID++;		// this is to prevent an infinite loop (however unlikely)
+
 		if (MLGFileName == null) {
 			try {
 				MLGFileName = getClassLoader(cls);
@@ -1548,7 +1556,6 @@ public class Main {
 					// System.out.println("[DEBUG] FoundLine False");
 					buildID();
 					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
-					// TODO: Add safeguard to prevent Infinite Loops
 					return;
 				}
 			} catch (Exception e) {
@@ -1556,7 +1563,6 @@ public class Main {
 				// e.printStackTrace();
 				buildID();
 				readBuildID();
-				// TODO: Add safeguard to prevent Infinite Loops
 				return;
 
 			}
@@ -1700,7 +1706,8 @@ public class Main {
 				+ "        Outputs the current world's spawn point coordinates." + newLine 
 				+ newLine
 				+ "  java -jar MinecraftLandGenerator.jar -conf" + newLine
-				+ "        Generates a "+ MinecraftLandGeneratorConf + " file." + newLine
+				+ "  java -jar MinecraftLandGenerator.jar -conf download" + newLine
+				+ "        Generates or downloads a "+ MinecraftLandGeneratorConf + " file." + newLine
 				+ newLine
 				+ "  java -jar MinecraftLandGenerator.jar -readme readme.txt" + newLine
 				+ "  java -jar MinecraftLandGenerator.jar -readme" + newLine
