@@ -45,7 +45,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 8";
+	private static final String VERSION = "1.6.0 Testing 11";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -98,9 +98,11 @@ public class Main {
 	private static boolean isCompiledAsJar = false;
 	private static String MLG_Current_Hash = null;
 
-	@SuppressWarnings("unused")
-	private static final String MinecraftLandGeneratorConfURL =
+	private static final String github_MLG_Conf_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.conf";
+	private static final String github_MLG_BuildID_URL =
+			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MLG-BuildID";
+
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
 
 	private static final boolean testing = false;	// a constant to display more output when debugging
@@ -170,6 +172,13 @@ public class Main {
 
 		// the arguments are apparently okay so far. parse the conf file.
 		if (args[0].equalsIgnoreCase("-conf")) {
+
+			boolean fileSuccess = downloadFile(github_MLG_Conf_URL);
+			if (fileSuccess) {
+				System.out.println(MLG + MinecraftLandGeneratorConf + " file downloaded.");
+				return;
+			}
+
 			try {
 				File config = new File(MinecraftLandGeneratorConf);
 				BufferedWriter out = new BufferedWriter(new FileWriter(config));
@@ -1360,8 +1369,11 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 * @param URL
+	 * 
 	 */
-	public static void downloadFile(String URL) {
+	public static boolean downloadFile(String URL) {
+
+		boolean success = true;
 
 		String fileName = URL.substring(URL.lastIndexOf("/") + 1, URL.length());
 		int size = 1024 * 4; // 1024 * n should be tested to get the optimum
@@ -1371,8 +1383,10 @@ public class Main {
 			fileName = String.valueOf(System.currentTimeMillis());
 		}
 
-		System.out.println(MLG + "Downloading: " + URL);
-		System.out.println(MLG + "Saving as: " + fileName);
+		if (testing) {
+			System.out.println(MLG + "Downloading: " + URL);
+			System.out.println(MLG + "Saving as: " + fileName);
+		}
 
 		long differenceTime = System.currentTimeMillis();
 		Long[] timeTracking = new Long[] { differenceTime, differenceTime };
@@ -1393,24 +1407,30 @@ public class Main {
 			}
 			bout.close();
 			in.close();
-			System.out.println(count + " byte(s) copied");
-
+			if (testing) {
+				System.out.println(count + " byte(s) copied");
+			}
 			timeTracking[1] = System.currentTimeMillis();
 			differenceTime = (timeTracking[1] - timeTracking[0]) / 2;
-
-			System.out.println(String.format(MLG + "Elapsed Time: %dm%ds",
-					(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
-					((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+			if (testing) {
+				System.out.println(String.format(MLG + "Elapsed Time: %dm%ds",
+						(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
+						((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			success = false;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			success = false;
 		} catch (IOException e) {
 			e.printStackTrace();
+			success = false;
 		}
-
-		System.out.println(MLG + "Done");
-
+		if (testing) {
+			System.out.println(MLG + "Done");
+		}
+		return success;
 	}
 
 	/**
@@ -1424,6 +1444,12 @@ public class Main {
 	public static void buildID() {
 
 		// TODO: Decide to download BuildID from Github.
+
+		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL);
+		if (fileSuccess) {
+			System.out.println(MLG + buildIDFile + " file downloaded.");
+		}
+
 		// If not available, create.
 		// After downloading, check to see if it matches hash.
 
