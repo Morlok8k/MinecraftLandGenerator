@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Testing 11
+Minecraft Land Generator version 1.6.0 Testing 12
 
 Updated November 4, 2011
 
@@ -25,9 +25,10 @@ Morlok8k:
 
 1.6.0
 - TODO: add features
-- Added the ability to download files from the internet (specifically for the BuildID file)
+- Added the ability to download files from the internet (specifically for the BuildID file, and conf file)
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
-- Minor Refactoring
+- Some Refactoring
+- Code Formatting
 
 1.5.1
 - pr0f1x: Added the "save-all" command to be sent to the server before shutting it down.

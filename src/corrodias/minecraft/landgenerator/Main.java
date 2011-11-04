@@ -45,7 +45,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 11";
+	private static final String VERSION = "1.6.0 Testing 12";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -116,8 +116,7 @@ public class Main {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-		(new Main()).run(args); // Why? idk, but merging this with run() creates
-								// errors, and i'm lazy!
+		(new Main()).run(args); // Why? idk, but merging this with run() creates errors, and i'm lazy!
 	}
 
 	/**
@@ -128,8 +127,7 @@ public class Main {
 	 */
 	private void run(String[] args) {
 
-		// Lets get a nice Date format for display, and a compact one for
-		// telling apart builds.
+		// Lets get a nice Date format for display, and a compact one for telling apart builds.
 		dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
 		dateFormatBuildID = new SimpleDateFormat("'BuildID:' (yyMMdd.HHmmss)", Locale.ENGLISH);
 		dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
@@ -138,10 +136,7 @@ public class Main {
 
 		readBuildID();
 
-		//readMe("test.txt");
-
-		// The following displays no matter what happens, so we needed this date
-		// stuff to happen first.
+		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
 		// MLG_Last_Modified_Date = date;
 
@@ -336,9 +331,10 @@ public class Main {
 
 			if (serverPath == null || javaLine == null) { 			// MLG 1.2 Check for a valid .conf file.
 				System.err.println(MLG + MinecraftLandGeneratorConf
-						+ " does not contain all required properties.  Making New File!");
-				// Please recreate it by running this application with -conf.
+						+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
+
 				// return;
+
 				// We no longer quit. We generate a new one with defaults.
 
 				javaLine = defaultJavaLine;
@@ -346,15 +342,15 @@ public class Main {
 				oldConf = true;
 			}
 
-			if (doneText == null) {					// MLG 1.3
+			if (doneText == null) {					// MLG 1.4.0
 				oldConf = true;
-			} else if (preparingText == null) {		// MLG 1.4?
+			} else if (preparingText == null) {		// MLG 1.4.0
 				oldConf = true;
-			} else if (preparingLevel == null) {	// MLG 1.4?
+			} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
 				oldConf = true;
-			} else if (level_1 == null) {			// MLG 1.5.0?
+			} else if (level_1 == null) {			// MLG 1.4.5 / 1.5.0
 				oldConf = true;
-			} else if (level_0 == null) {			// MLG 1.5.1
+			} else if (level_0 == null) {			// MLG 1.5.1 / 1.6.0
 				oldConf = true;
 			}
 
@@ -608,22 +604,13 @@ public class Main {
 									+ ") "
 									+ Float.toString((Float.parseFloat(Integer
 											.toString(currentIteration)) / Float.parseFloat(Integer
-											.toString(totalIterations))) * 100) + "% Done"); // Time
-																								// Remaining
-																								// estimate
+											.toString(totalIterations))) * 100) + "% Done"); // Time Remaining estimate
 					timeTracking[0] = timeTracking[1];
 					timeTracking[1] = timeTracking[2];
 					timeTracking[2] = timeTracking[3];
 					timeTracking[3] = System.currentTimeMillis();
 					if (currentIteration >= 4) {
-						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well,
-																					// this
-																					// is
-																					// what
-																					// it
-																					// boils
-																					// down
-																					// to
+						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
 						System.out
 								.println(MLG
@@ -633,14 +620,7 @@ public class Main {
 												(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
 												((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration == 3) {
-						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well,
-																					// this
-																					// is
-																					// what
-																					// it
-																					// boils
-																					// down
-																					// to
+						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
 						System.out
 								.println(MLG
@@ -650,14 +630,7 @@ public class Main {
 												(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
 												((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration == 2) {
-						differenceTime = (timeTracking[3] - timeTracking[2]); // well,
-																				// this
-																				// is
-																				// what
-																				// it
-																				// boils
-																				// down
-																				// to
+						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
 						System.out
 								.println(MLG
@@ -744,56 +717,41 @@ public class Main {
 			CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
 			input.close();
 
-			// <editor-fold defaultstate="collapsed" desc="structure">
-			// Structure:
-			//
-			// TAG_Compound("Data"): World data.
-			// * TAG_Long("Time"): Stores the current "time of day" in ticks.
-			// There are 20 ticks per real-life second, and 24000 ticks per
-			// Minecraft day, making the day length 20 minutes. 0 appears to be
-			// sunrise, 12000 sunset and 24000 sunrise again.
-			// * TAG_Long("LastPlayed"): Stores the Unix time stamp (in
-			// milliseconds) when the player saved the game.
-			// * TAG_Compound("Player"): Player entity information. See Entity
-			// Format and Mob Entity Format for details. Has additional
-			// elements:
-			// o TAG_List("Inventory"): Each TAG_Compound in this list defines
-			// an item the player is carrying, holding, or wearing as armor.
-			// + TAG_Compound: Inventory item data
-			// # TAG_Short("id"): Item or Block ID.
-			// # TAG_Short("Damage"): The amount of wear each item has suffered.
-			// 0 means undamaged. When the Damage exceeds the item's durability,
-			// it breaks and disappears. Only tools and armor accumulate damage
-			// normally.
-			// # TAG_Byte("Count"): Number of items stacked in this inventory
-			// slot. Any item can be stacked, including tools, armor, and
-			// vehicles. Range is 1-255. Values above 127 are not displayed
-			// in-game.
-			// # TAG_Byte("Slot"): Indicates which inventory slot this item is
-			// in.
-			// o TAG_Int("Score"): Current score, doesn't appear to be
-			// implemented yet. Always 0.
-			// * TAG_Int("SpawnX"): X coordinate of the player's spawn position.
-			// Default is 0.
-			// * TAG_Int("SpawnY"): Y coordinate of the player's spawn position.
-			// Default is 64.
-			// * TAG_Int("SpawnZ"): Z coordinate of the player's spawn position.
-			// Default is 0.
-			// * TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
-			// //Old!
-			// * TAG_Long("SizeOnDisk"): Estimated size of the entire world in
-			// bytes.
-			// * TAG_Long("RandomSeed"): Random number providing the Random Seed
-			// for the terrain.
-			// </editor-fold>
+			//@formatter:off
+			
+			
+			/* <editor-fold defaultstate="collapsed" desc="structure">
+			* Structure:
+			*
+			*TAG_Compound("Data"): World data.
+			*	* TAG_Long("Time"): Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft day, making the day length 20 minutes. 0 appears to be sunrise, 12000 sunset and 24000 sunrise again.
+			*	* TAG_Long("LastPlayed"): Stores the Unix time stamp (in milliseconds) when the player saved the game.
+			*	* TAG_Compound("Player"): Player entity information. See Entity Format and Mob Entity Format for details. Has additional elements:
+			*		o TAG_List("Inventory"): Each TAG_Compound in this list defines an item the player is carrying, holding, or wearing as armor.
+			*			+ TAG_Compound: Inventory item data
+			*				# TAG_Short("id"): Item or Block ID.
+			* 				# TAG_Short("Damage"): The amount of wear each item has suffered. 0 means undamaged. When the Damage exceeds the item's durability, it breaks and disappears. Only tools and armor accumulate damage normally.
+			*				# TAG_Byte("Count"): Number of items stacked in this inventory slot. Any item can be stacked, including tools, armor, and vehicles. Range is 1-255. Values above 127 are not displayed in-game.
+			*				# TAG_Byte("Slot"): Indicates which inventory slot this item is in.
+			*		o TAG_Int("Score"): Current score, doesn't appear to be implemented yet. Always 0.
+			*	* TAG_Int("SpawnX"): X coordinate of the player's spawn position. Default is 0.
+			*	* TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.
+			*	* TAG_Int("SpawnZ"): Z coordinate of the player's spawn position. Default is 0.
+			*	* TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
+			*	* TAG_Long("SizeOnDisk"): Estimated size of the entire world in bytes.
+			*	* TAG_Long("RandomSeed"): Random number providing the Random Seed for the terrain.
+			* </editor-fold>
+			*/
+			
+			
+			
+			//@formatter:on
 
 			Map<String, Tag> originalData =
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
-			// This is our map of data. It is an unmodifiable map, for some
-			// reason, so we have to make a copy.
+			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
 			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
-			// .get() a couple of values, just to make sure we're dealing with a
-			// valid level file, here. Good for debugging, too.
+			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
 
 			@SuppressWarnings("unused")
 			IntTag spawnX = (IntTag) newData.get("SpawnX"); // we never use these... Its only here for potential debugging.
@@ -918,19 +876,12 @@ public class Main {
 
 			String line = null;
 
-			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so
-																// this code
-																// wont run
-																// every loop,
-																// thus Faster!
+			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so this code wont run every loop, thus Faster!
 			// and no, i can't use a string here!
 
 			byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 
-			OutputStream outputStream = process.getOutputStream(); // moved here
-																	// to remove
-																	// some
-																	// redundancy
+			OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
 
 			while ((line = pOut.readLine()) != null) {
 				if (verbose) {
@@ -1012,24 +963,19 @@ public class Main {
 					}
 				}
 				if (ignoreWarnings == false) {
-					if (line.contains("[WARNING]")) { // If we have a warning,
-														// stop...
+					if (line.contains("[WARNING]")) { // If we have a warning, stop...
 						System.out.println("");
 						System.out
 								.println(MLG + "Warning found: Stopping Minecraft Land Generator");
-						if (verbose == false) { // If verbose is true, we
-												// already displayed it.
+						if (verbose == false) { // If verbose is true, we already displayed it.
 							System.out.println(line);
 						}
 						System.out.println("");
 						System.out.println(MLG + "Forcing Save...");
 						outputStream.write(saveAll);
 						outputStream.flush();
-						// OutputStream outputStream =
-						// process.getOutputStream();
-						outputStream.write(stop); // if the warning was a fail
-													// to bind to port, we may
-													// need to write stop twice!
+						// OutputStream outputStream = process.getOutputStream();
+						outputStream.write(stop); // if the warning was a fail to bind to port, we may need to write stop twice!
 						outputStream.flush();
 						outputStream.write(stop);
 						outputStream.flush();
@@ -1037,24 +983,20 @@ public class Main {
 						warning = true;
 						// System.exit(1);
 					}
-					if (line.contains("[SEVERE]")) { // If we have a severe
-														// error, stop...
+					if (line.contains("[SEVERE]")) { // If we have a severe error, stop...
 						System.out.println("");
 						System.out.println(MLG + "Severe error found: Stopping server.");
-						if (verbose == false) { // If verbose is true, we
-												// already displayed it.
+						if (verbose == false) { // If verbose is true, we already displayed it.
 							System.out.println(line);
 						}
 						System.out.println("");
 						System.out.println(MLG + "Forcing Save...");
 						outputStream.write(saveAll);
 						outputStream.flush();
-						// OutputStream outputStream =
-						// process.getOutputStream();
+						// OutputStream outputStream = process.getOutputStream();
 						outputStream.write(stop);
 						outputStream.flush();
-						outputStream.write(stop); // sometimes we need to do
-													// stop twice...
+						outputStream.write(stop); // sometimes we need to do stop twice...
 						outputStream.flush();
 						// outputStream.close();
 						warning = true;
@@ -1064,10 +1006,7 @@ public class Main {
 				}
 			}
 
-			if (warning == true) { // in 1.4.4 we had a issue. tried to write
-									// stop twice, but we had closed the stream
-									// already. this, and other lines should fix
-									// this.
+			if (warning == true) { // in 1.4.4 we had a issue. tried to write stop twice, but we had closed the stream already. this, and other lines should fix this.
 				outputStream.flush();
 				outputStream.close();
 				System.exit(1);
@@ -1256,10 +1195,11 @@ public class Main {
 				+ "Morlok8k:" + newLine
 				+ newLine
 				+ "1.6.0" + newLine
-				+ "- TODO: add features" + newLine
-				+ "- Added the ability to download files from the internet (specifically for the BuildID file)" + newLine
+				+ "- TODO: add features" + newLine //TODO
+				+ "- Added the ability to download files from the internet (specifically for the BuildID file, and conf file)" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
-				+ "- Minor Refactoring" + newLine
+				+ "- Some Refactoring" + newLine
+				+ "- Code Formatting" + newLine
 				+ newLine
 				+ "1.5.1" + newLine
 				+ "- pr0f1x: Added the \"save-all\" command to be sent to the server before shutting it down." + newLine
@@ -1376,8 +1316,7 @@ public class Main {
 		boolean success = true;
 
 		String fileName = URL.substring(URL.lastIndexOf("/") + 1, URL.length());
-		int size = 1024 * 4; // 1024 * n should be tested to get the optimum
-								// size (for download speed.)
+		int size = 1024 * 4; // 1024 * n should be tested to get the optimum size (for download speed.)
 
 		if (fileName.equals("")) {
 			fileName = String.valueOf(System.currentTimeMillis());
@@ -1588,8 +1527,7 @@ public class Main {
 						if (end == -1) { // If we have no hash sign, then we read till the end of the line
 							end = line.length();
 						}
-						if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make
-											// sure.
+						if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 							end = line.length();
 						}
 
@@ -1642,11 +1580,10 @@ public class Main {
 
 		// START Garbage removal:
 		int bang = filename.indexOf("!");		// remove everything after xxxx.jar
-		if (bang == -1) { 										// a real example:
+		if (bang == -1) { 						// a real example:
 			bang = filename.length();			// jar:file:/home/morlok8k/test.jar!/me/Morlok8k/test/Main.class
 		}
-		int file = filename.indexOf("file:");	// removes junk from the beginning
-												// of the path
+		int file = filename.indexOf("file:");	// removes junk from the beginning of the path
 		file = file + 5;
 		if (file == -1) {
 			file = 0;
