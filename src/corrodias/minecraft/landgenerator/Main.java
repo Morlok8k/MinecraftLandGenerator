@@ -45,10 +45,14 @@ import org.jnbt.Tag;
  * @author Corrodias, Morlok8k, pr0f1x
  * 
  */
+/**
+ * @author morlok8k
+ * 
+ */
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 22";
+	private static final String VERSION = "1.6.0 Testing 26";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -101,6 +105,7 @@ public class Main {
 	private static boolean isCompiledAsJar = false;
 	private static String MLG_Current_Hash = null;
 	private static int inf_loop_protect_BuildID = 0;
+	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
 	private static final String github_MLG_Conf_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.conf";
@@ -113,7 +118,7 @@ public class Main {
 
 	//////
 
-	private static final boolean testing = false;	// a constant to display more output when debugging
+	private static final boolean testing = false;	// display more output when debugging
 
 	//////
 
@@ -180,7 +185,7 @@ public class Main {
 		if (args[0].equalsIgnoreCase("-conf")) {
 
 			if (args[0].equalsIgnoreCase("download")) {
-				boolean fileSuccess = downloadFile(github_MLG_Conf_URL);
+				boolean fileSuccess = downloadFile(github_MLG_Conf_URL, testing);
 				if (fileSuccess) {
 					System.out.println(MLG + MinecraftLandGeneratorConf + " file downloaded.");
 					return;
@@ -253,6 +258,9 @@ public class Main {
 			return;
 		} else if (args[0].equalsIgnoreCase("-build")) {
 			buildID();
+			return;
+		} else if (args[0].equalsIgnoreCase("-update")) {
+			updateMLG();
 			return;
 		} else if (args[0].equalsIgnoreCase("-readme")) {
 			readMe(args[1]);
@@ -357,7 +365,7 @@ public class Main {
 
 			if (doneText == null) {					// MLG 1.4.0
 				oldConf = true;
-			} else if (preparingText == null) {		// MLG 1.4.0
+			} else if (preparingText == null) {		// MLG 1.4.0O
 				oldConf = true;
 			} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
 				oldConf = true;
@@ -557,7 +565,7 @@ public class Main {
 		// prepare our two ProcessBuilders
 		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m",
 		// "-jar", jarFile, "nogui");
-		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.
+		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.			
 		minecraft.directory(new File(serverPath));
 		minecraft.redirectErrorStream(true);
 
@@ -692,13 +700,7 @@ public class Main {
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 
 			randomSeed = (LongTag) newData.get("RandomSeed");
-			System.out.println(MLG + "Seed: " + randomSeed.getValue()); // lets
-																		// output
-																		// the
-																		// seed,
-																		// cause
-																		// why
-																		// not?
+			System.out.println(MLG + "Seed: " + randomSeed.getValue()); // lets output the seed, cause why not?
 
 			Integer[] ret =
 					new Integer[] { spawnX.getValue(), spawnY.getValue(), spawnZ.getValue() };
@@ -748,7 +750,7 @@ public class Main {
 			*				# TAG_Byte("Slot"): Indicates which inventory slot this item is in.
 			*		o TAG_Int("Score"): Current score, doesn't appear to be implemented yet. Always 0.
 			*	* TAG_Int("SpawnX"): X coordinate of the player's spawn position. Default is 0.
-			*	* TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.
+			*	* TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.			
 			*	* TAG_Int("SpawnZ"): Z coordinate of the player's spawn position. Default is 0.
 			*	* TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
 			*	* TAG_Long("SizeOnDisk"): Estimated size of the entire world in bytes.
@@ -769,7 +771,7 @@ public class Main {
 			@SuppressWarnings("unused")
 			IntTag spawnX = (IntTag) newData.get("SpawnX"); // we never use these... Its only here for potential debugging.
 			@SuppressWarnings("unused")
-			IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppressed these warnings.
+			IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppress			ed these warnings.
 			@SuppressWarnings("unused")
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ"); // I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
 
@@ -1208,9 +1210,10 @@ public class Main {
 				+ "Morlok8k:" + newLine
 				+ newLine
 				+ "1.6.0" + newLine
-				+ "- Added the ability to download files from the internet (specifically for the BuildID file, and conf file)" + newLine
+				+ "- Added the ability to download files from the internet" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
-				+ "- COde Refactoring" + newLine
+				+ "- Added \"-update\" to download new versions of MLG directly from github." + newLine
+				+ "- Code Refactoring" + newLine
 				+ "- Code Formatting" + newLine
 				+ "- Code Optimization" + newLine
 				+ newLine
@@ -1322,9 +1325,11 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 * @param URL
-	 * 
+	 *            URL in a String
+	 * @param Output
+	 *            Displays output if true
 	 */
-	public static boolean downloadFile(String URL) {
+	public static boolean downloadFile(String URL, boolean Output) {
 
 		boolean success = true;
 
@@ -1335,7 +1340,7 @@ public class Main {
 			fileName = String.valueOf(System.currentTimeMillis());
 		}
 
-		if (testing) {
+		if (Output) {
 			System.out.println(MLG + "Downloading: " + URL);
 			System.out.println(MLG + "Saving as: " + fileName);
 		}
@@ -1359,12 +1364,12 @@ public class Main {
 			}
 			bout.close();
 			in.close();
-			if (testing) {
+			if (Output) {
 				System.out.println(count + " byte(s) copied");
 			}
 			timeTracking[1] = System.currentTimeMillis();
 			differenceTime = (timeTracking[1] - timeTracking[0]) / 2;
-			if (testing) {
+			if (Output) {
 				System.out.println(String.format(MLG + "Elapsed Time: %dm%ds",
 						(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
 						((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
@@ -1379,7 +1384,7 @@ public class Main {
 			e.printStackTrace();
 			success = false;
 		}
-		if (testing) {
+		if (Output) {
 			System.out.println(MLG + "Done");
 		}
 		return success;
@@ -1396,7 +1401,7 @@ public class Main {
 	public static void buildID() {
 
 		// download BuildID from Github.
-		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL);
+		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL, testing);
 		if (fileSuccess) {
 			System.out.println(MLG + buildIDFile + " file downloaded.");
 
@@ -1528,7 +1533,8 @@ public class Main {
 		}
 
 		int tsCount = 0;
-		ArrayList<String> timeStamps = new ArrayList<String>();
+
+		timeStamps.clear();
 
 		if (MLG_Last_Modified_Date == null) {
 			boolean foundLine = false;
@@ -1573,50 +1579,6 @@ public class Main {
 				}
 				in.close();
 
-				Iterator<String> e = timeStamps.iterator();
-				String s;
-				int diff;
-				//boolean renameFailed = false;
-
-				while (e.hasNext()) {
-					s = e.next();
-					diff = MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
-					//System.out.println(diff);
-
-					if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-						System.out
-								.println("There is a NEW VERSION Of Minecraft Land Generator available online!");
-
-						try {
-							File fileRename = new File("MinecraftLandGenerator.jar");
-							fileRename.renameTo(new File("MinecraftLandGenerator.jar" + ".old"));
-						} catch (Exception e1) {
-							System.out.println("Rename failed");
-							e1.printStackTrace();
-
-							try {
-								copyFile(new File("MinecraftLandGenerator.jar"), new File(
-										"MinecraftLandGenerator.jar" + ".old"));
-								File fileDelete = new File("MinecraftLandGenerator.jar");
-								fileDelete.delete();
-							} catch (Exception e2) {
-								System.out.println("Rename 2 failed");
-								e2.printStackTrace();
-								//renameFailed = true;
-								return;
-							}
-
-						}
-
-						boolean fileSuccess = downloadFile(github_MLG_jar_URL);
-						if (fileSuccess) {
-							System.out.println(MLG + "MinecraftLandGenerator.jar" + " downloaded.");
-							return;
-						}
-
-					}
-				}
-
 				if (foundLine == false) {
 					// System.out.println("[DEBUG] FoundLine False");
 					buildID();
@@ -1633,6 +1595,62 @@ public class Main {
 			}
 		}
 
+	}
+
+	/**
+	 * Updates MLG to the Latest Version
+	 * 
+	 * @author Morlok8k
+	 * 
+	 */
+	public static void updateMLG() {
+
+		buildID();
+
+		Iterator<String> e = timeStamps.iterator();
+		String s;
+		int diff;
+
+		//boolean renameFailed = false;
+
+		while (e.hasNext()) {
+			s = e.next();
+			diff = MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
+			//System.out.println(diff);
+
+			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
+				System.out
+						.println("There is a NEW VERSION Of Minecraft Land Generator available online!");
+
+				try {
+					File fileRename = new File("MinecraftLandGenerator.jar");
+					fileRename.renameTo(new File("MinecraftLandGenerator.jar" + ".old"));
+				} catch (Exception e1) {
+					System.out.println("Rename failed");
+					e1.printStackTrace();
+
+					try {
+						copyFile(new File("MinecraftLandGenerator.jar"), new File(
+								"MinecraftLandGenerator.jar" + ".old"));
+						File fileDelete = new File("MinecraftLandGenerator.jar");
+						fileDelete.delete();
+					} catch (Exception e2) {
+						System.out.println("Rename 2 failed");
+						e2.printStackTrace();
+						//renameFailed = true;
+						return;
+					}
+
+				}
+
+				boolean fileSuccess = downloadFile(github_MLG_jar_URL, true);
+				if (fileSuccess) {
+					System.out.println(MLG + "MinecraftLandGenerator.jar" + " downloaded.");
+					return;
+				}
+
+			}
+		}
 	}
 
 	/**
@@ -1766,6 +1784,9 @@ public class Main {
 				+ "            -y# : set the X offset to generate land around (example: -y0)" + newLine
 				+ newLine
 				+ "Other options:" + newLine
+				+ "  java -jar MinecraftLandGenerator.jar -update" + newLine
+				+ "        Checks for and downloads new versions of MLG online." + newLine
+				+ newLine
 				+ "  java -jar MinecraftLandGenerator.jar -printspawn" + newLine
 				+ "  java -jar MinecraftLandGenerator.jar -ps" + newLine
 				+ "        Outputs the current world's spawn point coordinates." + newLine 

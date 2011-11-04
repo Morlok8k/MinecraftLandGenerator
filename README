@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Testing 22
+Minecraft Land Generator version 1.6.0 Testing 26
 
 Updated November 4, 2011
 
@@ -24,9 +24,10 @@ Version History:
 Morlok8k:
 
 1.6.0
-- Added the ability to download files from the internet (specifically for the BuildID file, and conf file)
+- Added the ability to download files from the internet
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
-- COde Refactoring
+- Added "-update" to download new versions of MLG directly from github.
+- Code Refactoring
 - Code Formatting
 - Code Optimization
 
@@ -125,6 +126,9 @@ Switches:
             -y# : set the X offset to generate land around (example: -y0)
 
 Other options:
+  java -jar MinecraftLandGenerator.jar -update
+        Checks for and downloads new versions of MLG online.
+
   java -jar MinecraftLandGenerator.jar -printspawn
   java -jar MinecraftLandGenerator.jar -ps
         Outputs the current world's spawn point coordinates.
