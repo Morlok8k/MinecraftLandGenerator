@@ -1,9 +1,110 @@
-Minecraft Land Generator version 1.5.1
-BuildID: (111017.233927-0700)
-This version was last modified on Monday, October 17, 2011 at 11:39 PM Pacific Daylight Time
+Minecraft Land Generator version 1.6.0 Testing 8
 
-Uses a Minecraft server to generate square land of a specified size.
+Updated November 4, 2011
 
+Original Code by Corrodias		November 2010
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
+Additional Code by pr0f1x		October 2011
+Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/
+Source: https://github.com/Morlok8k/MinecraftLandGenerator
+
+-----------------------------------------------
+
+This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
+When a Minecraft server is launched, it automatically generates chunks within a square area of 20x20 chunks (320x320 blocks), centered on the current spawn point. When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 300x300) You can use the -x and -y switches to override the spawn offset and center the land generation on a different point.
+The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
+
+This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
+The JNLP library is included (inside the .jar) as jnbt-1.1.jar. It is not public domain. Its license is included within its .jar file, as LICENSE.TXT.
+It is also available at: http://jnbt.sourceforge.net/
+
+-----------------------------------------------
+
+Version History:
+Morlok8k:
+
+1.6.0
+- TODO: add features
+- Added the ability to download files from the internet (specifically for the BuildID file)
+- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
+- Minor Refactoring
+
+1.5.1
+- pr0f1x: Added the "save-all" command to be sent to the server before shutting it down.
+- pr0f1x: Added a 40 second wait before shutting down.
+- Morlok8k: Made 40 second wait optional.
+- Morlok8k: Changed the Dimensions code.  (I had assumed it would be DIM-1, DIM-2, etc.  but it turned out to be DIM-1 and DIM1. Change reflects Server output of "Level n")
+- Morlok8k: Config file is automatically updated to reflect these changes.
+- Morlok8k: Cleaned up code.
+
+1.5.0
+- Supports Server Beta 1.6.4 (& hopefully future versions as well, while remaining backward compatible.)
+- Added "-a","-alt" to use alternate method (a slightly simplier version of 1.3.0's code - pure verbose only)
+- Added world specific output for 9 dimensions (DIM-1 is the Nether, DIM-2 through DIM-9 dont exist yet, but if and when they do, you can configure it's text).  ("Level 0", the default world, is displayed as the worlds name)
+- Updated Config File for these Dimensions.
+- Reads and outputs the Seed to the output. (If you had used text for the Seed, Minecraft converts it into a number. This outputs the number.)
+- Changed the default 300 blocks to 380.  The server now makes a 400x400 square block terrain instead of 320x320.  Thus it is faster because there are less loops.  To use the old way, use "-i300"
+- Added total Percentage done (technically, it displays the % done once the server finishes...)
+- Added debugging output vars of conf file (disabled - need to re-compile source to activate)
+
+     + (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)
+
+*** 1.4.5 (pre 1.5.0) ***
+- sorry!  I shouldn't release untested code...
+*************************
+
+1.4.4
+- Added ablilty to ignore [WARNING] and [SEVERE] errors with "-w"
+
+1.4.3
+- Fixed "-ps","-printspawn" as I had forgot I had broken it in 1.4.0 - due to config file change.
+
+1.4.2
+- No New Features
+- Changed non-verbose mode to display server progress on the same line, saving a lot of space.
+	- This couldn't wait for 1.5.0 ...  I (Morlok8k) liked it too much.
+
+1.4.0
+- Future Proofing
+- Configurble Server Message reading. (If server updates and breaks MLG, you can add the new text!)
+- Updated config file, and auto updating from old format.
+- Added % of spawn area to non-verbose output.
+- Removed datetime stamps from server output in verbose mode
+- Other Misc fixes.
+
+1.3.0
+- Fixed Problems with Minecraft Beta 1.3 -- Morlok8k
+
+-----------------------------------------------
+
+Corrodias:
+1.2.0
+- land generation now centers on the spawn point instead of [0, 0]
+- the server is launched once before the spawn point is changed, to verify that it can run and to create a world if one doesn't exist
+- added -printspawn [-ps] switch to print the current spawn coordinates to the console
+- added -x and -y switches to override the X and Y offsets
+- added -v switch, does the same as -verbose
+- improved status message spacing to make things easier to read
+- improved time estimation algorithm: it now averages the last 3 launches
+
+1.1.0
+- added MinecraftLandGenerator.conf file to hold the java command line and the server path
+- added -conf solo switch to generate a .conf file
+- added -verbose switch to output server output to the console (default is to ignore it)
+- added -i switch to allow customizing the block increment size (default is 300)
+- added instructions output in this version, i think
+- improved status message output to include current iteration and total iterations
+
+1.0.0
+- initial release
+
+-----------------------------------------------
+
+Notes:
+Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
+I recommend using MCE or MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
+
+-----------------------------------------------
 
 Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]
 
@@ -30,6 +131,10 @@ Other options:
   java -jar MinecraftLandGenerator.jar -conf
         Generates a MinecraftLandGenerator.conf file.
 
+  java -jar MinecraftLandGenerator.jar -readme readme.txt
+  java -jar MinecraftLandGenerator.jar -readme
+        Generates a readme file using supplied name or the default MLG-Readme.txt
+
   java -jar MinecraftLandGenerator.jar -version
   java -jar MinecraftLandGenerator.jar -help
   java -jar MinecraftLandGenerator.jar /?
@@ -55,3 +160,4 @@ Preparing_Level : The output from the server that tells us the level it is worki
         Level-8 : Name of Level 8: (Future Level)
         Level-9 : Name of Level 9: (Future Level)
        WaitSave : Optional: Wait before saving.
+
