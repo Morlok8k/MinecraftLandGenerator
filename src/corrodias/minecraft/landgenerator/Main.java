@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 26";
+	private static final String VERSION = "1.6.0 Testing 30";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -93,7 +93,7 @@ public class Main {
 	private static String MLG = "[MLG] ";
 
 	private static DateFormat dateFormat = null;
-	private static DateFormat dateFormatBuildID = null;
+	//private static DateFormat dateFormatBuildID = null;
 	private static DateFormat dateFormat_MDY = null;
 	private static Date date = null;
 	private static Date MLG_Last_Modified_Date = null;
@@ -145,7 +145,7 @@ public class Main {
 
 		// Lets get a nice Date format for display, and a compact one for telling apart builds.
 		dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
-		dateFormatBuildID = new SimpleDateFormat("'BuildID:' (yyMMdd.HHmmss)", Locale.ENGLISH);
+		//dateFormatBuildID = new SimpleDateFormat("'BuildID:' (yyMMdd.HHmmss)", Locale.ENGLISH);
 		dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 		date = new Date();
 		// dateFormat.format(date);
@@ -154,10 +154,8 @@ public class Main {
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		// MLG_Last_Modified_Date = date;
-
 		System.out.println("Minecraft Land Generator version " + VERSION);
-		System.out.println(dateFormatBuildID.format(MLG_Last_Modified_Date));
+		System.out.println("BuildID: (" + MLG_Last_Modified_Date.getTime() + ")");		//instead of dateformatting the buildid, we return the raw Long number.  thus different timezones wont display a different buildID
 		System.out.println("This version was last modified on "
 				+ dateFormat.format(MLG_Last_Modified_Date));
 		System.out.println("");
@@ -817,8 +815,7 @@ public class Main {
 		// So, here is a bunch of duplicate code...
 		// Stupid compile errors...
 
-		if (alternate) { // Alternate - a replication (slightly stripped down)
-							// of MLG 1.3.0's code. simplest code possible.
+		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
 			System.out.println(MLG + "Alternate Launch");
 			Process process = minecraft.start();
 
@@ -829,8 +826,7 @@ public class Main {
 			String line;
 			while ((line = pOut.readLine()) != null) {
 				System.out.println(line);
-				if (line.contains(doneText)) { // EDITED By Morlok8k for
-												// Minecraft 1.3+ Beta
+				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
 					if (waitSave) {
 						System.out.println(MLG + "Waiting 30 seconds to save.");
@@ -1213,6 +1209,7 @@ public class Main {
 				+ "- Added the ability to download files from the internet" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
 				+ "- Added \"-update\" to download new versions of MLG directly from github." + newLine
+				+ "- Updated estimated time.  Now shows up on loop 2+ instead of loop 4+." + newLine
 				+ "- Code Refactoring" + newLine
 				+ "- Code Formatting" + newLine
 				+ "- Code Optimization" + newLine
@@ -1340,6 +1337,8 @@ public class Main {
 			fileName = String.valueOf(System.currentTimeMillis());
 		}
 
+		Output = true;
+
 		if (Output) {
 			System.out.println(MLG + "Downloading: " + URL);
 			System.out.println(MLG + "Saving as: " + fileName);
@@ -1361,10 +1360,14 @@ public class Main {
 			while ((x = in.read(data, 0, size)) >= 0) {
 				bout.write(data, 0, x);
 				count = count + x;
+				if (Output) {
+					System.out.print("*");
+				}
 			}
 			bout.close();
 			in.close();
 			if (Output) {
+				System.out.println("");
 				System.out.println(count + " byte(s) copied");
 			}
 			timeTracking[1] = System.currentTimeMillis();
@@ -1605,7 +1608,7 @@ public class Main {
 	 */
 	public static void updateMLG() {
 
-		buildID();
+		buildID();		//get latest BuildID file.  
 
 		Iterator<String> e = timeStamps.iterator();
 		String s;
@@ -1626,7 +1629,7 @@ public class Main {
 					File fileRename = new File("MinecraftLandGenerator.jar");
 					fileRename.renameTo(new File("MinecraftLandGenerator.jar" + ".old"));
 				} catch (Exception e1) {
-					System.out.println("Rename failed");
+					System.out.println("Rename attempt #1 failed!");
 					e1.printStackTrace();
 
 					try {
@@ -1635,7 +1638,7 @@ public class Main {
 						File fileDelete = new File("MinecraftLandGenerator.jar");
 						fileDelete.delete();
 					} catch (Exception e2) {
-						System.out.println("Rename 2 failed");
+						System.out.println("Rename attempt #2 failed!");
 						e2.printStackTrace();
 						//renameFailed = true;
 						return;

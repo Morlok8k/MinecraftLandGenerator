@@ -1,6 +1,6 @@
-Minecraft Land Generator version 1.6.0 Testing 26
+Minecraft Land Generator version 1.6.0 Testing 30
 
-Updated November 4, 2011
+Updated November 8, 2011
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
@@ -27,6 +27,7 @@ Morlok8k:
 - Added the ability to download files from the internet
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
 - Added "-update" to download new versions of MLG directly from github.
+- Updated estimated time.  Now shows up on loop 2+ instead of loop 4+.
 - Code Refactoring
 - Code Formatting
 - Code Optimization
