@@ -1,6 +1,6 @@
-Minecraft Land Generator version 1.6.0 Testing 30
+Minecraft Land Generator version 1.6.0 Testing 39
 
-Updated November 8, 2011
+Updated December 17, 2011
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
@@ -25,9 +25,11 @@ Morlok8k:
 
 1.6.0
 - Added the ability to download files from the internet
+- Added a switch to download any file off the internet, if needed (useless for most people, but included it in case I wanted it in the future.)
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
 - Added "-update" to download new versions of MLG directly from github.
 - Updated estimated time.  Now shows up on loop 2+ instead of loop 4+.
+- Standard % output of the Server should look nicer now.
 - Code Refactoring
 - Code Formatting
 - Code Optimization
@@ -141,6 +143,9 @@ Other options:
   java -jar MinecraftLandGenerator.jar -readme readme.txt
   java -jar MinecraftLandGenerator.jar -readme
         Generates a readme file using supplied name or the default MLG-Readme.txt
+
+  java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt
+        Downloads whatever file from the internet you give it.
 
   java -jar MinecraftLandGenerator.jar -version
   java -jar MinecraftLandGenerator.jar -help

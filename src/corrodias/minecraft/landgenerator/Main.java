@@ -45,14 +45,10 @@ import org.jnbt.Tag;
  * @author Corrodias, Morlok8k, pr0f1x
  * 
  */
-/**
- * @author morlok8k
- * 
- */
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 30";
+	private static final String VERSION = "1.6.0 Testing 39";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -116,6 +112,8 @@ public class Main {
 
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
 
+	private static final String defaultReadmeFile = "MLG-Readme.txt";
+
 	//////
 
 	private static final boolean testing = false;	// display more output when debugging
@@ -167,8 +165,8 @@ public class Main {
 		//                           INSTRUCTIONS
 		// =====================================================================
 
-		if (args.length == 0 || args[0].equals("-version") || args[0].equals("-help")
-				|| args[0].equals("/?")) {
+		if (args.length == 0 || args[0].equalsIgnoreCase("-version")
+				|| args[0].equalsIgnoreCase("-help") || args[0].equals("/?")) {
 
 			showHelp(true);
 
@@ -262,6 +260,9 @@ public class Main {
 			return;
 		} else if (args[0].equalsIgnoreCase("-readme")) {
 			readMe(args[1]);
+			return;
+		} else if (args[0].equalsIgnoreCase("-downloadfile")) {
+			downloadFile(args[1], true);
 			return;
 		} else if (args.length == 1) {
 			System.out.println(MLG + "For help, use java -jar MinecraftLandGenerator.jar -help");
@@ -363,7 +364,7 @@ public class Main {
 
 			if (doneText == null) {					// MLG 1.4.0
 				oldConf = true;
-			} else if (preparingText == null) {		// MLG 1.4.0O
+			} else if (preparingText == null) {		// MLG 1.4.0
 				oldConf = true;
 			} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
 				oldConf = true;
@@ -546,6 +547,7 @@ public class Main {
 						.println(MLG
 								+ "There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
 								+ " or restore the backup.");
+				System.err.println(MLG + "You most likely will want to restore the backup!");
 				return;
 			}
 		}
@@ -561,8 +563,7 @@ public class Main {
 		System.out.println("");
 
 		// prepare our two ProcessBuilders
-		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m",
-		// "-jar", jarFile, "nogui");
+		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
 		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.			
 		minecraft.directory(new File(serverPath));
 		minecraft.redirectErrorStream(true);
@@ -624,10 +625,12 @@ public class Main {
 									+ Float.toString((Float.parseFloat(Integer
 											.toString(currentIteration)) / Float.parseFloat(Integer
 											.toString(totalIterations))) * 100) + "% Done"); // Time Remaining estimate
+
 					timeTracking[0] = timeTracking[1];
 					timeTracking[1] = timeTracking[2];
 					timeTracking[2] = timeTracking[3];
 					timeTracking[3] = System.currentTimeMillis();
+					//TODO: update this time remaining section
 					if (currentIteration >= 4) {
 						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
@@ -732,7 +735,6 @@ public class Main {
 
 			//@formatter:off
 			
-			
 			/* <editor-fold defaultstate="collapsed" desc="structure">
 			* Structure:
 			*
@@ -756,8 +758,6 @@ public class Main {
 			* </editor-fold>
 			*/
 			
-			
-			
 			//@formatter:on
 
 			Map<String, Tag> originalData =
@@ -769,7 +769,7 @@ public class Main {
 			@SuppressWarnings("unused")
 			IntTag spawnX = (IntTag) newData.get("SpawnX"); // we never use these... Its only here for potential debugging.
 			@SuppressWarnings("unused")
-			IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppress			ed these warnings.
+			IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppressed these warnings.
 			@SuppressWarnings("unused")
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ"); // I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
 
@@ -886,6 +886,8 @@ public class Main {
 			}
 
 			String line = null;
+			String outTmp = null;
+			String outTmp2 = null;
 
 			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so this code wont run every loop, thus Faster!
 			// and no, i can't use a string here!
@@ -895,6 +897,9 @@ public class Main {
 			OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
 
 			while ((line = pOut.readLine()) != null) {
+
+				line = line.trim();
+
 				if (verbose) {
 					if (line.contains("[INFO]")) {
 						System.out.println(line.substring(line.lastIndexOf("]") + 2));
@@ -902,7 +907,17 @@ public class Main {
 						System.out.println(line);
 					}
 				} else if (line.contains(preparingText)) {
-					System.out.print(line.substring(line.length() - 3, line.length()) + "... ");
+
+					outTmp2 = line.substring(line.length() - 3, line.length());
+					outTmp2 = outTmp2.trim();				//we are removing extra spaces here
+					if (outTmp == outTmp2) {
+						//instead of printing the same number, we add another dot
+						System.out.print(".");
+					} else {
+						outTmp = outTmp2;
+						System.out.print(" " + outTmp + "...");
+					}
+
 				} else if (line.contains(preparingLevel)) {
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
 						System.out.println("\r\n" + MLG + worldName + ": " + level_0 + ":");
@@ -1172,7 +1187,7 @@ public class Main {
 	public static void readMe(String readmeFile) {
 
 		if (readmeFile == "" || readmeFile == null) {
-			readmeFile = "MLG-Readme.txt";
+			readmeFile = defaultReadmeFile;
 		}
 
 		String showHelpSTR = "";
@@ -1207,9 +1222,11 @@ public class Main {
 				+ newLine
 				+ "1.6.0" + newLine
 				+ "- Added the ability to download files from the internet" + newLine
+				+ "- Added a switch to download any file off the internet, if needed (useless for most people, but included it in case I wanted it in the future.)" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
 				+ "- Added \"-update\" to download new versions of MLG directly from github." + newLine
 				+ "- Updated estimated time.  Now shows up on loop 2+ instead of loop 4+." + newLine
+				+ "- Standard % output of the Server should look nicer now." + newLine
 				+ "- Code Refactoring" + newLine
 				+ "- Code Formatting" + newLine
 				+ "- Code Optimization" + newLine
@@ -1397,7 +1414,12 @@ public class Main {
 	 * This is an "undocumented" function to create a BuildID file. It should only be used right after compiling a .jar file<br>
 	 * The resulting BuildID file is uploaded to github, and also distributed with the program.<br>
 	 * <b>THE FILE SHOULD ONLY BE MADE FROM SCRATCH AT THE TIME OF PUBLISHING!</b><br>
-	 * (Otherwise, the purpose is defeated!)
+	 * (Otherwise, the purpose is defeated!)<br>
+	 * <br>
+	 * The problem is that when a .jar file is downloaded from the internet, it gets a new date stamp - the time that it was downloaded. Only the original copy that was compiled on the original
+	 * computer will have the correct time stamp. (or possibly a copy from the original computer)<br>
+	 * <br>
+	 * This saves the hash and the timestamp (now known as the BuildID)
 	 * 
 	 * @author Morlok8k
 	 */
@@ -1590,6 +1612,8 @@ public class Main {
 				}
 			} catch (Exception e) {
 				System.err.println(MLG + "Cant Read " + buildIDFile + "!");
+				System.err.println(MLG + e.getLocalizedMessage());
+				System.err.println("");
 				// e.printStackTrace();
 				buildID();
 				readBuildID();
@@ -1654,6 +1678,7 @@ public class Main {
 
 			}
 		}
+
 	}
 
 	/**
@@ -1681,11 +1706,11 @@ public class Main {
 			file = 0;
 		}
 		if (filename.contains("rsrc:")) {
-			System.out
+			System.err
 					.println(MLG
 							+ "THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
-			System.out.println(MLG + "DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
-			System.out.println(MLG + "(Your Libraries need to be extracted.)");
+			System.err.println(MLG + "DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
+			System.err.println(MLG + "(Your Libraries need to be extracted.)");
 			return rsrcError;
 		}
 		if (filename.contains(".jar")) {
@@ -1800,7 +1825,10 @@ public class Main {
 				+ newLine
 				+ "  java -jar MinecraftLandGenerator.jar -readme readme.txt" + newLine
 				+ "  java -jar MinecraftLandGenerator.jar -readme" + newLine
-				+ "        Generates a readme file using supplied name or the default MLG-Readme.txt" + newLine
+				+ "        Generates a readme file using supplied name or the default " + defaultReadmeFile + newLine
+				+ newLine
+				+ "  java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt" + newLine
+				+ "        Downloads whatever file from the internet you give it." + newLine
 				+ newLine
 				+ "  java -jar MinecraftLandGenerator.jar -version" + newLine
 				+ "  java -jar MinecraftLandGenerator.jar -help" + newLine
