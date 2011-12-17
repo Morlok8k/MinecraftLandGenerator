@@ -48,7 +48,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 39";
+	private static final String VERSION = "1.6.0 Testing 40";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -825,6 +825,9 @@ public class Main {
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = pOut.readLine()) != null) {
+
+				line = line.trim(); //Trim spaces off the beginning and end, if any.
+
 				System.out.println(line);
 				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
@@ -886,7 +889,7 @@ public class Main {
 			}
 
 			String line = null;
-			String outTmp = null;
+			String outTmp = "";
 			String outTmp2 = null;
 
 			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so this code wont run every loop, thus Faster!
@@ -910,7 +913,7 @@ public class Main {
 
 					outTmp2 = line.substring(line.length() - 3, line.length());
 					outTmp2 = outTmp2.trim();				//we are removing extra spaces here
-					if (outTmp == outTmp2) {
+					if (outTmp.equals(outTmp2)) {
 						//instead of printing the same number, we add another dot
 						System.out.print(".");
 					} else {
@@ -988,6 +991,9 @@ public class Main {
 						System.out.println("");
 					}
 				}
+				//Here we want to ignore the most common warning.
+				//TODO: add ignore cant keep up warning!
+
 				if (ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) { // If we have a warning, stop...
 						System.out.println("");
