@@ -48,7 +48,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 40";
+	private static final String VERSION = "1.6.0 Testing 41";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -103,16 +103,16 @@ public class Main {
 	private static int inf_loop_protect_BuildID = 0;
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
-	private static final String github_MLG_Conf_URL =
-			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.conf";
-	private static final String github_MLG_BuildID_URL =
-			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MLG-BuildID";
-	private static final String github_MLG_jar_URL =
-			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/MinecraftLandGenerator.jar";
-
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
-
 	private static final String defaultReadmeFile = "MLG-Readme.txt";
+	private static final String MLG_JarFile = "MinecraftLandGenerator.jar";
+
+	private static final String github_URL =
+			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";			// just removing some redundancy
+
+	private static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
+	private static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
+	private static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
 
 	//////
 
@@ -630,7 +630,9 @@ public class Main {
 					timeTracking[1] = timeTracking[2];
 					timeTracking[2] = timeTracking[3];
 					timeTracking[3] = System.currentTimeMillis();
-					//TODO: update this time remaining section
+
+					//TODO: update this time remaining section, so it doesnt do last 4 runs, but all runs.
+
 					if (currentIteration >= 4) {
 						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
@@ -714,15 +716,17 @@ public class Main {
 	}
 
 	/**
-	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates. Note that, in Minecraft levels, the Y coordinate is height, while Z is what may normally be thought of as Y.
+	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.<br>
+	 * Note that, in Minecraft levels, the Y coordinate is height, while Z is what may normally be thought of as Y.<br>
+	 * (We picture maps from above, but the game was made from a different perspective)
 	 * 
 	 * @param level
 	 *            the level file to change the spawn point in
 	 * @param x
 	 *            the new X value
-	 * @param z
-	 *            the new Y value
 	 * @param y
+	 *            the new Y value
+	 * @param z
 	 *            the new Z value
 	 * @throws IOException
 	 *             if there are any problems reading/writing the file
@@ -992,7 +996,7 @@ public class Main {
 					}
 				}
 				//Here we want to ignore the most common warning.
-				//TODO: add ignore cant keep up warning!
+				//TODO: add ignore "cant keep up" warning!
 
 				if (ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) { // If we have a warning, stop...
@@ -1081,6 +1085,8 @@ public class Main {
 	private boolean printSpawn() {
 		// ugh, sorry, this is an ugly hack, but it's a last-minute feature.
 		// this is a lot of duplicated code.
+
+		//TODO: tidy up, make config file stuff one function.
 
 		try {
 			File config = new File(MinecraftLandGeneratorConf);
