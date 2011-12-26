@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 62";
+	private static final String VERSION = "1.6.0 Testing 63";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -703,26 +703,27 @@ public class Main {
 					}
 
 				} else if (line.contains(preparingLevel)) {
+					prepTextFirst = true;
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
-						out("\r\n" + MLG + worldName + ": " + level_0 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_0 + ":");
 					} else if (line.contains("level 1")) { // "Preparing start region for level 1"
-						out("\r\n" + MLG + worldName + ": " + level_1 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_1 + ":");
 					} else if (line.contains("level 2")) { // "Preparing start region for level 2"
-						out("\r\n" + MLG + worldName + ": " + level_2 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_2 + ":");
 					} else if (line.contains("level 3")) { // "Preparing start region for level 3"
-						out("\r\n" + MLG + worldName + ": " + level_3 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_3 + ":");
 					} else if (line.contains("level 4")) { // "Preparing start region for level 4"
-						out("\r\n" + MLG + worldName + ": " + level_4 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_4 + ":");
 					} else if (line.contains("level 5")) { // "Preparing start region for level 5"
-						out("\r\n" + MLG + worldName + ": " + level_5 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_5 + ":");
 					} else if (line.contains("level 6")) { // "Preparing start region for level 6"
-						out("\r\n" + MLG + worldName + ": " + level_6 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_6 + ":");
 					} else if (line.contains("level 7")) { // "Preparing start region for level 7"
-						out("\r\n" + MLG + worldName + ": " + level_7 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_7 + ":");
 					} else if (line.contains("level 8")) { // "Preparing start region for level 8"
-						out("\r\n" + MLG + worldName + ": " + level_8 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_8 + ":");
 					} else if (line.contains("level 9")) { // "Preparing start region for level 9"
-						out("\r\n" + MLG + worldName + ": " + level_9 + ":");
+						outP("\r\n" + MLG + worldName + ": " + level_9 + ":");
 					} else {
 						out(line.substring(line.lastIndexOf("]") + 2));
 					}
