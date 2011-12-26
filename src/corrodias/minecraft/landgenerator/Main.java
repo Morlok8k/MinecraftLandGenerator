@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 64";
+	private static final String VERSION = "1.6.0 Christmas 2011 Edition";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -94,6 +94,7 @@ public class Main {
 	private static LongTag randomSeed = null;
 
 	private static String MLG = "[MLG] ";
+	private static String MLGe = "[MLG-ERROR] ";
 
 	private static DateFormat dateFormat = null;
 	//private static DateFormat dateFormatBuildID = null;
@@ -1899,7 +1900,7 @@ public class Main {
 	}
 
 	private static void err(String str) {
-		System.err.println(MLG + str);
+		System.err.println(MLGe + str);
 	}
 
 	private static void outP(String str) {
