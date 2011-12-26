@@ -51,7 +51,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 54";
+	private static final String VERSION = "1.6.0 Testing 55";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -206,7 +206,7 @@ public class Main {
 			printSpawn();
 			return;
 		} else if (args[0].equalsIgnoreCase("-build")) {
-			buildID();
+			buildID(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-update")) {
 			updateMLG();
@@ -1108,14 +1108,23 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	private static void buildID() {
+	private static void buildID(boolean downloadOnly) {
 
 		// download BuildID from Github.
 		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL, testing);
 		if (fileSuccess) {
 			out(buildIDFile + " file downloaded.");
 			flag_downloadedBuildID = true;
+
+			if (downloadOnly) { return; }
+
 		}
+
+		if (downloadOnly) {
+			err("Couldn't Download new " + buildIDFile);
+			return;
+		}
+
 		// If not available, create.
 		// After downloading, check to see if it matches hash.
 
@@ -1337,7 +1346,7 @@ public class Main {
 
 				if (foundLine == false) {
 					// out("[DEBUG] FoundLine False");
-					buildID();
+					buildID(false);
 					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
 					return;
 				}
@@ -1346,7 +1355,7 @@ public class Main {
 				err(e.getLocalizedMessage());
 				System.err.println("");
 				// e.printStackTrace();
-				buildID();
+				buildID(false);
 				readBuildID();
 				return;
 
@@ -1361,9 +1370,10 @@ public class Main {
 	 * @author Morlok8k
 	 * 
 	 */
-	private static void updateMLG() {
+	private void updateMLG() {
 
-		buildID();		//get latest BuildID file.  
+		buildID(true);		//get latest BuildID file.  
+		readBuildID();
 
 		Iterator<String> e = timeStamps.iterator();
 		String s;
