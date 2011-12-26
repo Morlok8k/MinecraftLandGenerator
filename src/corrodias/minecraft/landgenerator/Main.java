@@ -51,7 +51,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 55";
+	private static final String VERSION = "1.6.0 Testing 56";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -915,6 +915,7 @@ public class Main {
 				+ "- Code Refactoring" + newLine
 				+ "- Code Formatting" + newLine
 				+ "- Code Optimization" + newLine
+				+ "- Duplicate sections of code have been turned into Methods/\"Functions\"" + newLine
 				+ newLine
 				+ "1.5.1" + newLine
 				+ "- pr0f1x: Added the \"save-all\" command to be sent to the server before shutting it down." + newLine
@@ -934,7 +935,7 @@ public class Main {
 				+ "- Added total Percentage done (technically, it displays the % done once the server finishes...)" + newLine
 				+ "- Added debugging output vars of conf file (disabled - need to re-compile source to activate)" + newLine
 				+ newLine
-				+ "     + (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)" + newLine
+				+ "\t\t+ (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)" + newLine
 				+ newLine
 				+ "*** 1.4.5 (pre 1.5.0) ***" + newLine
 				+ "- sorry!  I shouldn't release untested code..." + newLine
@@ -995,22 +996,7 @@ public class Main {
 				+ newLine;
 		//@formatter:on
 
-		try {
-			File readme = new File(readmeFile);
-			BufferedWriter outFile = new BufferedWriter(new FileWriter(readme));
-
-			outFile.write(ReadMeText + showHelpSTR);
-
-			outFile.newLine();
-			outFile.close();
-
-			out(readmeFile + " file created.");
-			return;
-
-		} catch (IOException ex) {
-			err("Could not create " + readmeFile + ".");
-			return;
-		}
+		writeTxtFile(readmeFile, ReadMeText + showHelpSTR);
 
 	}
 
@@ -1199,15 +1185,9 @@ public class Main {
 		} catch (FileNotFoundException ex) {
 			out("\"" + buildIDFile + "\" file not Found.  Generating New \"" + buildIDFile
 					+ "\" File");
-			try {
-				BufferedWriter outFile = new BufferedWriter(new FileWriter(buildIDFile));
-				outFile.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
-						+ VERSION + INFO);
-				outFile.newLine();
-				outFile.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+			writeTxtFile(buildIDFile, MLG_Current_Hash + "=" + String.valueOf(time.getTime())
+					+ "#MLG v" + VERSION + INFO);
 
 		} catch (IOException ex) {
 			err("Could not create \"" + buildIDFile + "\".");
@@ -1780,12 +1760,9 @@ public class Main {
 			sP = serverPath;		//
 		}
 
-		try {
-			File config = new File(MinecraftLandGeneratorConf);
-			BufferedWriter outFile = new BufferedWriter(new FileWriter(config));
-
-			//@formatter:off
-			outFile.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION + newLine
+		String txt = null;
+		//@formatter:off
+		txt = "#Minecraft Land Generator Configuration File:  Version: " + VERSION + newLine
 					+ "#Authors: " + AUTHORS + newLine
 					+ "#Auto-Generated: " + dateFormat.format(date) + newLine
 					+ newLine
@@ -1812,18 +1789,12 @@ public class Main {
 					+ "Level-8=Level 8 (Future Level)" + newLine 
 					+ "Level-9=Level 9 (Future Level)" + newLine 
 					+ newLine
-					+ "#Optional: Wait a few seconds after saving." + newLine + "WaitSave=false");
+					+ "#Optional: Wait a few seconds after saving." + newLine + "WaitSave=false";
 			//@formatter:on
 
-			outFile.newLine();
-			outFile.close();
-			out(MinecraftLandGeneratorConf + " file created.");
-			return;
+		writeTxtFile(MinecraftLandGeneratorConf, txt);
 
-		} catch (IOException ex) {
-			err("Could not create " + MinecraftLandGeneratorConf + ".");
-			return;
-		}
+		return;
 
 	}
 
@@ -1869,15 +1840,29 @@ public class Main {
 
 	}
 
-	@SuppressWarnings("unused")
-	private static void writeTxtFile(File file, String str) {
-		//TODO: find all file writes, and make it use this function.
+	private static void writeTxtFile(String file, String txt) {
+		//TODO: find all file writes, and make it use this method, if possible.
 
 		/*
 		 * NOTE: I don't include a generic readTxtFile method, as that code depends on what I'm reading.
 		 * For things like that I make a special method for it, if its used in more than one place.
 		 * Like reading the config file.
 		 */
+
+		try {
+			File oFile = new File(file);
+			BufferedWriter outFile = new BufferedWriter(new FileWriter(oFile));
+			outFile.write(txt);
+			outFile.newLine();
+			outFile.close();
+			out(file + " file created.");
+			return;
+		} catch (IOException ex) {
+			err("Could not create " + MinecraftLandGeneratorConf + ".");
+			ex.printStackTrace();
+			return;
+		}
+
 	}
 
 	private static void out(String str) {
