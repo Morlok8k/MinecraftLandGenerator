@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Christmas 2011 Edition
+Minecraft Land Generator version 1.6.01
 
 Updated December 26, 2011
 
@@ -22,7 +22,8 @@ It is also available at: http://jnbt.sourceforge.net/
 
 Version History:
 Morlok8k:
-
+1.6.01
+- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side- no new functionality, md5 issue doesnt affect -update on old versions.
 1.6.0
 - NOW DOES NOT NEED ANY SCRIPT FILES!
 - Added the ability to download files from the internet

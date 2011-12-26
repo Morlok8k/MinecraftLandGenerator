@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Christmas 2011 Edition";
+	private static final String VERSION = "1.6.01";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -934,6 +934,9 @@ public class Main {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.01" + newLine
+				+ "- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side"
+				+ "- no new functionality, md5 issue doesnt affect -update on old versions."
 				+ newLine
 				+ "1.6.0" + newLine
 				+ "- NOW DOES NOT NEED ANY SCRIPT FILES!" + newLine
@@ -1515,7 +1518,7 @@ public class Main {
 			}
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
-			String output = bigInt.toString(16);
+			String output = String.format("%1$032X", bigInt);    //pad on left to 32 chars with 0's, also capitalize.
 			// out("MD5: " + output);
 			return output.toUpperCase(Locale.ENGLISH);
 		} catch (IOException e) {
