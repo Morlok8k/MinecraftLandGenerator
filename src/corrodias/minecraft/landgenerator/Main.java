@@ -51,7 +51,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 57";
+	private static final String VERSION = "1.6.0 Testing 58";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -843,11 +843,14 @@ public class Main {
 		copyOut.close();
 	}
 
+	//TODO: add description
+	/**
+	 * @return
+	 */
 	private boolean printSpawn() {
-		// ugh, sorry, this is an ugly hack, but it's a last-minute feature.
-		// this is a lot of duplicated code.
+		// ugh, sorry, this is an ugly hack, but it's a last-minute feature. this is a lot of duplicated code.
+		// - Fixed by Morlok8k
 
-		//TODO: tidy up
 		readConf();
 		verifyWorld();
 
@@ -1841,7 +1844,6 @@ public class Main {
 	}
 
 	private static void writeTxtFile(String file, String txt) {
-		//TODO: find all file writes, and make it use this method, if possible.
 
 		/*
 		 * NOTE: I don't include a generic readTxtFile method, as that code depends on what I'm reading.
@@ -1866,7 +1868,7 @@ public class Main {
 	}
 
 	private static void out(String str) {
-		System.out.println(MLG + str);
+		System.out.println(MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
 	}
 
 	private static void err(String str) {
