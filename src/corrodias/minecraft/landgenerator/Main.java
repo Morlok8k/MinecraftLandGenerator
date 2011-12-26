@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 60";
+	private static final String VERSION = "1.6.0 Testing 62";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -669,6 +669,8 @@ public class Main {
 
 			byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 
+			boolean prepTextFirst = true;
+
 			OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
 
 			while ((line = pOut.readLine()) != null) {
@@ -690,7 +692,14 @@ public class Main {
 						outP(".");
 					} else {
 						outTmp = outTmp2;
-						outP(" " + outTmp + "...");
+
+						if (prepTextFirst) {
+							outP(MLG + outTmp + "...");
+							prepTextFirst = false;
+						} else {
+							outP(" " + outTmp + "...");
+						}
+
 					}
 
 				} else if (line.contains(preparingLevel)) {
@@ -722,7 +731,7 @@ public class Main {
 				}
 
 				if (line.contains(doneText)) { // now this is configurable!
-					out("");
+					outP(newLine);
 					if (waitSave) {
 						out("Waiting 30 seconds to save.");
 
