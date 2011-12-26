@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Testing 55
+Minecraft Land Generator version 1.6.0 Testing 56
 
 Updated December 25, 2011
 
@@ -33,6 +33,7 @@ Morlok8k:
 - Code Refactoring
 - Code Formatting
 - Code Optimization
+- Duplicate sections of code have been turned into Methods/"Functions"
 
 1.5.1
 - pr0f1x: Added the "save-all" command to be sent to the server before shutting it down.
@@ -52,7 +53,7 @@ Morlok8k:
 - Added total Percentage done (technically, it displays the % done once the server finishes...)
 - Added debugging output vars of conf file (disabled - need to re-compile source to activate)
 
-     + (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)
+		+ (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)
 
 *** 1.4.5 (pre 1.5.0) ***
 - sorry!  I shouldn't release untested code...
