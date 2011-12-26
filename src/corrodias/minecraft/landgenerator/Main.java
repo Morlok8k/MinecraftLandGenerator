@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -48,24 +51,26 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 41";
+	private static final String VERSION = "1.6.0 Testing 54";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
 	private static final String newLine = System.getProperty("line.separator");
 
 	private int increment = 380;
-	private ProcessBuilder minecraft = null;
-	private String javaLine = null;
+	private static ProcessBuilder minecraft = null;
+	private static String javaLine = null;
 	private static final String defaultJavaLine =
 			"java -Djava.awt.headless=true -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en"
 					+ " -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui";
-	private String serverPath = null;
-	private String worldPath = null;
+
+	private static String serverPath = null;
+	private static String worldPath = null;
 	private static String worldName = null;
 	private static String doneText = null;
 	private static String preparingText = null;
 	private static String preparingLevel = null;
+
 	private static String level_0 = null;			// the world
 	private static String level_1 = null;			// the nether
 	private static String level_2 = null;			// the end
@@ -76,6 +81,7 @@ public class Main {
 	private static String level_7 = null;
 	private static String level_8 = null;
 	private static String level_9 = null;
+
 	private int xRange = 0;
 	private int yRange = 0;
 	private Integer xOffset = null;
@@ -93,14 +99,18 @@ public class Main {
 	private static DateFormat dateFormat_MDY = null;
 	private static Date date = null;
 	private static Date MLG_Last_Modified_Date = null;
+	private static Long MLG_Last_Modified_Long = 0L;
 
 	private static final Class<?> cls = Main.class;
 	private static String MLGFileName = null;
+	private static String MLGFileNameShort = null;
 	private static final String rsrcError = "rsrcERROR";
 	private static String buildIDFile = "MLG-BuildID";
 	private static boolean isCompiledAsJar = false;
 	private static String MLG_Current_Hash = null;
 	private static int inf_loop_protect_BuildID = 0;
+	private static boolean flag_downloadedBuildID = false;
+
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
@@ -129,7 +139,7 @@ public class Main {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
-		(new Main()).run(args); // Why? idk, but merging this with run() creates errors, and i'm lazy!
+		(new Main()).run(args); // Why? this avoids "static" compiling issues.
 	}
 
 	/**
@@ -141,25 +151,23 @@ public class Main {
 	 */
 	private void run(String[] args) {
 
-		// Lets get a nice Date format for display, and a compact one for telling apart builds.
+		// Lets get a nice Date format for display
 		dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
-		//dateFormatBuildID = new SimpleDateFormat("'BuildID:' (yyMMdd.HHmmss)", Locale.ENGLISH);
 		dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 		date = new Date();
-		// dateFormat.format(date);
 
 		readBuildID();
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		System.out.println("Minecraft Land Generator version " + VERSION);
-		System.out.println("BuildID: (" + MLG_Last_Modified_Date.getTime() + ")");		//instead of dateformatting the buildid, we return the raw Long number.  thus different timezones wont display a different buildID
-		System.out.println("This version was last modified on "
-				+ dateFormat.format(MLG_Last_Modified_Date));
-		System.out.println("");
-		System.out.println("Uses a Minecraft server to generate square land of a specified size.");
-		System.out.println("");
-		System.out.println("");
+		out("Minecraft Land Generator version " + VERSION);
+		out("BuildID: (" + MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
+		// thus different timezones wont display a different buildID
+		out("This version was last modified on " + dateFormat.format(MLG_Last_Modified_Date));
+		out("");
+		out("Uses a Minecraft server to generate square land of a specified size.");
+		out("");
+		out("");
 
 		// =====================================================================
 		//                           INSTRUCTIONS
@@ -180,74 +188,19 @@ public class Main {
 		// the arguments are apparently okay so far. parse the conf file.
 		if (args[0].equalsIgnoreCase("-conf")) {
 
-			if (args[0].equalsIgnoreCase("download")) {
-				boolean fileSuccess = downloadFile(github_MLG_Conf_URL, testing);
-				if (fileSuccess) {
-					System.out.println(MLG + MinecraftLandGeneratorConf + " file downloaded.");
-					return;
+			if (args.length == 2) {
+				if (args[1].equalsIgnoreCase("download")) {
+					boolean fileSuccess = downloadFile(github_MLG_Conf_URL, testing);
+					if (fileSuccess) {
+						out(MinecraftLandGeneratorConf + " file downloaded.");
+						return;
+					}
 				}
 			}
 
-			try {
-				File config = new File(MinecraftLandGeneratorConf);
-				BufferedWriter out = new BufferedWriter(new FileWriter(config));
-				out.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION);
-				out.newLine();
-				out.write("#Authors: " + AUTHORS);
-				out.newLine();
-				out.write("#Auto-Generated: " + dateFormat.format(date));
-				out.newLine();
-				out.newLine();
-				out.write("#Line to run server:");
-				out.newLine();
-				out.write("Java=" + defaultJavaLine); // reads the default from a constant, makes it easier!
-				out.newLine();
-				out.newLine();
-				out.write("#Location of server.  use \".\" for the same folder as MLG");
-				out.newLine();
-				out.write("ServerPath=.");
-				out.newLine();
-				out.newLine();
-				out.write("#Strings read from the server");
-				out.newLine();
-				out.write("Done_Text=[INFO] Done");
-				out.newLine();
-				out.write("Preparing_Text=[INFO] Preparing spawn area:");
-				out.newLine();
-				out.write("Preparing_Level=[INFO] Preparing start region for");
-				out.newLine();
-				out.write("Level-0=The Overworld");
-				out.newLine();
-				out.write("Level-1=The Nether");
-				out.newLine();
-				out.write("Level-2=The End");
-				out.newLine();
-				out.write("Level-3=Level 3 (Future Level)");
-				out.newLine();
-				out.write("Level-4=Level 4 (Future Level)");
-				out.newLine();
-				out.write("Level-5=Level 5 (Future Level)");
-				out.newLine();
-				out.write("Level-6=Level 6 (Future Level)");
-				out.newLine();
-				out.write("Level-7=Level 7 (Future Level)");
-				out.newLine();
-				out.write("Level-8=Level 8 (Future Level)");
-				out.newLine();
-				out.write("Level-9=Level 9 (Future Level)");
-				out.newLine();
-				out.newLine();
-				out.write("#Optional: Wait a few seconds after saving.");
-				out.newLine();
-				out.write("WaitSave=false");
-				out.newLine();
-				out.close();
-				System.out.println(MLG + MinecraftLandGeneratorConf + " file created.");
-				return;
-			} catch (IOException ex) {
-				System.err.println(MLG + "Could not create " + MinecraftLandGeneratorConf + ".");
-				return;
-			}
+			saveConf(true);  //new conf file
+			return;
+
 		} else if (args[0].equalsIgnoreCase("-ps") || args[0].equalsIgnoreCase("-printspawn")) {
 			// okay, sorry, this is an ugly hack, but it's just a last-minute feature.
 			printSpawn();
@@ -259,212 +212,74 @@ public class Main {
 			updateMLG();
 			return;
 		} else if (args[0].equalsIgnoreCase("-readme")) {
-			readMe(args[1]);
+
+			if (args.length == 2) {
+				readMe(args[1]);
+			} else {
+				readMe(null);
+			}
 			return;
 		} else if (args[0].equalsIgnoreCase("-downloadfile")) {
-			downloadFile(args[1], true);
+			if (args.length == 2) {
+				downloadFile(args[1], true);
+			} else {
+				out("No File to Download!");
+			}
 			return;
 		} else if (args.length == 1) {
-			System.out.println(MLG + "For help, use java -jar MinecraftLandGenerator.jar -help");
+			out("For help, use java -jar " + MLGFileNameShort + " -help");
 			return;
 		}
 
-		try {
-			File config = new File(MinecraftLandGeneratorConf);
-			BufferedReader in = new BufferedReader(new FileReader(config));
-			String line;
-			while ((line = in.readLine()) != null) {
-				int pos = line.indexOf('=');
-				int end = line.lastIndexOf('#'); // comments, ignored lines
+		readConf();
 
-				if (end == -1) { // If we have no hash sign, then we read till the end of the line
-					end = line.length();
-				}
-				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
-					end = line.length();
-				}
+		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
 
-				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
-						doneText = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
-						preparingText = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("preparing_level")) {
-						preparingLevel = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-0")) {
-						level_0 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-1")) {
-						level_1 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-2")) {
-						level_2 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-3")) {
-						level_3 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-4")) {
-						level_4 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-5")) {
-						level_5 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-6")) {
-						level_6 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-7")) {
-						level_7 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-8")) {
-						level_8 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-9")) {
-						level_9 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("waitsave")) {
-						String wstmp = line.toLowerCase().substring(pos + 1, end);
-						if (wstmp.equals("true")) {
-							waitSave = true;
-						} else {
-							waitSave = false;
-						}
-					}
-				}
-			}
-			in.close();
+		if (serverPath == null || javaLine == null) { 			// MLG 1.2 Check for a valid .conf file.
+			err(MinecraftLandGeneratorConf
+					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
 
-			if (testing) {
-				System.out.println(MLG + "[TEST] Test Output: Reading of Config File ");
-				System.out.println(MLG + "[TEST]     serverPath: " + serverPath);
-				System.out.println(MLG + "[TEST]       javaLine: " + javaLine);
-				System.out.println(MLG + "[TEST]       doneText: " + doneText);
-				System.out.println(MLG + "[TEST]  preparingText: " + preparingText);
-				System.out.println(MLG + "[TEST] preparingLevel: " + preparingLevel);
-				System.out.println(MLG + "[TEST]        level_0: " + level_0);
-				System.out.println(MLG + "[TEST]        level_1: " + level_1);
-				System.out.println(MLG + "[TEST]        level_2: " + level_2);
-				System.out.println(MLG + "[TEST]        level_3: " + level_3);
-				System.out.println(MLG + "[TEST]        level_4: " + level_4);
-				System.out.println(MLG + "[TEST]        level_5: " + level_5);
-				System.out.println(MLG + "[TEST]        level_6: " + level_6);
-				System.out.println(MLG + "[TEST]        level_7: " + level_7);
-				System.out.println(MLG + "[TEST]        level_8: " + level_8);
-				System.out.println(MLG + "[TEST]        level_9: " + level_9);
-				System.out.println(MLG + "[TEST]       waitSave: " + waitSave);
-			}
+			// return;
 
-			boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
+			// We no longer quit. We generate a new one with defaults.
 
-			if (serverPath == null || javaLine == null) { 			// MLG 1.2 Check for a valid .conf file.
-				System.err.println(MLG + MinecraftLandGeneratorConf
-						+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
+			javaLine = defaultJavaLine;
+			serverPath = ".";
+			oldConf = true;
+		}
 
-				// return;
+		if (doneText == null) {					// MLG 1.4.0
+			oldConf = true;
+		} else if (preparingText == null) {		// MLG 1.4.0
+			oldConf = true;
+		} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
+			oldConf = true;
+		} else if (level_1 == null) {			// MLG 1.4.5 / 1.5.0
+			oldConf = true;
+		} else if (level_0 == null) {			// MLG 1.5.1 / 1.6.0
+			oldConf = true;
+		}
 
-				// We no longer quit. We generate a new one with defaults.
+		if (oldConf) {
+			err("Old Version of " + MinecraftLandGeneratorConf + " found.  Updating...");
 
-				javaLine = defaultJavaLine;
-				serverPath = ".";
-				oldConf = true;
-			}
+			saveConf(false);		//old conf
 
-			if (doneText == null) {					// MLG 1.4.0
-				oldConf = true;
-			} else if (preparingText == null) {		// MLG 1.4.0
-				oldConf = true;
-			} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
-				oldConf = true;
-			} else if (level_1 == null) {			// MLG 1.4.5 / 1.5.0
-				oldConf = true;
-			} else if (level_0 == null) {			// MLG 1.5.1 / 1.6.0
-				oldConf = true;
-			}
+			out("");
+			int count = 0;
+			while (count <= 100) {
+				outP(count + "% ");
 
-			if (oldConf) {
-				System.err.println(MLG + "Old Version of " + MinecraftLandGeneratorConf
-						+ " found.  Updating...");
 				try {
-					File configUpdate = new File(MinecraftLandGeneratorConf);
-					BufferedWriter out = new BufferedWriter(new FileWriter(configUpdate));
-					out.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION);
-					out.newLine();
-					out.write("#Authors: " + AUTHORS);
-					out.newLine();
-					out.write("#Auto-Updated: " + dateFormat.format(date));
-					out.newLine();
-					out.newLine();
-					out.write("#Line to run server:");
-					out.newLine();
-					out.write("Java=" + javaLine);
-					out.newLine();
-					out.newLine();
-					out.write("#Location of server.  use \".\" for the same folder as MLG");
-					out.newLine();
-					out.write("ServerPath=" + serverPath);
-					out.newLine();
-					out.newLine();
-					out.write("#Strings read from the server");
-					out.newLine();
-					out.write("Done_Text=[INFO] Done");
-					out.newLine();
-					out.write("Preparing_Text=[INFO] Preparing spawn area:");
-					out.newLine();
-					out.write("Preparing_Level=[INFO] Preparing start region for");
-					out.newLine();
-					out.write("Level-0=The Overworld");
-					out.newLine();
-					out.write("Level-1=The Nether");
-					out.newLine();
-					out.write("Level-2=The End");
-					out.newLine();
-					out.write("Level-3=Level 3 (Future Level)");
-					out.newLine();
-					out.write("Level-4=Level 4 (Future Level)");
-					out.newLine();
-					out.write("Level-5=Level 5 (Future Level)");
-					out.newLine();
-					out.write("Level-6=Level 6 (Future Level)");
-					out.newLine();
-					out.write("Level-7=Level 7 (Future Level)");
-					out.newLine();
-					out.write("Level-8=Level 8 (Future Level)");
-					out.newLine();
-					out.write("Level-9=Level 9 (Future Level)");
-					out.newLine();
-					out.newLine();
-					out.write("#Optional: Wait a few seconds after saving.");
-					out.newLine();
-					out.write("WaitSave=false");
-					out.newLine();
-					out.close();
-					System.out.println(MLG + MinecraftLandGeneratorConf + " file created.");
-
-					System.out.println("");
-					int count = 0;
-					while (count <= 100) {
-						System.out.print(count + "% ");
-
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						count += 10;
-					}
-					System.out.println("");
-					return;
-
-				} catch (IOException ex) {
-					System.err
-							.println(MLG + "Could not create " + MinecraftLandGeneratorConf + ".");
-					return;
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				count += 10;
 			}
+			out("");
+			return;
 
-		} catch (FileNotFoundException ex) {
-			System.out
-					.println(MLG
-							+ "Could not find "
-							+ MinecraftLandGeneratorConf
-							+ ". It is recommended that you run the application with the -conf option to create it.");
-			return;
-		} catch (IOException ex) {
-			System.err.println(MLG + "Could not read " + MinecraftLandGeneratorConf + ".");
-			return;
 		}
 
 		// ARGUMENTS
@@ -472,7 +287,7 @@ public class Main {
 			xRange = Integer.parseInt(args[0]);
 			yRange = Integer.parseInt(args[1]);
 		} catch (NumberFormatException ex) {
-			System.err.println(MLG + "Invalid X or Y argument.");
+			err("Invalid X or Y argument.");
 			return;
 		}
 
@@ -490,7 +305,7 @@ public class Main {
 				} else if (nextSwitch.startsWith("-w")) {
 					ignoreWarnings = true;
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
-					System.out.println(MLG + "Using Alternate Launching...");
+					out("Using Alternate Launching...");
 					alternate = true;
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
@@ -501,53 +316,18 @@ public class Main {
 				}
 			}
 		} catch (NumberFormatException ex) {
-			System.err.println(MLG + "Invalid -i switch value.");
+			err("Invalid -i switch value.");
 			return;
 		}
 
-		{
-			// verify that we ended up with a good server path, either from the file or from an argument.
-			File file = new File(serverPath);
-			if (!file.exists() || !file.isDirectory()) {
-				System.err.println(MLG + "The server directory is invalid: " + serverPath);
-				return;
-			}
-		}
-
-		try {
-			// read the name of the current world from the server.properties file
-			BufferedReader props =
-					new BufferedReader(new FileReader(new File(serverPath + fileSeparator
-							+ "server.properties")));
-			String line;
-			while ((line = props.readLine()) != null) {
-				int pos = line.indexOf('=');
-				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
-						worldPath = serverPath + fileSeparator + line.substring(pos + 1);
-						worldName = line.substring(pos + 1);
-					}
-
-				}
-			}
-
-		} catch (FileNotFoundException ex) {
-			System.err.println(MLG + "Could not open " + serverPath + fileSeparator
-					+ "server.properties");
-			return;
-		} catch (IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-			return;
-		}
+		verifyWorld();
 
 		{
 			File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
 			if (backupLevel.exists()) {
-				System.err
-						.println(MLG
-								+ "There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
-								+ " or restore the backup.");
-				System.err.println(MLG + "You most likely will want to restore the backup!");
+				err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
+						+ " or restore the backup.");
+				err("You most likely will want to restore the backup!");
 				return;
 			}
 		}
@@ -556,11 +336,11 @@ public class Main {
 		//                              PROCESSING
 		// =====================================================================
 
-		System.out.println(MLG + "Processing world \"" + worldPath + "\", in " + increment
-				+ " block increments, with: " + javaLine);
-		// System.out.println( MLG + "Processing \"" + worldName + "\"...");
+		out("Processing world \"" + worldPath + "\", in " + increment + " block increments, with: "
+				+ javaLine);
+		// out( MLG + "Processing \"" + worldName + "\"...");
 
-		System.out.println("");
+		out("");
 
 		// prepare our two ProcessBuilders
 		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
@@ -569,19 +349,21 @@ public class Main {
 		minecraft.redirectErrorStream(true);
 
 		try {
-			System.out.println(MLG + "Launching server once to make sure there is a world.");
-			runMinecraft(minecraft, verbose, alternate, javaLine);
-			System.out.println("");
+			out("Launching server once to make sure there is a world.");
+
+			runMinecraft(verbose, alternate);
+
+			out("");
 
 			File serverLevel = new File(worldPath + fileSeparator + "level.dat");
 			File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
 
-			System.out.println(MLG + "Backing up level.dat to level_backup.dat.");
+			out("Backing up level.dat to level_backup.dat.");
 			copyFile(serverLevel, backupLevel);
-			System.out.println("");
+			out("");
 
 			Integer[] spawn = getSpawn(serverLevel);
-			System.out.println(MLG + "Spawn point detected: [" + spawn[0] + ", " + spawn[2] + "]");
+			out("Spawn point detected: [" + spawn[0] + ", " + spawn[2] + "]");
 			{
 				boolean overridden = false;
 				if (xOffset == null) {
@@ -595,11 +377,11 @@ public class Main {
 					overridden = true;
 				}
 				if (overridden) {
-					System.out.println(MLG + "Centering land generation on [" + xOffset + ", "
-							+ yOffset + "] due to switches.");
+					out("Centering land generation on [" + xOffset + ", " + yOffset
+							+ "] due to switches.");
 				}
 			}
-			System.out.println("");
+			out("");
 
 			int totalIterations = (xRange / increment + 1) * (yRange / increment + 1);
 			int currentIteration = 0;
@@ -611,20 +393,18 @@ public class Main {
 				for (int currentY = 0 - yRange / 2; currentY <= yRange / 2; currentY += increment) {
 					currentIteration++;
 
-					System.out
-							.println(MLG
-									+ "Setting spawn to ["
-									+ Integer.toString(currentX + xOffset)
-									+ ", "
-									+ Integer.toString(currentY + yOffset)
-									+ "] ("
-									+ currentIteration
-									+ "/"
-									+ totalIterations
-									+ ") "
-									+ Float.toString((Float.parseFloat(Integer
-											.toString(currentIteration)) / Float.parseFloat(Integer
-											.toString(totalIterations))) * 100) + "% Done"); // Time Remaining estimate
+					out("Setting spawn to ["
+							+ Integer.toString(currentX + xOffset)
+							+ ", "
+							+ Integer.toString(currentY + yOffset)
+							+ "] ("
+							+ currentIteration
+							+ "/"
+							+ totalIterations
+							+ ") "
+							+ Float.toString((Float.parseFloat(Integer.toString(currentIteration)) / Float
+									.parseFloat(Integer.toString(totalIterations))) * 100)
+							+ "% Done"); // Time Remaining estimate
 
 					timeTracking[0] = timeTracking[1];
 					timeTracking[1] = timeTracking[2];
@@ -636,55 +416,53 @@ public class Main {
 					if (currentIteration >= 4) {
 						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						System.out
-								.println(MLG
-										+ String.format(
-												"Estimated time remaining: %dh%dm%ds",
-												differenceTime / (1000 * 60 * 60),
-												(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
-												((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration == 3) {
 						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						System.out
-								.println(MLG
-										+ String.format(
-												"Estimated time remaining: %dh%dm%ds",
-												differenceTime / (1000 * 60 * 60),
-												(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
-												((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration == 2) {
 						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						System.out
-								.println(MLG
-										+ String.format(
-												"Estimated time remaining: %dh%dm%ds",
-												differenceTime / (1000 * 60 * 60),
-												(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
-												((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration <= 1) {
-						System.out.println(MLG + "Estimated time remaining: Calculating...");
+						out("Estimated time remaining: Calculating...");
 					}
 
 					// Set the spawn point
 					setSpawn(serverLevel, currentX + xOffset, 128, currentY + yOffset);
 
 					// Launch the server
-					runMinecraft(minecraft, verbose, alternate, javaLine);
-					System.out.println("");
+					runMinecraft(verbose, alternate);
+					out("");
 				}
 			}
 
-			System.out.println(MLG + "Finished generating chunks.");
+			out("Finished generating chunks.");
 			copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
-			System.out.println(MLG + "Restored original level.dat.");
+			out("Restored original level.dat.");
 		} catch (IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
+	//TODO: update this
+	/**
+	 * @param level
+	 * @return
+	 * @throws IOException
+	 * @author Corrodias
+	 */
 	protected static Integer[] getSpawn(File level) throws IOException {
 		try {
 			NBTInputStream input = new NBTInputStream(new FileInputStream(level));
@@ -703,7 +481,7 @@ public class Main {
 			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 
 			randomSeed = (LongTag) newData.get("RandomSeed");
-			System.out.println(MLG + "Seed: " + randomSeed.getValue()); // lets output the seed, cause why not?
+			out("Seed: " + randomSeed.getValue()); // lets output the seed, cause why not?
 
 			Integer[] ret =
 					new Integer[] { spawnX.getValue(), spawnY.getValue(), spawnZ.getValue() };
@@ -730,6 +508,7 @@ public class Main {
 	 *            the new Z value
 	 * @throws IOException
 	 *             if there are any problems reading/writing the file
+	 * @author Corrodias
 	 */
 	protected static void setSpawn(File level, Integer x, Integer y, Integer z) throws IOException {
 		try {
@@ -804,12 +583,14 @@ public class Main {
 	 * @param minecraft
 	 * @param verbose
 	 * @throws IOException
+	 * @author Corrodias
 	 */
-	protected static void runMinecraft(ProcessBuilder minecraft, boolean verbose,
-			boolean alternate, String javaLine) throws IOException {
-		System.out.println(MLG + "Starting server.");
+	protected static void runMinecraft(boolean verbose, boolean alternate) throws IOException {
+		out("Starting server.");
 
 		boolean warning = false;
+		boolean cantKeepUp = false;
+		final boolean ignoreWarningsOriginal = ignoreWarnings;
 
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
@@ -820,8 +601,11 @@ public class Main {
 		// Stupid compile errors...
 
 		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
-			System.out.println(MLG + "Alternate Launch");
+			out("Alternate Launch");
 			Process process = minecraft.start();
+
+			byte[] saveall = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
+			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
 			// monitor output and print to console where required.
 			// STOP the server when it's done.
@@ -832,51 +616,19 @@ public class Main {
 
 				line = line.trim(); //Trim spaces off the beginning and end, if any.
 
-				System.out.println(line);
+				out(line);
 				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
-					if (waitSave) {
-						System.out.println(MLG + "Waiting 30 seconds to save.");
+					// removed waitSave code for alternate launch.  Not needed here.  Alt launch is basic, no frills, etc.
 
-						int count = 1;
-						while (count <= 30) {
-							System.out.print(".");
-
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							count += 1;
-						}
-						System.out.println("");
-					}
-
-					System.out.println(MLG + "Saving server data...");
-					byte[] saveall = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
+					out("Saving server data...");
 					outputStream.write(saveall);
 					outputStream.flush();
-					byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
-					System.out.println(MLG + "Stopping server...");
-
+					out("Stopping server...");
 					outputStream.write(stop);
 					outputStream.flush();
-					if (waitSave) {
-						System.out.println(MLG + "Waiting 10 seconds to save.");
-						int count = 1;
-						while (count <= 10) {
-							System.out.print(".");
 
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							count += 1;
-						}
-						System.out.println("");
-					}
 				}
 			}
 			// readLine() returns null when the process exits
@@ -884,12 +636,12 @@ public class Main {
 		} else { // start minecraft server normally!
 			Process process = minecraft.start();
 			if (verbose) {
-				System.out.println(MLG + "Started Server.");
+				out("Started Server.");
 			}
 			BufferedReader pOut =
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
 			if (verbose) {
-				System.out.println(MLG + "Accessing Server Output...");
+				out("Accessing Server Output...");
 			}
 
 			String line = null;
@@ -909,9 +661,9 @@ public class Main {
 
 				if (verbose) {
 					if (line.contains("[INFO]")) {
-						System.out.println(line.substring(line.lastIndexOf("]") + 2));
+						out(line.substring(line.lastIndexOf("]") + 2));
 					} else {
-						System.out.println(line);
+						out(line);
 					}
 				} else if (line.contains(preparingText)) {
 
@@ -919,46 +671,48 @@ public class Main {
 					outTmp2 = outTmp2.trim();				//we are removing extra spaces here
 					if (outTmp.equals(outTmp2)) {
 						//instead of printing the same number, we add another dot
-						System.out.print(".");
+						outP(".");
 					} else {
 						outTmp = outTmp2;
-						System.out.print(" " + outTmp + "...");
+						outP(" " + outTmp + "...");
 					}
 
 				} else if (line.contains(preparingLevel)) {
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_0 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_0 + ":");
 					} else if (line.contains("level 1")) { // "Preparing start region for level 1"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_1 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_1 + ":");
 					} else if (line.contains("level 2")) { // "Preparing start region for level 2"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_2 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_2 + ":");
 					} else if (line.contains("level 3")) { // "Preparing start region for level 3"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_3 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_3 + ":");
 					} else if (line.contains("level 4")) { // "Preparing start region for level 4"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_4 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_4 + ":");
 					} else if (line.contains("level 5")) { // "Preparing start region for level 5"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_5 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_5 + ":");
 					} else if (line.contains("level 6")) { // "Preparing start region for level 6"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_6 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_6 + ":");
 					} else if (line.contains("level 7")) { // "Preparing start region for level 7"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_7 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_7 + ":");
 					} else if (line.contains("level 8")) { // "Preparing start region for level 8"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_8 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_8 + ":");
 					} else if (line.contains("level 9")) { // "Preparing start region for level 9"
-						System.out.println("\r\n" + MLG + worldName + ": " + level_9 + ":");
+						out("\r\n" + MLG + worldName + ": " + level_9 + ":");
 					} else {
-						System.out.println(line.substring(line.lastIndexOf("]") + 2));
+						out(line.substring(line.lastIndexOf("]") + 2));
 					}
+				} else if (line.contains("server version")) {
+					out(line.substring(line.lastIndexOf("]") + 2));
 				}
 
 				if (line.contains(doneText)) { // now this is configurable!
-					System.out.println("");
+					out("");
 					if (waitSave) {
-						System.out.println(MLG + "Waiting 30 seconds to save.");
+						out("Waiting 30 seconds to save.");
 
 						int count = 1;
 						while (count <= 30) {
-							System.out.print(".");
+							outP(".");
 
 							try {
 								Thread.sleep(1000);
@@ -967,23 +721,23 @@ public class Main {
 							}
 							count += 1;
 						}
-						System.out.println("");
+						out("");
 					}
-					System.out.println(MLG + "Saving server data.");
+					out("Saving server data.");
 					outputStream.write(saveAll);
 					outputStream.flush();
 
-					System.out.println(MLG + "Stopping server.");
+					out("Stopping server.");
 					// OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
 					outputStream.flush();
 					// outputStream.close();
 
 					if (waitSave) {
-						System.out.println(MLG + "Waiting 10 seconds to save.");
+						out("Waiting 10 seconds to save.");
 						int count = 1;
 						while (count <= 10) {
-							System.out.print(".");
+							outP(".");
 
 							try {
 								Thread.sleep(1000);
@@ -992,22 +746,25 @@ public class Main {
 							}
 							count += 1;
 						}
-						System.out.println("");
+						out("");
 					}
 				}
-				//Here we want to ignore the most common warning.
-				//TODO: add ignore "cant keep up" warning!
+
+				//Here we want to ignore the most common warning: "Can't keep up!"
+				if (line.contains("Can't keep up!")) {
+					cantKeepUp = true;			//[WARNING] Can't keep up! Did the system time change, or is the server overloaded?
+					ignoreWarnings = true;
+				}
 
 				if (ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) { // If we have a warning, stop...
-						System.out.println("");
-						System.out
-								.println(MLG + "Warning found: Stopping Minecraft Land Generator");
+						out("");
+						out("Warning found: Stopping Minecraft Land Generator");
 						if (verbose == false) { // If verbose is true, we already displayed it.
-							System.out.println(line);
+							out(line);
 						}
-						System.out.println("");
-						System.out.println(MLG + "Forcing Save...");
+						out("");
+						out("Forcing Save...");
 						outputStream.write(saveAll);
 						outputStream.flush();
 						// OutputStream outputStream = process.getOutputStream();
@@ -1020,13 +777,13 @@ public class Main {
 						// System.exit(1);
 					}
 					if (line.contains("[SEVERE]")) { // If we have a severe error, stop...
-						System.out.println("");
-						System.out.println(MLG + "Severe error found: Stopping server.");
+						out("");
+						out("Severe error found: Stopping server.");
 						if (verbose == false) { // If verbose is true, we already displayed it.
-							System.out.println(line);
+							out(line);
 						}
-						System.out.println("");
-						System.out.println(MLG + "Forcing Save...");
+						out("");
+						out("Forcing Save...");
 						outputStream.write(saveAll);
 						outputStream.flush();
 						// OutputStream outputStream = process.getOutputStream();
@@ -1039,6 +796,10 @@ public class Main {
 						// System.exit(1);
 						// Quit!
 					}
+				}
+
+				if (cantKeepUp) {
+					ignoreWarnings = ignoreWarningsOriginal;
 				}
 			}
 
@@ -1065,126 +826,38 @@ public class Main {
 	 * @param dst
 	 * @throws IOException
 	 */
-	public static void copyFile(File src, File dst) throws IOException {
-		InputStream in = new FileInputStream(src);
-		OutputStream out = new FileOutputStream(dst);
+	private static void copyFile(File src, File dst) throws IOException {
+		InputStream copyIn = new FileInputStream(src);
+		OutputStream copyOut = new FileOutputStream(dst);
 
 		// Transfer bytes from in to out
 		byte[] buf = new byte[1024];
 		int len;
-		while ((len = in.read(buf)) >= 0) {
+		while ((len = copyIn.read(buf)) >= 0) {
 			if (len > 0) {
-				out.write(buf, 0, len);
+				copyOut.write(buf, 0, len);
 			}
 		}
-		in.close();
-		out.flush();
-		out.close();
+		copyIn.close();
+		copyOut.flush();
+		copyOut.close();
 	}
 
 	private boolean printSpawn() {
 		// ugh, sorry, this is an ugly hack, but it's a last-minute feature.
 		// this is a lot of duplicated code.
 
-		//TODO: tidy up, make config file stuff one function.
-
-		try {
-			File config = new File(MinecraftLandGeneratorConf);
-			BufferedReader in = new BufferedReader(new FileReader(config));
-			String line;
-			while ((line = in.readLine()) != null) {
-				int pos = line.indexOf('=');
-				int end = line.lastIndexOf('#'); // comments, ignored lines
-
-				if (end == -1) { // If we have no hash sign, then we read till the end of the line
-					end = line.length();
-				}
-
-				if (end <= pos) { // If hash is before the '=', we may have a issue... it should be fine, cause we check for issues next, but lets make sure.
-					end = line.length();
-				}
-
-				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
-						doneText = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
-						preparingText = line.substring(pos + 1, end);
-					}
-				}
-			}
-			in.close();
-
-			if (serverPath == null || javaLine == null) {
-				System.err
-						.println(MLG
-								+ MinecraftLandGeneratorConf
-								+ " does not contain all requird properties. Please recreate it by running this application with no arguments.");
-				return false;
-			}
-		} catch (FileNotFoundException ex) {
-			System.out
-					.println(MLG
-							+ "Could not find "
-							+ MinecraftLandGeneratorConf
-							+ ". It is recommended that you run the application with the -conf option to create it.");
-			return false;
-		} catch (IOException ex) {
-			System.err.println(MLG + "Could not read " + MinecraftLandGeneratorConf + ".");
-			return false;
-		}
-
-		{
-			// verify that we ended up with a good server path, either from the file or from an argument.
-			File file = new File(serverPath);
-			if (!file.exists() || !file.isDirectory()) {
-				System.err.println(MLG + "The server directory is invalid: " + serverPath);
-				return false;
-			}
-		}
-
-		try {
-			// read the name of the current world from the server.properties file
-			BufferedReader props =
-					new BufferedReader(new FileReader(new File(serverPath + fileSeparator
-							+ "server.properties")));
-			String line;
-			while ((line = props.readLine()) != null) {
-				int pos = line.indexOf('=');
-				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
-						worldPath = serverPath + fileSeparator + line.substring(pos + 1);
-					}
-				}
-			}
-
-		} catch (FileNotFoundException ex) {
-			System.err.println(MLG + "Could not open " + serverPath + fileSeparator
-					+ "server.properties");
-			return false;
-		} catch (IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		}
+		//TODO: tidy up
+		readConf();
+		verifyWorld();
 
 		File level = new File(worldPath + fileSeparator + "level.dat");
-		if (!level.exists() || !level.isFile()) {
-			System.err
-					.println(MLG
-							+ "The currently-configured world does not exist. Please launch the server once, first.");
-			return false;
-		}
-
 		try {
 			Integer[] spawn = getSpawn(level);
-			System.out.println(MLG + "The current spawn point is: [" + spawn[0] + ", " + spawn[2]
-					+ "]");
+			out("The current spawn point is: [" + spawn[0] + ", " + spawn[2] + "]");
 			return true;
 		} catch (IOException ex) {
-			System.err.println(MLG + "Error while reading " + level.getPath());
+			err("Error while reading " + level.getPath());
 			return false;
 		}
 	}
@@ -1196,7 +869,7 @@ public class Main {
 	 * @author Morlok8k
 	 * 
 	 */
-	public static void readMe(String readmeFile) {
+	private static void readMe(String readmeFile) {
 
 		if (readmeFile == "" || readmeFile == null) {
 			readmeFile = defaultReadmeFile;
@@ -1324,18 +997,18 @@ public class Main {
 
 		try {
 			File readme = new File(readmeFile);
-			BufferedWriter out = new BufferedWriter(new FileWriter(readme));
+			BufferedWriter outFile = new BufferedWriter(new FileWriter(readme));
 
-			out.write(ReadMeText + showHelpSTR);
+			outFile.write(ReadMeText + showHelpSTR);
 
-			out.newLine();
-			out.close();
+			outFile.newLine();
+			outFile.close();
 
-			System.out.println(MLG + readmeFile + " file created.");
+			out(readmeFile + " file created.");
 			return;
 
 		} catch (IOException ex) {
-			System.err.println(MLG + "Could not create " + readmeFile + ".");
+			err("Could not create " + readmeFile + ".");
 			return;
 		}
 
@@ -1355,7 +1028,7 @@ public class Main {
 	 * @param Output
 	 *            Displays output if true
 	 */
-	public static boolean downloadFile(String URL, boolean Output) {
+	private static boolean downloadFile(String URL, boolean Output) {
 
 		boolean success = true;
 
@@ -1369,14 +1042,15 @@ public class Main {
 		Output = true;
 
 		if (Output) {
-			System.out.println(MLG + "Downloading: " + URL);
-			System.out.println(MLG + "Saving as: " + fileName);
+			out("Downloading: " + URL);
+			out("Saving as: " + fileName);
 		}
 
 		long differenceTime = System.currentTimeMillis();
 		Long[] timeTracking = new Long[] { differenceTime, differenceTime };
 		timeTracking[0] = System.currentTimeMillis();
 
+		outP(MLG);
 		try {
 			BufferedInputStream in;
 			in = new BufferedInputStream(new URL(URL).openStream());
@@ -1390,21 +1064,20 @@ public class Main {
 				bout.write(data, 0, x);
 				count = count + x;
 				if (Output) {
-					System.out.print("*");
+					outP("*");
 				}
 			}
 			bout.close();
 			in.close();
 			if (Output) {
-				System.out.println("");
-				System.out.println(count + " byte(s) copied");
+				outP(newLine);
+				out(count + " byte(s) copied");
 			}
 			timeTracking[1] = System.currentTimeMillis();
 			differenceTime = (timeTracking[1] - timeTracking[0]) / 2;
 			if (Output) {
-				System.out.println(String.format(MLG + "Elapsed Time: %dm%ds",
-						(differenceTime % (1000 * 60 * 60)) / (1000 * 60),
-						((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+				out(String.format(MLG + "Elapsed Time: %dm%ds", (differenceTime % (1000 * 60 * 60))
+						/ (1000 * 60), ((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1417,7 +1090,7 @@ public class Main {
 			success = false;
 		}
 		if (Output) {
-			System.out.println(MLG + "Done");
+			out("Done");
 		}
 		return success;
 	}
@@ -1435,13 +1108,13 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static void buildID() {
+	private static void buildID() {
 
 		// download BuildID from Github.
 		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL, testing);
 		if (fileSuccess) {
-			System.out.println(MLG + buildIDFile + " file downloaded.");
-
+			out(buildIDFile + " file downloaded.");
+			flag_downloadedBuildID = true;
 		}
 		// If not available, create.
 		// After downloading, check to see if it matches hash.
@@ -1450,7 +1123,7 @@ public class Main {
 			try {
 				MLGFileName = getClassLoader(cls);
 			} catch (Exception e) {
-				System.out.println(MLG + "Error: Finding file failed");
+				out("Error: Finding file failed");
 				e.printStackTrace();
 			}
 			if (MLGFileName.equals(rsrcError)) { return; }
@@ -1460,9 +1133,9 @@ public class Main {
 
 			try {
 				MLG_Current_Hash = fileMD5(MLGFileName);
-				// System.out.println(hash + "  " + MLGFileName);
+				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
-				System.out.println(MLG + "Error: MD5 from file failed");
+				out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -1471,10 +1144,10 @@ public class Main {
 		try {
 			time = getCompileTimeStamp(cls);
 		} catch (Exception e) {
-			System.out.println(MLG + "Error: TimeStamp from file failed");
+			out("Error: TimeStamp from file failed");
 			e.printStackTrace();
 		}
-		// System.out.println(d.toString());
+		// out(d.toString());
 
 		boolean notNew = false;
 		String INFO = "";
@@ -1485,29 +1158,29 @@ public class Main {
 		try {
 			String line;
 
-			BufferedReader in = new BufferedReader(new FileReader(buildIDFile));
-			BufferedWriter out = new BufferedWriter(new FileWriter(buildIDFile + ".temp"));
+			BufferedReader inFile = new BufferedReader(new FileReader(buildIDFile));
+			BufferedWriter outFile = new BufferedWriter(new FileWriter(buildIDFile + ".temp"));
 
-			while ((line = in.readLine()) != null) {
+			while ((line = inFile.readLine()) != null) {
 
 				if (line.contains(MLG_Current_Hash)) {
 					notNew = true;
 					if (testing) {
-						System.out.println("[DEBUG] NotNew");
+						out("[DEBUG] NotNew");
 					}
 				}
 
-				out.write(line);
-				out.newLine();
+				outFile.write(line);
+				outFile.newLine();
 			}
 
 			if (notNew == false) {
-				out.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "# MLG v"
+				outFile.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "# MLG v"
 						+ VERSION + INFO);
-				out.newLine();
+				outFile.newLine();
 			}
-			out.close();
-			in.close();
+			outFile.close();
+			inFile.close();
 
 			File fileDelete = new File(buildIDFile);
 			fileDelete.delete();
@@ -1515,20 +1188,20 @@ public class Main {
 			fileRename.renameTo(new File(buildIDFile));
 
 		} catch (FileNotFoundException ex) {
-			System.out.println(MLG + "\"" + buildIDFile + "\" file not Found.  Generating New \""
-					+ buildIDFile + "\" File");
+			out("\"" + buildIDFile + "\" file not Found.  Generating New \"" + buildIDFile
+					+ "\" File");
 			try {
-				BufferedWriter out = new BufferedWriter(new FileWriter(buildIDFile));
-				out.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
+				BufferedWriter outFile = new BufferedWriter(new FileWriter(buildIDFile));
+				outFile.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
 						+ VERSION + INFO);
-				out.newLine();
-				out.close();
+				outFile.newLine();
+				outFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
 		} catch (IOException ex) {
-			System.err.println(MLG + "Could not create \"" + buildIDFile + "\".");
+			err("Could not create \"" + buildIDFile + "\".");
 			return;
 		}
 
@@ -1552,19 +1225,28 @@ public class Main {
 			try {
 				MLGFileName = getClassLoader(cls);
 			} catch (Exception e) {
-				System.out.println(MLG + "Error: Finding file failed");
+				out("Error: Finding file failed");
 				e.printStackTrace();
 			}
 			if (MLGFileName.equals(rsrcError)) { return; }
+		}
+
+		//TODO: MLGFileNameShort
+		MLGFileNameShort =
+				MLGFileName.substring(MLGFileName.lastIndexOf(fileSeparator) + 1,
+						MLGFileName.length());
+
+		if (testing) {
+			out("Currently Running as file:" + MLGFileNameShort);
 		}
 
 		if (MLG_Current_Hash == null) {
 
 			try {
 				MLG_Current_Hash = fileMD5(MLGFileName);
-				// System.out.println(hash + "  " + MLGFileName);
+				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
-				System.out.println(MLG + "Error: MD5 from file failed");
+				out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -1594,19 +1276,56 @@ public class Main {
 					timeStamps.add(line.substring(pos + 1, end));
 
 					if (testing) {
-						System.out.println(timeStamps.get(tsCount));
+						out(timeStamps.get(tsCount));
 					}
 
 					tsCount++;
 
 					if (line.contains(MLG_Current_Hash)) {
-						// System.out.println("[DEBUG] Found!");
+						// out("[DEBUG] Found!");
 						foundLine = true;
 
 						if (pos != -1) {
 							if (line.substring(0, pos).equals(MLG_Current_Hash)) {
-								MLG_Last_Modified_Date =
-										new Date(new Long(line.substring(pos + 1, end)));
+								MLG_Last_Modified_Long = new Long(line.substring(pos + 1, end));
+								MLG_Last_Modified_Date = new Date(MLG_Last_Modified_Long);
+
+								Long highestModTime = ZipGetModificationTime(MLGFileName);
+								long tCalc = MLG_Last_Modified_Long - highestModTime;
+
+								if (testing) {
+									err("tCalc\tMLG_Last_Modified_Long\thighestModTime" + newLine
+											+ tCalc + "\t" + MLG_Last_Modified_Long + "\t"
+											+ highestModTime);
+								}
+
+								if (highestModTime == 0L) {
+
+									err("Archive Intergrity Check Failed: .zip/.jar file Issue.");
+									err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+
+								} else {
+									if (tCalc < -15000L) {
+
+										//time is newer?  (.zip file is newer than BuildID)
+										err("Archive Intergrity Check Failed: .zip file is newer than BuildID");
+										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+									}
+
+									if (tCalc < 15000L) {
+
+										//times are within 30 seconds (+/- 15 seconds) of each other.  (typically 1-2 seconds, but left room for real-world error)
+										if (testing | flag_downloadedBuildID) {
+											err("Archive Intergrity Check Passed. Offset: "
+													+ (tCalc / 1000) + "sec.");
+										}
+
+									} else {
+										//times dont match.  (.zip file is older than specified BuildID)
+										err("Archive Intergrity Check Failed: .zip file is older than BuildID");
+										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+									}
+								}
 								//return;
 							}
 
@@ -1617,14 +1336,14 @@ public class Main {
 				in.close();
 
 				if (foundLine == false) {
-					// System.out.println("[DEBUG] FoundLine False");
+					// out("[DEBUG] FoundLine False");
 					buildID();
 					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
 					return;
 				}
 			} catch (Exception e) {
-				System.err.println(MLG + "Cant Read " + buildIDFile + "!");
-				System.err.println(MLG + e.getLocalizedMessage());
+				err("Cant Read " + buildIDFile + "!");
+				err(e.getLocalizedMessage());
 				System.err.println("");
 				// e.printStackTrace();
 				buildID();
@@ -1642,7 +1361,7 @@ public class Main {
 	 * @author Morlok8k
 	 * 
 	 */
-	public static void updateMLG() {
+	private static void updateMLG() {
 
 		buildID();		//get latest BuildID file.  
 
@@ -1655,26 +1374,24 @@ public class Main {
 		while (e.hasNext()) {
 			s = e.next();
 			diff = MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
-			//System.out.println(diff);
+			//out(diff);
 
 			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-				System.out
-						.println("There is a NEW VERSION Of Minecraft Land Generator available online!");
+				out("There is a NEW VERSION Of Minecraft Land Generator available online!");
 
 				try {
-					File fileRename = new File("MinecraftLandGenerator.jar");
-					fileRename.renameTo(new File("MinecraftLandGenerator.jar" + ".old"));
+					File fileRename = new File(MLG_JarFile);
+					fileRename.renameTo(new File(MLG_JarFile + ".old"));
 				} catch (Exception e1) {
-					System.out.println("Rename attempt #1 failed!");
+					out("Rename attempt #1 failed!");
 					e1.printStackTrace();
 
 					try {
-						copyFile(new File("MinecraftLandGenerator.jar"), new File(
-								"MinecraftLandGenerator.jar" + ".old"));
-						File fileDelete = new File("MinecraftLandGenerator.jar");
+						copyFile(new File(MLG_JarFile), new File(MLG_JarFile + ".old"));
+						File fileDelete = new File(MLG_JarFile);
 						fileDelete.delete();
 					} catch (Exception e2) {
-						System.out.println("Rename attempt #2 failed!");
+						out("Rename attempt #2 failed!");
 						e2.printStackTrace();
 						//renameFailed = true;
 						return;
@@ -1684,7 +1401,7 @@ public class Main {
 
 				boolean fileSuccess = downloadFile(github_MLG_jar_URL, true);
 				if (fileSuccess) {
-					System.out.println(MLG + "MinecraftLandGenerator.jar" + " downloaded.");
+					out(MLG_JarFile + " downloaded.");
 					return;
 				}
 
@@ -1698,14 +1415,14 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static String getClassLoader(Class<?> classFile) throws IOException {
+	private static String getClassLoader(Class<?> classFile) throws IOException {
 		ClassLoader loader = classFile.getClassLoader();
 		String filename = classFile.getName().replace('.', '/') + ".class";
 		URL resource =
 				(loader != null) ? loader.getResource(filename) : ClassLoader
 						.getSystemResource(filename);
 		filename = URLDecoder.decode(resource.toString(), "UTF-8");
-		// System.out.println(filename);
+		// out(filename);
 
 		// START Garbage removal:
 		int bang = filename.indexOf("!");		// remove everything after xxxx.jar
@@ -1718,11 +1435,9 @@ public class Main {
 			file = 0;
 		}
 		if (filename.contains("rsrc:")) {
-			System.err
-					.println(MLG
-							+ "THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
-			System.err.println(MLG + "DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
-			System.err.println(MLG + "(Your Libraries need to be extracted.)");
+			err("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
+			err("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
+			err("(Your Libraries need to be extracted.)");
 			return rsrcError;
 		}
 		if (filename.contains(".jar")) {
@@ -1742,7 +1457,7 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static Date getCompileTimeStamp(Class<?> classFile) throws IOException {
+	private static Date getCompileTimeStamp(Class<?> classFile) throws IOException {
 		ClassLoader loader = classFile.getClassLoader();
 		String filename = classFile.getName().replace('.', '/') + ".class";
 		// get the corresponding class file as a Resource.
@@ -1765,10 +1480,10 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static String fileMD5(String fileName) throws NoSuchAlgorithmException,
+	private static String fileMD5(String fileName) throws NoSuchAlgorithmException,
 			FileNotFoundException {
-		// System.out.println("");
-		// System.out.println("");
+		// out("");
+		// out("");
 		MessageDigest digest = MessageDigest.getInstance("MD5");
 		InputStream is = new FileInputStream(fileName);
 		byte[] buffer = new byte[8192];
@@ -1780,7 +1495,7 @@ public class Main {
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
 			String output = bigInt.toString(16);
-			// System.out.println(MLG + "MD5: " + output);
+			// out("MD5: " + output);
 			return output.toUpperCase(Locale.ENGLISH);
 		} catch (IOException e) {
 			throw new RuntimeException("Unable to process file for MD5", e);
@@ -1802,76 +1517,80 @@ public class Main {
 	 *            Set FALSE to return info as String.
 	 * @author Morlok8k
 	 */
-	public static String showHelp(boolean SysOut) {
+	private static String showHelp(boolean SysOut) {
 		String Str = null;
+		String NewLine = newLine;
+		if (SysOut) {
+			NewLine = newLine + MLG;
+		}
 
 		//@formatter:off
-		Str =	"Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]" + newLine
-				+ newLine
-				+ "Arguments:" + newLine
-				+ "              x : X range to generate" + newLine
-				+ "              y : Y range to generate" + newLine
-				+ "     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)" + newLine
-				+ newLine
-				+ "Switches:" + newLine
-				+ "       -verbose : causes the application to output the server's messages to the console" + newLine
-				+ "             -v : same as -verbose" + newLine
-				+ "             -w : Ignore [WARNING] and [SEVERE] messages." + newLine
-				+ "           -alt : alternate server launch sequence" + newLine
-				+ "             -a : same as -alt" + newLine
-				+ "            -i# : override the iteration spawn offset increment (default 300) (example: -i100)" + newLine
-				+ "            -x# : set the X offset to generate land around (example: -x0)" + newLine
-				+ "            -y# : set the X offset to generate land around (example: -y0)" + newLine
-				+ newLine
-				+ "Other options:" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar -update" + newLine
-				+ "        Checks for and downloads new versions of MLG online." + newLine
-				+ newLine
-				+ "  java -jar MinecraftLandGenerator.jar -printspawn" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar -ps" + newLine
-				+ "        Outputs the current world's spawn point coordinates." + newLine 
-				+ newLine
-				+ "  java -jar MinecraftLandGenerator.jar -conf" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar -conf download" + newLine
-				+ "        Generates or downloads a "+ MinecraftLandGeneratorConf + " file." + newLine
-				+ newLine
-				+ "  java -jar MinecraftLandGenerator.jar -readme readme.txt" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar -readme" + newLine
-				+ "        Generates a readme file using supplied name or the default " + defaultReadmeFile + newLine
-				+ newLine
-				+ "  java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt" + newLine
-				+ "        Downloads whatever file from the internet you give it." + newLine
-				+ newLine
-				+ "  java -jar MinecraftLandGenerator.jar -version" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar -help" + newLine
-				+ "  java -jar MinecraftLandGenerator.jar /?" + newLine
-				+ "        Prints this message." + newLine 
-				+ newLine
-				+ "When launched with the -conf switch, this application creates a " + MinecraftLandGeneratorConf + " file that contains configuration options." + newLine
-				+ "If this file does not exist or does not contain all required properties, the application will not run." + newLine 
-				+ newLine
-				+ MinecraftLandGeneratorConf + " properties:" + newLine
-				+ "           Java : The command line to use to launch the server" + newLine
-				+ "     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)" + newLine
-				+ "      Done_Text : The output from the server that tells us that we are done" + newLine
-				+ " Preparing_Text : The output from the server that tells us the percentage" + newLine
-				+ "Preparing_Level : The output from the server that tells us the level it is working on" + newLine 
-				+ "        Level-0 : Name of Level 0: The Overworld" + newLine
-				+ "        Level-1 : Name of Level 1: The Nether" + newLine
-				+ "        Level-2 : Name of Level 2: The End" + newLine
-				+ "        Level-3 : Name of Level 3: (Future Level)" + newLine
-				+ "        Level-4 : Name of Level 4: (Future Level)" + newLine
-				+ "        Level-5 : Name of Level 5: (Future Level)" + newLine
-				+ "        Level-6 : Name of Level 6: (Future Level)" + newLine
-				+ "        Level-7 : Name of Level 7: (Future Level)" + newLine
-				+ "        Level-8 : Name of Level 8: (Future Level)" + newLine
-				+ "        Level-9 : Name of Level 9: (Future Level)" + newLine
-				+ "       WaitSave : Optional: Wait before saving." + newLine;
+		Str =	"Usage: java -jar " + MLGFileNameShort + " x y [serverpath] [switches]" + NewLine
+				+ NewLine
+				+ "Arguments:" + NewLine
+				+ "              x : X range to generate" + NewLine
+				+ "              y : Y range to generate" + NewLine
+				+ "     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)" + NewLine
+				+ NewLine
+				+ "Switches:" + NewLine
+				+ "       -verbose : causes the application to output the server's messages to the console" + NewLine
+				+ "             -v : same as -verbose" + NewLine
+				+ "             -w : Ignore [WARNING] and [SEVERE] messages." + NewLine
+				+ "           -alt : alternate server launch sequence" + NewLine
+				+ "             -a : same as -alt" + NewLine
+				+ "            -i# : override the iteration spawn offset increment (default 300) (example: -i100)" + NewLine
+				+ "            -x# : set the X offset to generate land around (example: -x0)" + NewLine
+				+ "            -y# : set the X offset to generate land around (example: -y0)" + NewLine
+				+ NewLine
+				+ "Other options:" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -update" + NewLine
+				+ "        Checks for and downloads new versions of MLG online." + NewLine
+				+ NewLine
+				+ "  java -jar " + MLGFileNameShort + " -printspawn" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -ps" + NewLine
+				+ "        Outputs the current world's spawn point coordinates." + NewLine 
+				+ NewLine
+				+ "  java -jar " + MLGFileNameShort + " -conf" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -conf download" + NewLine
+				+ "        Generates or downloads a "+ MinecraftLandGeneratorConf + " file." + NewLine
+				+ NewLine
+				+ "  java -jar " + MLGFileNameShort + " -readme readme.txt" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -readme" + NewLine
+				+ "        Generates a readme file using supplied name or the default " + defaultReadmeFile + NewLine
+				+ NewLine
+				+ "  java -jar " + MLGFileNameShort + " -downloadfile http://example.com/file.txt" + NewLine
+				+ "        Downloads whatever file from the internet you give it." + NewLine
+				+ NewLine
+				+ "  java -jar " + MLGFileNameShort + " -version" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -help" + NewLine
+				+ "  java -jar " + MLGFileNameShort + " /?" + NewLine
+				+ "        Prints this message." + NewLine 
+				+ NewLine
+				+ "When launched with the -conf switch, this application creates a " + MinecraftLandGeneratorConf + " file that contains configuration options." + NewLine
+				+ "If this file does not exist or does not contain all required properties, the application will not run." + NewLine 
+				+ NewLine
+				+ MinecraftLandGeneratorConf + " properties:" + NewLine
+				+ "           Java : The command line to use to launch the server" + NewLine
+				+ "     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)" + NewLine
+				+ "      Done_Text : The output from the server that tells us that we are done" + NewLine
+				+ " Preparing_Text : The output from the server that tells us the percentage" + NewLine
+				+ "Preparing_Level : The output from the server that tells us the level it is working on" + NewLine 
+				+ "        Level-0 : Name of Level 0: The Overworld" + NewLine
+				+ "        Level-1 : Name of Level 1: The Nether" + NewLine
+				+ "        Level-2 : Name of Level 2: The End" + NewLine
+				+ "        Level-3 : Name of Level 3: (Future Level)" + NewLine
+				+ "        Level-4 : Name of Level 4: (Future Level)" + NewLine
+				+ "        Level-5 : Name of Level 5: (Future Level)" + NewLine
+				+ "        Level-6 : Name of Level 6: (Future Level)" + NewLine
+				+ "        Level-7 : Name of Level 7: (Future Level)" + NewLine
+				+ "        Level-8 : Name of Level 8: (Future Level)" + NewLine
+				+ "        Level-9 : Name of Level 9: (Future Level)" + NewLine
+				+ "       WaitSave : Optional: Wait before saving." + NewLine;
 		//@formatter:on
 
 		if (SysOut) {
-			System.out.print(Str);
-			System.out.println("");
+			out(Str);
+			out("");
 			return null;
 		} else {
 			return Str;
@@ -1879,4 +1598,287 @@ public class Main {
 
 	}
 
+	/**
+	 * <b>.zip file Get Modification Time</b><br>
+	 * 
+	 * Takes a string of a path to a .zip file (or .jar), and and returns a Long of the latest "Last Time Modified". <br>
+	 * <br>
+	 * 
+	 * Thanks to the following:<br>
+	 * <a href="http://www.java-examples.com/get-modification-time-zip-entry-example">http://www.java-examples.com/get-modification-time-zip-entry-example</a><br>
+	 * <a href="http://www.java-examples.com/get-crc-32-checksum-zip-entry-example">http://www.java-examples.com/get-crc-32-checksum-zip-entry-example</a>
+	 * 
+	 * @param zipFile
+	 * @param timeBuildID
+	 * @author Morlok8k
+	 */
+	private static Long ZipGetModificationTime(String zipFile) {
+
+		Long highestModTime = 0L;
+
+		try {
+
+			ZipFile zipF = new ZipFile(zipFile);
+
+			/*
+			 * Get list of zip entries using entries method of ZipFile class.
+			 */
+
+			Enumeration<? extends ZipEntry> e = zipF.entries();
+
+			if (testing) {
+				out("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
+			}
+
+			while (e.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) e.nextElement();
+
+				Long modTime = entry.getTime();
+
+				if (highestModTime < modTime) {
+					highestModTime = modTime;
+				}
+
+				if (testing) {
+
+					String entryName = entry.getName();
+					Date modificationTime = new Date(modTime);
+					String CRC = Long.toHexString(entry.getCrc());
+
+					out(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
+							+ modTime.toString());
+				}
+
+			}
+
+			zipF.close();
+
+			return highestModTime;
+
+		} catch (IOException ioe) {
+			out("Error opening zip file" + ioe);
+			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
+		}
+	}
+
+	private void readConf() {
+
+		try {
+			File config = new File(MinecraftLandGeneratorConf);
+			BufferedReader in = new BufferedReader(new FileReader(config));
+			String line;
+			while ((line = in.readLine()) != null) {
+				int pos = line.indexOf('=');
+				int end = line.lastIndexOf('#'); // comments, ignored lines
+
+				if (end == -1) { // If we have no hash sign, then we read till the end of the line
+					end = line.length();
+				}
+				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+					end = line.length();
+				}
+
+				if (pos != -1) {
+					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
+						serverPath = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
+						javaLine = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
+						doneText = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
+						preparingText = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("preparing_level")) {
+						preparingLevel = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-0")) {
+						level_0 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-1")) {
+						level_1 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-2")) {
+						level_2 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-3")) {
+						level_3 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-4")) {
+						level_4 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-5")) {
+						level_5 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-6")) {
+						level_6 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-7")) {
+						level_7 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-8")) {
+						level_8 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("level-9")) {
+						level_9 = line.substring(pos + 1, end);
+					} else if (line.substring(0, pos).toLowerCase().equals("waitsave")) {
+						String wstmp = line.toLowerCase().substring(pos + 1, end);
+						if (wstmp.equals("true")) {
+							waitSave = true;
+						} else {
+							waitSave = false;
+						}
+					}
+				}
+			}
+			in.close();
+
+			if (testing) {
+				err("[TEST] Test Output: Reading of Config File ");
+				err("[TEST]     serverPath: " + serverPath);
+				err("[TEST]       javaLine: " + javaLine);
+				err("[TEST]       doneText: " + doneText);
+				err("[TEST]  preparingText: " + preparingText);
+				err("[TEST] preparingLevel: " + preparingLevel);
+				err("[TEST]        level_0: " + level_0);
+				err("[TEST]        level_1: " + level_1);
+				err("[TEST]        level_2: " + level_2);
+				err("[TEST]        level_3: " + level_3);
+				err("[TEST]        level_4: " + level_4);
+				err("[TEST]        level_5: " + level_5);
+				err("[TEST]        level_6: " + level_6);
+				err("[TEST]        level_7: " + level_7);
+				err("[TEST]        level_8: " + level_8);
+				err("[TEST]        level_9: " + level_9);
+				err("[TEST]       waitSave: " + waitSave);
+			}
+		} catch (FileNotFoundException ex) {
+			out("Could not find "
+					+ MinecraftLandGeneratorConf
+					+ ". It is recommended that you run the application with the -conf option to create it.");
+			return;
+		} catch (IOException ex) {
+			err("Could not read " + MinecraftLandGeneratorConf + ".");
+			return;
+		}
+	}
+
+	/**
+	 * Generates a Config File.
+	 * 
+	 * @param newConf
+	 *            true: Uses Default values. false:
+	 */
+	private void saveConf(boolean newConf) {
+
+		String jL = null;			//javaLine
+		String sP = null;			//serverPath
+
+		if (newConf) {
+			jL = defaultJavaLine;	// reads the default from a constant, makes it easier!
+			sP = ".";				// 
+		} else {
+			jL = javaLine;			// we read these values from an existing Conf File.
+			sP = serverPath;		//
+		}
+
+		try {
+			File config = new File(MinecraftLandGeneratorConf);
+			BufferedWriter outFile = new BufferedWriter(new FileWriter(config));
+
+			//@formatter:off
+			outFile.write("#Minecraft Land Generator Configuration File:  Version: " + VERSION + newLine
+					+ "#Authors: " + AUTHORS + newLine
+					+ "#Auto-Generated: " + dateFormat.format(date) + newLine
+					+ newLine
+					+ "#Line to run server:" + newLine
+					+ "Java=" + jL // reads the default from a constant, makes it easier!
+					+ newLine 
+					+ newLine
+					+ "#Location of server.  use \".\" for the same folder as MLG" + newLine
+					+ "ServerPath=" + sP 
+					+ newLine 
+					+ newLine 
+					+ "#Strings read from the server" + newLine 
+					+ "Done_Text=[INFO] Done" + newLine
+					+ "Preparing_Text=[INFO] Preparing spawn area:" + newLine
+					+ "Preparing_Level=[INFO] Preparing start region for" + newLine
+					+ "Level-0=The Overworld" + newLine
+					+ "Level-1=The Nether" + newLine
+					+ "Level-2=The End" + newLine 
+					+ "Level-3=Level 3 (Future Level)" + newLine
+					+ "Level-4=Level 4 (Future Level)" + newLine 
+					+ "Level-5=Level 5 (Future Level)" + newLine 
+					+ "Level-6=Level 6 (Future Level)" + newLine
+					+ "Level-7=Level 7 (Future Level)" + newLine 
+					+ "Level-8=Level 8 (Future Level)" + newLine 
+					+ "Level-9=Level 9 (Future Level)" + newLine 
+					+ newLine
+					+ "#Optional: Wait a few seconds after saving." + newLine + "WaitSave=false");
+			//@formatter:on
+
+			outFile.newLine();
+			outFile.close();
+			out(MinecraftLandGeneratorConf + " file created.");
+			return;
+
+		} catch (IOException ex) {
+			err("Could not create " + MinecraftLandGeneratorConf + ".");
+			return;
+		}
+
+	}
+
+	private void verifyWorld() {
+
+		// verify that we ended up with a good server path, either from the file or from an argument.
+		File file = new File(serverPath);
+		if (!file.exists() || !file.isDirectory()) {
+			err("The server directory is invalid: " + serverPath);
+			return;
+		}
+
+		try {
+			// read the name of the current world from the server.properties file
+			BufferedReader props =
+					new BufferedReader(new FileReader(new File(serverPath + fileSeparator
+							+ "server.properties")));
+			String line;
+			while ((line = props.readLine()) != null) {
+				int pos = line.indexOf('=');
+				if (pos != -1) {
+					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
+						worldPath = serverPath + fileSeparator + line.substring(pos + 1);
+						worldName = line.substring(pos + 1);
+					}
+
+				}
+			}
+
+		} catch (FileNotFoundException ex) {
+			err("Could not open " + serverPath + fileSeparator + "server.properties");
+			return;
+		} catch (IOException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+			return;
+		}
+
+		File level = new File(worldPath + fileSeparator + "level.dat");
+		if (!level.exists() || !level.isFile()) {
+			err("The currently-configured world does not exist. Please launch the server once, first.");
+			return;
+		}
+
+	}
+
+	@SuppressWarnings("unused")
+	private static void writeTxtFile(File file, String str) {
+		//TODO: find all file writes, and make it use this function.
+
+		/*
+		 * NOTE: I don't include a generic readTxtFile method, as that code depends on what I'm reading.
+		 * For things like that I make a special method for it, if its used in more than one place.
+		 * Like reading the config file.
+		 */
+	}
+
+	private static void out(String str) {
+		System.out.println(MLG + str);
+	}
+
+	private static void err(String str) {
+		System.err.println(MLG + str);
+	}
+
+	private static void outP(String str) {
+		System.out.print(str);
+	}
 }
