@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -51,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 58";
+	private static final String VERSION = "1.6.0 Testing 60";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -110,6 +111,7 @@ public class Main {
 	private static String MLG_Current_Hash = null;
 	private static int inf_loop_protect_BuildID = 0;
 	private static boolean flag_downloadedBuildID = false;
+	private static Scanner sc = new Scanner(System.in);
 
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
@@ -173,8 +175,18 @@ public class Main {
 		//                           INSTRUCTIONS
 		// =====================================================================
 
-		if (args.length == 0 || args[0].equalsIgnoreCase("-version")
-				|| args[0].equalsIgnoreCase("-help") || args[0].equals("/?")) {
+		if (args.length == 0) {
+			out("Please Enter the size of world you want.  Example: X:1000  Y:1000");
+			outP(MLG + "X:");
+			xRange = getInt("X:");
+			outP(MLG + "Y:");
+			yRange = getInt("Y:");
+			args = new String[] { String.valueOf(xRange), String.valueOf(yRange) };
+
+		}
+
+		if (args[0].equalsIgnoreCase("-version") || args[0].equalsIgnoreCase("-help")
+				|| args[0].equals("/?")) {
 
 			showHelp(true);
 
@@ -265,7 +277,7 @@ public class Main {
 
 			saveConf(false);		//old conf
 
-			out("");
+			outP(MLG);				//here we wait 10 sec before closing.
 			int count = 0;
 			while (count <= 100) {
 				outP(count + "% ");
@@ -277,7 +289,7 @@ public class Main {
 				}
 				count += 10;
 			}
-			out("");
+			outP(newLine);
 			return;
 
 		}
@@ -288,7 +300,11 @@ public class Main {
 			yRange = Integer.parseInt(args[1]);
 		} catch (NumberFormatException ex) {
 			err("Invalid X or Y argument.");
-			return;
+			err("Please Enter the size of world you want.  Example: X:1000  Y:1000");
+			xRange = getInt("X:");
+			yRange = getInt("Y:");
+
+			//return;
 		}
 
 		verbose = false;			// Verifing that these vars are false
@@ -909,6 +925,7 @@ public class Main {
 				+ "Morlok8k:" + newLine
 				+ newLine
 				+ "1.6.0" + newLine
+				+ "- NOW DOES NOT NEED ANY SCRIPT FILES!" + newLine
 				+ "- Added the ability to download files from the internet" + newLine
 				+ "- Added a switch to download any file off the internet, if needed (useless for most people, but included it in case I wanted it in the future.)" + newLine
 				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
@@ -1878,4 +1895,22 @@ public class Main {
 	private static void outP(String str) {
 		System.out.print(str);
 	}
+
+	/**
+	 * getInt(String msg) - outputs a message, will only accept a valid integer from keyboard
+	 * 
+	 * @param msg
+	 *            String
+	 * @return int
+	 */
+	private static int getInt(String msg) {
+
+		while (!sc.hasNextInt()) {
+			sc.nextLine();
+			outP(MLG + "Invalid Input. " + msg);
+		}
+		return sc.nextInt();
+
+	}
+
 }

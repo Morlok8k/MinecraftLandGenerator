@@ -1,4 +1,4 @@
-Minecraft Land Generator version 1.6.0 Testing 58
+Minecraft Land Generator version 1.6.0 Testing 60
 
 Updated December 26, 2011
 
@@ -24,6 +24,7 @@ Version History:
 Morlok8k:
 
 1.6.0
+- NOW DOES NOT NEED ANY SCRIPT FILES!
 - Added the ability to download files from the internet
 - Added a switch to download any file off the internet, if needed (useless for most people, but included it in case I wanted it in the future.)
 - Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)
