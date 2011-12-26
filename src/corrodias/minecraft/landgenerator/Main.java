@@ -51,7 +51,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.0 Testing 56";
+	private static final String VERSION = "1.6.0 Testing 57";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -1220,7 +1220,6 @@ public class Main {
 			if (MLGFileName.equals(rsrcError)) { return; }
 		}
 
-		//TODO: MLGFileNameShort
 		MLGFileNameShort =
 				MLGFileName.substring(MLGFileName.lastIndexOf(fileSeparator) + 1,
 						MLGFileName.length());
@@ -1353,6 +1352,7 @@ public class Main {
 	private void updateMLG() {
 
 		buildID(true);		//get latest BuildID file.  
+		MLG_Last_Modified_Date = null;
 		readBuildID();
 
 		Iterator<String> e = timeStamps.iterator();

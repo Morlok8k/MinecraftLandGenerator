@@ -16,4 +16,6 @@ java -jar ./bin/MinecraftLandGenerator.jar -readme README
 
 rm ./MLG-BuildID
 
-
+git add .
+git commit -a
+git push origin master
