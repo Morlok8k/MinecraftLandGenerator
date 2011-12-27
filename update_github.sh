@@ -3,6 +3,8 @@
 ## Minecraft Land Generator - GitHub Update Script
 ## Morlok8k - Updated 12/26/2011
 
+zip ./bin/MinecraftLandGenerator.jar ./src/corrodias/minecraft/landgenerator/Main.java
+
 cd ./bin/
 chmod a+x ./MinecraftLandGenerator.jar
 
@@ -13,7 +15,7 @@ java -jar ./bin/MinecraftLandGenerator.jar -readme README
 
 rm ./MLG-BuildID
 
-zip ./bin/MinecraftLandGenerator.jar ./src/corrodias/minecraft/landgenerator/Main.java
+
 
 git add .
 git commit -a
