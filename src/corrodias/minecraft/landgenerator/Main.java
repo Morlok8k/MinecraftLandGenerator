@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.01";
+	private static final String VERSION = "1.6.02";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -1330,7 +1330,8 @@ public class Main {
 									if (tCalc < -15000L) {
 
 										//time is newer?  (.zip file is newer than BuildID)
-										err("Archive Intergrity Check Failed: .zip file is newer than BuildID");
+										err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
+												+ (tCalc / 1000) + "sec.");
 										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 
@@ -1344,7 +1345,8 @@ public class Main {
 
 									} else {
 										//times dont match.  (.zip file is older than specified BuildID)
-										err("Archive Intergrity Check Failed: .zip file is older than BuildID");
+										err("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
+												+ (tCalc / 1000) + "sec.");
 										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 								}
