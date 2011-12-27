@@ -22,8 +22,8 @@ It is also available at: http://jnbt.sourceforge.net/
 
 Version History:
 Morlok8k:
-1.6.01
-- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side- no new functionality, md5 issue doesnt affect -update on old versions.
+1.6.02
+- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side- quick Archive intergity fix after injecting source code into .jar after it compiled.- no new functionality, md5 issue doesnt affect -update on old versions.
 1.6.0
 - NOW DOES NOT NEED ANY SCRIPT FILES!
 - Added the ability to download files from the internet

@@ -934,8 +934,9 @@ public class Main {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
-				+ "1.6.01" + newLine
+				+ "1.6.02" + newLine
 				+ "- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side"
+				+ "- quick Archive intergity fix after injecting source code into .jar after it compiled."
 				+ "- no new functionality, md5 issue doesnt affect -update on old versions."
 				+ newLine
 				+ "1.6.0" + newLine
@@ -1660,6 +1661,10 @@ public class Main {
 				ZipEntry entry = (ZipEntry) e.nextElement();
 
 				Long modTime = entry.getTime();
+
+				if (entry.getName().toUpperCase().contains("MAIN.JAVA")) {			//ignore highest timestamp for the source code, as that can be injected into the .jar file much later after compiling.
+					modTime = 0L;
+				}
 
 				if (highestModTime < modTime) {
 					highestModTime = modTime;
