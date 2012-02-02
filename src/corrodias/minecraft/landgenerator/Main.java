@@ -52,7 +52,7 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.02";
+	private static final String VERSION = "1.6.03";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -239,6 +239,31 @@ public class Main {
 				out("No File to Download!");
 			}
 			return;
+
+		} else if (args[0].equalsIgnoreCase("-downloadlist")) {
+
+			if (args.length == 2) {
+				try {
+					File config = new File(args[1]);
+					BufferedReader in = new BufferedReader(new FileReader(config));
+					String line;
+					while ((line = in.readLine()) != null) {
+						downloadFile(line, true);
+					}
+					in.close();
+
+				} catch (FileNotFoundException ex) {
+					System.err.println(args[1] + " - File not found");
+					return;
+				} catch (IOException ex) {
+					System.err.println(args[1] + " - Could not read file.");
+					return;
+				}
+			} else {
+				out("No File with links!");
+			}
+			return;
+
 		} else if (args.length == 1) {
 			out("For help, use java -jar " + MLGFileNameShort + " -help");
 			return;
@@ -927,13 +952,21 @@ public class Main {
 				+ "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + newLine
 				+ newLine
 				+ "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + newLine
-				+ "The JNLP library is included (inside the .jar) as jnbt-1.1.jar. It is not public domain. Its license is included within its .jar file, as LICENSE.TXT." + newLine
+				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
+				+ newLine
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ newLine
+				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code."
 				+ newLine
 				+ "-----------------------------------------------" + newLine
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.03" + newLine
+				+ "- added decoding of escape characters of URL's (so a space is a \" \" and not \"%20\")" + newLine
+				+ "- added \"-downloadlist [list]\" where [list] is a text file with URL's on each line" + newLine
+				+ newLine
 				+ "1.6.02" + newLine
 				+ "- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side"
 				+ "- quick Archive intergity fix after injecting source code into .jar after it compiled."
@@ -1025,7 +1058,8 @@ public class Main {
 				+ newLine
 				+ "Notes:" + newLine
 				+ "Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time." + newLine
-				+ "I recommend using MCE or MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level." + newLine
+				+ "However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated."
+				+ "I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level." + newLine
 				+ newLine
 				+ "-----------------------------------------------" + newLine
 				+ newLine;
@@ -1060,7 +1094,7 @@ public class Main {
 			fileName = String.valueOf(System.currentTimeMillis());
 		}
 
-		Output = true;
+		fileName = unescape(fileName);
 
 		if (Output) {
 			out("Downloading: " + URL);
@@ -1587,6 +1621,8 @@ public class Main {
 				+ NewLine
 				+ "  java -jar " + MLGFileNameShort + " -downloadfile http://example.com/file.txt" + NewLine
 				+ "        Downloads whatever file from the internet you give it." + NewLine
+				+ "  java -jar " + MLGFileNameShort + " -downloadlist list.txt" + NewLine
+				+ "        list.txt (or any other file) contains a URL on each line which will be downloaded." + NewLine
 				+ NewLine
 				+ "  java -jar " + MLGFileNameShort + " -version" + NewLine
 				+ "  java -jar " + MLGFileNameShort + " -help" + NewLine
@@ -1932,6 +1968,74 @@ public class Main {
 		}
 		return sc.nextInt();
 
+	}
+
+	/**
+	 * Created: 17 April 1997<br>
+	 * Author: Bert Bos &lt;<a href="mailto:bert@w3.org">bert@w3.org</a>&gt;<br>
+	 * <br>
+	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
+	 * <br>
+	 * Copyright © 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
+	 * work is distributed under the W3C® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+	 * PARTICULAR PURPOSE.<br>
+	 * <br>
+	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
+	 * 
+	 * @param s
+	 *            string of URL
+	 * @return decoded string of URL
+	 */
+	private static String unescape(String s) {
+		StringBuffer sbuf = new StringBuffer();
+		int l = s.length();
+		int ch = -1;
+		int b, sumb = 0;
+		for (int i = 0, more = -1; i < l; i++) {
+			/* Get next byte b from URL segment s */
+			switch (ch = s.charAt(i)) {
+				case '%':
+					ch = s.charAt(++i);
+					int hb =
+							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
+									.toLowerCase((char) ch) - 'a') & 0xF;
+					ch = s.charAt(++i);
+					int lb =
+							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
+									.toLowerCase((char) ch) - 'a') & 0xF;
+					b = (hb << 4) | lb;
+					break;
+				case '+':
+					b = ' ';
+					break;
+				default:
+					b = ch;
+			}
+			/* Decode byte b as UTF-8, sumb collects incomplete chars */
+			if ((b & 0xc0) == 0x80) {			// 10xxxxxx (continuation byte)
+				sumb = (sumb << 6) | (b & 0x3f);	// Add 6 bits to sumb
+				if (--more == 0) sbuf.append((char) sumb); // Add char to sbuf
+			} else if ((b & 0x80) == 0x00) {		// 0xxxxxxx (yields 7 bits)
+				sbuf.append((char) b);			// Store in sbuf
+			} else if ((b & 0xe0) == 0xc0) {		// 110xxxxx (yields 5 bits)
+				sumb = b & 0x1f;
+				more = 1;				// Expect 1 more byte
+			} else if ((b & 0xf0) == 0xe0) {		// 1110xxxx (yields 4 bits)
+				sumb = b & 0x0f;
+				more = 2;				// Expect 2 more bytes
+			} else if ((b & 0xf8) == 0xf0) {		// 11110xxx (yields 3 bits)
+				sumb = b & 0x07;
+				more = 3;				// Expect 3 more bytes
+			} else if ((b & 0xfc) == 0xf8) {		// 111110xx (yields 2 bits)
+				sumb = b & 0x03;
+				more = 4;				// Expect 4 more bytes
+			} else /*if ((b & 0xfe) == 0xfc)*/{	// 1111110x (yields 1 bit)
+				sumb = b & 0x01;
+				more = 5;				// Expect 5 more bytes
+			}
+			/* We don't test if the UTF-8 encoding is well-formed */
+		}
+		return sbuf.toString();
 	}
 
 }
