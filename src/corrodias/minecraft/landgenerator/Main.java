@@ -955,7 +955,7 @@ public class Main {
 				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
 				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3Cï¿½ Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
 				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code."
 				+ newLine
@@ -1105,7 +1105,10 @@ public class Main {
 		Long[] timeTracking = new Long[] { differenceTime, differenceTime };
 		timeTracking[0] = System.currentTimeMillis();
 
-		outP(MLG);
+		if (Output) {
+			outP(MLG + "*");
+		}
+
 		try {
 			BufferedInputStream in;
 			in = new BufferedInputStream(new URL(URL).openStream());
@@ -1374,7 +1377,7 @@ public class Main {
 
 										//times are within 30 seconds (+/- 15 seconds) of each other.  (typically 1-2 seconds, but left room for real-world error)
 										if (testing | flag_downloadedBuildID) {
-											err("Archive Intergrity Check Passed. Offset: "
+											out("Archive Intergrity Check Passed. Offset: "
 													+ (tCalc / 1000) + "sec.");
 										}
 
@@ -1403,7 +1406,7 @@ public class Main {
 			} catch (Exception e) {
 				err("Cant Read " + buildIDFile + "!");
 				err(e.getLocalizedMessage());
-				System.err.println("");
+				err("");
 				// e.printStackTrace();
 				buildID(false);
 				readBuildID();
@@ -2010,8 +2013,8 @@ public class Main {
 	 * <br>
 	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
 	 * <br>
-	 * Copyright © 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
-	 * work is distributed under the W3C® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+	 * Copyright ï¿½ 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
+	 * work is distributed under the W3Cï¿½ Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 	 * PARTICULAR PURPOSE.<br>
 	 * <br>
 	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
