@@ -1,6 +1,6 @@
-Minecraft Land Generator version 1.6.02
+Minecraft Land Generator version 1.6.03
 
-Updated December 26, 2011
+Updated February 3, 2012
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
@@ -11,17 +11,23 @@ Source: https://github.com/Morlok8k/MinecraftLandGenerator
 -----------------------------------------------
 
 This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
-When a Minecraft server is launched, it automatically generates chunks within a square area of 20x20 chunks (320x320 blocks), centered on the current spawn point. When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 300x300) You can use the -x and -y switches to override the spawn offset and center the land generation on a different point.
+When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -y switches to override the spawn offset and center the land generation on a different point.
 The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
 
 This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
-The JNLP library is included (inside the .jar) as jnbt-1.1.jar. It is not public domain. Its license is included within its .jar file, as LICENSE.TXT.
+The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
 It is also available at: http://jnbt.sourceforge.net/
 
+The "unescape" method/function is also not Public Domain.  Its License is the W3C� Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
 -----------------------------------------------
 
 Version History:
 Morlok8k:
+1.6.03
+- added decoding of escape characters of URL's (so a space is a " " and not "%20")
+- added "-downloadlist [list]" where [list] is a text file with URL's on each line
+
 1.6.02
 - small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side- quick Archive intergity fix after injecting source code into .jar after it compiled.- no new functionality, md5 issue doesnt affect -update on old versions.
 1.6.0
@@ -110,7 +116,7 @@ Corrodias:
 
 Notes:
 Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
-I recommend using MCE or MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
+However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
 
 -----------------------------------------------
 
@@ -149,6 +155,8 @@ Other options:
 
   java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt
         Downloads whatever file from the internet you give it.
+  java -jar MinecraftLandGenerator.jar -downloadlist list.txt
+        list.txt (or any other file) contains a URL on each line which will be downloaded.
 
   java -jar MinecraftLandGenerator.jar -version
   java -jar MinecraftLandGenerator.jar -help

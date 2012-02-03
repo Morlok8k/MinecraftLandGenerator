@@ -955,7 +955,7 @@ public class Main {
 				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
 				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3CÂ® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
 				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code."
 				+ newLine
@@ -1729,7 +1729,7 @@ public class Main {
 	}
 
 	private void readConf() {
-
+		//TODO: element comment
 		try {
 			File config = new File(MinecraftLandGeneratorConf);
 			BufferedReader in = new BufferedReader(new FileReader(config));
@@ -1822,7 +1822,8 @@ public class Main {
 	 * Generates a Config File.
 	 * 
 	 * @param newConf
-	 *            true: Uses Default values. false:
+	 *            true: Uses Default values. false: uses existing values
+	 * @author Morlok8k
 	 */
 	private void saveConf(boolean newConf) {
 
@@ -1876,6 +1877,7 @@ public class Main {
 	}
 
 	private void verifyWorld() {
+		//TODO: element comment
 
 		// verify that we ended up with a good server path, either from the file or from an argument.
 		File file = new File(serverPath);
@@ -1918,6 +1920,7 @@ public class Main {
 	}
 
 	private static void writeTxtFile(String file, String txt) {
+		//TODO: element comment
 
 		/*
 		 * NOTE: I don't include a generic readTxtFile method, as that code depends on what I'm reading.
@@ -1941,14 +1944,35 @@ public class Main {
 
 	}
 
+	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
 	private static void out(String str) {
 		System.out.println(MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
 	}
 
+	/**
+	 * Outputs a formatted string to System.err as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
 	private static void err(String str) {
 		System.err.println(MLGe + str);
 	}
 
+	/**
+	 * Outputs a string to System.out without a newline.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
 	private static void outP(String str) {
 		System.out.print(str);
 	}
@@ -1959,6 +1983,7 @@ public class Main {
 	 * @param msg
 	 *            String
 	 * @return int
+	 * @author Morlok8k
 	 */
 	private static int getInt(String msg) {
 
@@ -1970,14 +1995,23 @@ public class Main {
 
 	}
 
+	/* Morlok8k:
+	 * Just a note about this unescape method:
+	 * I am quite amazed at this code.  It is vastly superior to my own coding ability.
+	 * I had to look up many things in it to see how it works, and I still don't quite follow it.
+	 * (I have never worked with raw bytes in Java... Never needed to.)
+	 * But it works and it works very well.   I tip my hat at you Bert!
+	 * 
+	 * I just needed to say this somewhere, even though very few people will ever read this. 
+	 */
 	/**
 	 * Created: 17 April 1997<br>
 	 * Author: Bert Bos &lt;<a href="mailto:bert@w3.org">bert@w3.org</a>&gt;<br>
 	 * <br>
 	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
 	 * <br>
-	 * Copyright Â© 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
-	 * work is distributed under the W3CÂ® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+	 * Copyright © 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
+	 * work is distributed under the W3C® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 	 * PARTICULAR PURPOSE.<br>
 	 * <br>
 	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
@@ -1985,6 +2019,7 @@ public class Main {
 	 * @param s
 	 *            string of URL
 	 * @return decoded string of URL
+	 * @author Bert Bos
 	 */
 	private static String unescape(String s) {
 		StringBuffer sbuf = new StringBuffer();
