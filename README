@@ -25,6 +25,7 @@ Other Public Domain code has been used in this program, and references to source
 Version History:
 Morlok8k:
 1.6.05
+- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)
 - Minor fixes/edits/typos
 
 1.6.03

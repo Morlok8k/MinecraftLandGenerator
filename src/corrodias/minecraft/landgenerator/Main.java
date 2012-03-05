@@ -982,6 +982,7 @@ public class Main {
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
 				+ "1.6.05" + newLine
+				+ "- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)" + newLine
 				+ "- Minor fixes/edits/typos" + newLine
 				+ newLine
 				+ "1.6.03" + newLine
