@@ -981,6 +981,9 @@ public class Main {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.05" + newLine
+				+ "- Minor fixes/edits/typos" + newLine
+				+ newLine
 				+ "1.6.03" + newLine
 				+ "- added decoding of escape characters of URL's (so a space is a \" \" and not \"%20\")" + newLine
 				+ "- added \"-downloadlist [list]\" where [list] is a text file with URL's on each line" + newLine
