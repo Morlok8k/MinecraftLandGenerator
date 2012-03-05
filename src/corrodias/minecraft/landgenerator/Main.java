@@ -52,7 +52,8 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String VERSION = "1.6.03";
+	private static final String PROG_NAME = "Minecraft Land Generator";
+	private static final String VERSION = "1.6.05";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -163,7 +164,7 @@ public class Main {
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		out("Minecraft Land Generator version " + VERSION);
+		out(PROG_NAME + " version " + VERSION);
 		out("BuildID: (" + MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
 		// thus different timezones wont display a different buildID
 		out("This version was last modified on " + dateFormat.format(MLG_Last_Modified_Date));
@@ -217,12 +218,14 @@ public class Main {
 		} else if (args[0].equalsIgnoreCase("-ps") || args[0].equalsIgnoreCase("-printspawn")) {
 			// okay, sorry, this is an ugly hack, but it's just a last-minute feature.
 			printSpawn();
+			waitTenSec(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-build")) {
 			buildID(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-update")) {
 			updateMLG();
+			waitTenSec(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-readme")) {
 
@@ -237,6 +240,7 @@ public class Main {
 				downloadFile(args[1], true);
 			} else {
 				out("No File to Download!");
+				waitTenSec(false);
 			}
 			return;
 
@@ -254,18 +258,22 @@ public class Main {
 
 				} catch (FileNotFoundException ex) {
 					System.err.println(args[1] + " - File not found");
+					waitTenSec(false);
 					return;
 				} catch (IOException ex) {
 					System.err.println(args[1] + " - Could not read file.");
+					waitTenSec(false);
 					return;
 				}
 			} else {
 				out("No File with links!");
+				waitTenSec(false);
 			}
 			return;
 
 		} else if (args.length == 1) {
 			out("For help, use java -jar " + MLGFileNameShort + " -help");
+			waitTenSec(false);
 			return;
 		}
 
@@ -303,19 +311,7 @@ public class Main {
 
 			saveConf(false);		//old conf
 
-			outP(MLG);				//here we wait 10 sec before closing.
-			int count = 0;
-			while (count <= 100) {
-				outP(count + "% ");
-
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				count += 10;
-			}
-			outP(newLine);
+			waitTenSec(false);
 			return;
 
 		}
@@ -699,18 +695,34 @@ public class Main {
 
 			OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
 
+			//TODO:  add converting section:
+			/*
+			2012-02-29 03:50:28 [INFO] Converting map!
+			Scanning folders...
+			Total conversion count is 9
+			2012-02-29 03:50:29 [INFO] Converting... 8%
+			2012-02-29 03:50:30 [INFO] Converting... 9%
+			2012-02-29 03:50:31 [INFO] Converting... 10%
+			2012-02-29 03:50:32 [INFO] Converting... 12%
+			2012-02-29 03:50:33 [INFO] Converting... 13%
+			*/
+
+			boolean convertedMapFormattingFlag = false;		// This allows MLG to track if we converted a map to a new format (such as Chunk-file -> McRegion, or McRegion -> Anvil)
+			// just so it gets a line ending after the % output finishes
 			while ((line = pOut.readLine()) != null) {
 
 				line = line.trim();
 
 				if (verbose) {
-					if (line.contains("[INFO]")) {
+					if (line.contains("[INFO]")) {		//TODO: add to .conf
 						out(line.substring(line.lastIndexOf("]") + 2));
 					} else {
 						out(line);
 					}
-				} else if (line.contains(preparingText)) {
-
+				} else if (line.contains(preparingText) || line.contains("Converting...")) {
+					if (line.contains("Converting...")) {
+						convertedMapFormattingFlag = true;
+					}
 					outTmp2 = line.substring(line.length() - 3, line.length());
 					outTmp2 = outTmp2.trim();				//we are removing extra spaces here
 					if (outTmp.equals(outTmp2)) {
@@ -730,6 +742,12 @@ public class Main {
 
 				} else if (line.contains(preparingLevel)) {
 					prepTextFirst = true;
+
+					if (convertedMapFormattingFlag == true) {
+						outP(newLine);
+						convertedMapFormattingFlag = false;
+					}
+
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
 						outP(MLG + worldName + ": " + level_0 + ":" + newLine);
 					} else if (line.contains("level 1")) { // "Preparing start region for level 1"
@@ -753,7 +771,7 @@ public class Main {
 					} else {
 						outP(newLine + MLG + line.substring(line.lastIndexOf("]") + 2));
 					}
-				} else if (line.contains("server version")) {
+				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
 					out(line.substring(line.lastIndexOf("]") + 2));
 				}
 
@@ -803,7 +821,7 @@ public class Main {
 				}
 
 				//Here we want to ignore the most common warning: "Can't keep up!"
-				if (line.contains("Can't keep up!")) {
+				if (line.contains("Can't keep up!")) {	//TODO: add to .conf
 					cantKeepUp = true;			//[WARNING] Can't keep up! Did the system time change, or is the server overloaded?
 					ignoreWarnings = true;
 				}
@@ -811,7 +829,7 @@ public class Main {
 				if (ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) { // If we have a warning, stop...
 						out("");
-						out("Warning found: Stopping Minecraft Land Generator");
+						out("Warning found: Stopping " + PROG_NAME);
 						if (verbose == false) { // If verbose is true, we already displayed it.
 							out(line);
 						}
@@ -935,7 +953,7 @@ public class Main {
 
 		//@formatter:off
 		String ReadMeText = "";
-		ReadMeText = "Minecraft Land Generator version " + VERSION + newLine
+		ReadMeText = PROG_NAME + " version " + VERSION + newLine
 				+ newLine
 				+ "Updated " + dateFormat_MDY.format(MLG_Last_Modified_Date) + newLine
 				+ newLine
@@ -957,7 +975,7 @@ public class Main {
 				+ newLine
 				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C� Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
-				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code."
+				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of " + PROG_NAME + "'s source code."
 				+ newLine
 				+ "-----------------------------------------------" + newLine
 				+ newLine
@@ -1082,6 +1100,7 @@ public class Main {
 	 *            URL in a String
 	 * @param Output
 	 *            Displays output if true
+	 * @return Boolean: true if download was successful, false if download wasn't
 	 */
 	private static boolean downloadFile(String URL, boolean Output) {
 
@@ -1441,7 +1460,7 @@ public class Main {
 			//out(diff);
 
 			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-				out("There is a NEW VERSION Of Minecraft Land Generator available online!");
+				out("There is a NEW VERSION Of " + PROG_NAME + " available online!");
 
 				try {
 					File fileRename = new File(MLG_JarFile);
@@ -1843,7 +1862,7 @@ public class Main {
 
 		String txt = null;
 		//@formatter:off
-		txt = "#Minecraft Land Generator Configuration File:  Version: " + VERSION + newLine
+		txt = "#" + PROG_NAME + " Configuration File:  Version: " + VERSION + newLine
 					+ "#Authors: " + AUTHORS + newLine
 					+ "#Auto-Generated: " + dateFormat.format(date) + newLine
 					+ newLine
@@ -1995,6 +2014,35 @@ public class Main {
 			outP(MLG + "Invalid Input. " + msg);
 		}
 		return sc.nextInt();
+
+	}
+
+	/**
+	 * waits ten seconds. outputs 10%, 20%, etc after each second.
+	 * 
+	 * @author Morlok8k
+	 */
+	private static void waitTenSec(boolean output) {
+		if (output) {
+			outP(MLG);		//here we wait 10 sec.
+		}
+		int count = 0;
+		while (count <= 100) {
+			if (output) {
+				outP(count + "% ");
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			count += 10;
+		}
+		if (output) {
+			outP(newLine);
+		}
+		return;
 
 	}
 
