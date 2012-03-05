@@ -3,7 +3,7 @@ Minecraft Land Generator version 1.6.05
 Updated March 5, 2012
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to March 5, 2012!)
 Additional Code by pr0f1x		October 2011
 Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/
 Source: https://github.com/Morlok8k/MinecraftLandGenerator
@@ -18,7 +18,7 @@ This program is public domain, and the source code is included in the .jar file.
 The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
 It is also available at: http://jnbt.sourceforge.net/
 
-The "unescape" method/function is also not Public Domain.  Its License is the W3C� Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+The "unescape" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
 -----------------------------------------------
 

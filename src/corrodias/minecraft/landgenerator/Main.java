@@ -958,7 +958,7 @@ public class Main {
 				+ "Updated " + dateFormat_MDY.format(MLG_Last_Modified_Date) + newLine
 				+ newLine
 				+ "Original Code by Corrodias		November 2010" + newLine
-				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to the date listed above!)" + newLine
+				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + dateFormat_MDY.format(MLG_Last_Modified_Date) + "!)" + newLine
 				+ "Additional Code by pr0f1x		October 2011" + newLine
 				+ "Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/" + newLine
 				+ "Source: https://github.com/Morlok8k/MinecraftLandGenerator" + newLine
@@ -973,7 +973,7 @@ public class Main {
 				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
 				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C� Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
 				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of " + PROG_NAME + "'s source code."
 				+ newLine
@@ -1219,7 +1219,7 @@ public class Main {
 
 			try {
 				MLG_Current_Hash = fileMD5(MLGFileName);
-				// out(hash + "  " + MLGFileName);
+				// out(hash + "  " + MLGFileName);®
 			} catch (Exception e) {
 				out("Error: MD5 from file failed");
 				e.printStackTrace();
@@ -2061,8 +2061,8 @@ public class Main {
 	 * <br>
 	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
 	 * <br>
-	 * Copyright � 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
-	 * work is distributed under the W3C� Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+	 * Copyright © 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
+	 * work is distributed under the W3C® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 	 * PARTICULAR PURPOSE.<br>
 	 * <br>
 	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
