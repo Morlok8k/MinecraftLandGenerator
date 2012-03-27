@@ -1,10 +1,12 @@
 Minecraft Land Generator version 1.6.05
 
-Updated March 5, 2012
+Updated March 27, 2012
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to March 5, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to March 27, 2012!)
 Additional Code by pr0f1x		October 2011
+
+Website: https://sites.google.com/site/minecraftlandgenerator/
 Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/
 Source: https://github.com/Morlok8k/MinecraftLandGenerator
 
@@ -27,7 +29,7 @@ Morlok8k:
 1.6.05
 - MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)
 - Minor fixes/edits/typos
-
+- Added link to new MLG website to readme file
 1.6.03
 - added decoding of escape characters of URL's (so a space is a " " and not "%20")
 - added "-downloadlist [list]" where [list] is a text file with URL's on each line

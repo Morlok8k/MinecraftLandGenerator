@@ -960,6 +960,8 @@ public class Main {
 				+ "Original Code by Corrodias		November 2010" + newLine
 				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + dateFormat_MDY.format(MLG_Last_Modified_Date) + "!)" + newLine
 				+ "Additional Code by pr0f1x		October 2011" + newLine
+				+ newLine
+				+ "Website: https://sites.google.com/site/minecraftlandgenerator/" + newLine
 				+ "Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/" + newLine
 				+ "Source: https://github.com/Morlok8k/MinecraftLandGenerator" + newLine
 				+ newLine
@@ -984,6 +986,7 @@ public class Main {
 				+ "1.6.05" + newLine
 				+ "- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)" + newLine
 				+ "- Minor fixes/edits/typos" + newLine
+				+ "- Added link to new MLG website to readme file"
 				+ newLine
 				+ "1.6.03" + newLine
 				+ "- added decoding of escape characters of URL's (so a space is a \" \" and not \"%20\")" + newLine
