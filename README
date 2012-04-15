@@ -1,9 +1,9 @@
-Minecraft Land Generator version 1.6.05
+Minecraft Land Generator version 1.6.1
 
-Updated March 27, 2012
+Updated April 15, 2012
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to March 27, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to April 15, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -13,7 +13,7 @@ Source: https://github.com/Morlok8k/MinecraftLandGenerator
 -----------------------------------------------
 
 This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
-When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -y switches to override the spawn offset and center the land generation on a different point.
+When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point.
 The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
 
 This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
@@ -26,6 +26,13 @@ Other Public Domain code has been used in this program, and references to source
 
 Version History:
 Morlok8k:
+1.6.1
+- Added some modifications for scripting  (Mainly for a new Initial setup script)
+- Changed MLG's Y to Z.  Now it matches Minecraft.  Y in the game is Height.
+- Renamed -y switch to -z.  MLG will remain backwards compatible if you use the old -y switch.
+- Updated -printspawn to show X,Y,Z
+- Added End-of-Generation ASCII-Graphic
+
 1.6.05
 - MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)
 - Minor fixes/edits/typos
@@ -126,11 +133,11 @@ However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer ge
 
 -----------------------------------------------
 
-Usage: java -jar MinecraftLandGenerator.jar x y [serverpath] [switches]
+Usage: java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
 
 Arguments:
               x : X range to generate
-              y : Y range to generate
+              z : Z range to generate
      serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)
 
 Switches:
@@ -139,9 +146,9 @@ Switches:
              -w : Ignore [WARNING] and [SEVERE] messages.
            -alt : alternate server launch sequence
              -a : same as -alt
-            -i# : override the iteration spawn offset increment (default 300) (example: -i100)
-            -x# : set the X offset to generate land around (example: -x0)
-            -y# : set the X offset to generate land around (example: -y0)
+            -i# : override the iteration spawn offset increment (default 380) (example: -i100)
+            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)
+            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)
 
 Other options:
   java -jar MinecraftLandGenerator.jar -update
@@ -157,7 +164,7 @@ Other options:
 
   java -jar MinecraftLandGenerator.jar -readme readme.txt
   java -jar MinecraftLandGenerator.jar -readme
-        Generates a readme file using supplied name or the default MLG-Readme.txt
+        Generates a readme file using supplied name or the default _MLG_Readme.txt
 
   java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt
         Downloads whatever file from the internet you give it.

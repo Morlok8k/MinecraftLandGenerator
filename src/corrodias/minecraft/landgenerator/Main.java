@@ -53,7 +53,7 @@ public class Main {
 
 	// Version Number!
 	private static final String PROG_NAME = "Minecraft Land Generator";
-	private static final String VERSION = "1.6.05";
+	private static final String VERSION = "1.6.1";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -85,9 +85,9 @@ public class Main {
 	private static String level_9 = null;
 
 	private int xRange = 0;
-	private int yRange = 0;
+	private int zRange = 0;
 	private Integer xOffset = null;
-	private Integer yOffset = null;
+	private Integer zOffset = null;
 	private boolean verbose = false;
 	private boolean alternate = false;
 	private static boolean waitSave = false;
@@ -118,7 +118,7 @@ public class Main {
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
 	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
-	private static final String defaultReadmeFile = "MLG-Readme.txt";
+	private static final String defaultReadmeFile = "_MLG_Readme.txt";
 	private static final String MLG_JarFile = "MinecraftLandGenerator.jar";
 
 	private static final String github_URL =
@@ -127,6 +127,8 @@ public class Main {
 	private static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
 	private static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
 	private static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
+
+	private static Boolean recheckFlag = false;
 
 	//////
 
@@ -178,12 +180,12 @@ public class Main {
 		// =====================================================================
 
 		if (args.length == 0) {
-			out("Please Enter the size of world you want.  Example: X:1000  Y:1000");
+			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			outP(MLG + "X:");
 			xRange = getInt("X:");
-			outP(MLG + "Y:");
-			yRange = getInt("Y:");
-			args = new String[] { String.valueOf(xRange), String.valueOf(yRange) };
+			outP(MLG + "Z:");
+			zRange = getInt("Z:");
+			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
 
 		}
 
@@ -247,14 +249,50 @@ public class Main {
 		} else if (args[0].equalsIgnoreCase("-downloadlist")) {
 
 			if (args.length == 2) {
+				String origMD5 = "";
+				String recheckMD5 = "";
+
 				try {
 					File config = new File(args[1]);
+					try {
+						origMD5 = fileMD5(config.toString());
+					} catch (NoSuchAlgorithmException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					BufferedReader in = new BufferedReader(new FileReader(config));
 					String line;
 					while ((line = in.readLine()) != null) {
-						downloadFile(line, true);
+						if (line == "###RECHECK###") {
+							recheckFlag = !recheckFlag;
+						} else {
+							downloadFile(line, true);
+						}
 					}
 					in.close();
+
+					if (recheckFlag == true) {
+						try {
+							recheckMD5 = fileMD5(config.toString());
+						} catch (NoSuchAlgorithmException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						if (!origMD5.contentEquals(recheckMD5)) {
+							BufferedReader in_recheck = new BufferedReader(new FileReader(config));
+							String line_recheck;
+							while ((line_recheck = in_recheck.readLine()) != null) {
+								if (line_recheck == "###RECHECK###") {
+									recheckFlag = !recheckFlag;
+								} else {
+									downloadFile(line_recheck, true);
+								}
+							}
+							in_recheck.close();
+						}
+
+					}
 
 				} catch (FileNotFoundException ex) {
 					System.err.println(args[1] + " - File not found");
@@ -319,12 +357,12 @@ public class Main {
 		// ARGUMENTS
 		try {
 			xRange = Integer.parseInt(args[0]);
-			yRange = Integer.parseInt(args[1]);
+			zRange = Integer.parseInt(args[1]);
 		} catch (NumberFormatException ex) {
-			err("Invalid X or Y argument.");
-			err("Please Enter the size of world you want.  Example: X:1000  Y:1000");
+			err("Invalid X or Z argument.");
+			err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			xRange = getInt("X:");
-			yRange = getInt("Y:");
+			zRange = getInt("Z:");
 
 			//return;
 		}
@@ -338,23 +376,39 @@ public class Main {
 				String nextSwitch = args[i + 2].toLowerCase();
 				if (nextSwitch.equals("-verbose") || nextSwitch.equals("-v")) {
 					verbose = true;
+					out("Notice: Verbose Mode");
+
 				} else if (nextSwitch.startsWith("-i")) {
 					increment = Integer.parseInt(args[i + 2].substring(2));
+					out("Notice: Non-Default Increment: " + increment);
+
 				} else if (nextSwitch.startsWith("-w")) {
 					ignoreWarnings = true;
+					out("Notice: Warnings from Server are Ignored");
+
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
-					out("Using Alternate Launching...");
 					alternate = true;
+					out("Notice: Using Alternate Launching");
+
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
-				} else if (nextSwitch.startsWith("-y")) {
-					yOffset = Integer.valueOf(args[i + 2].substring(2));
+					out("Notice: X Offset: " + xOffset);
+
+				} else if (nextSwitch.startsWith("-y") || nextSwitch.equals("-z")) {		//NOTE: "-y" is just here for backwards compatibility
+					zOffset = Integer.valueOf(args[i + 2].substring(2));
+					out("Notice: Z Offset: " + zOffset);
+					if (nextSwitch.startsWith("-y")) {
+						out("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
+						waitTenSec(false);
+					}
+
 				} else {
 					serverPath = args[i + 2];
+					out("Notice: Attempting to use Alternate Server:" + serverPath);
 				}
 			}
 		} catch (NumberFormatException ex) {
-			err("Invalid -i switch value.");
+			err("Invalid switch value.");
 			return;
 		}
 
@@ -391,6 +445,10 @@ public class Main {
 
 			runMinecraft(verbose, alternate);
 
+			if ((xRange == 0) & (zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
+				return;
+			}
+
 			out("");
 
 			File serverLevel = new File(worldPath + fileSeparator + "level.dat");
@@ -401,7 +459,8 @@ public class Main {
 			out("");
 
 			Integer[] spawn = getSpawn(serverLevel);
-			out("Spawn point detected: [" + spawn[0] + ", " + spawn[2] + "]");
+			out("Spawn point detected: [X,Y,Z] [" + spawn[0] + ", " + spawn[1] + ", " + spawn[2]
+					+ "]");
 			{
 				boolean overridden = false;
 				if (xOffset == null) {
@@ -409,32 +468,32 @@ public class Main {
 				} else {
 					overridden = true;
 				}
-				if (yOffset == null) {
-					yOffset = spawn[2];
+				if (zOffset == null) {
+					zOffset = spawn[2];
 				} else {
 					overridden = true;
 				}
 				if (overridden) {
-					out("Centering land generation on [" + xOffset + ", " + yOffset
+					out("Centering land generation on [" + xOffset + ", " + zOffset
 							+ "] due to switches.");
 				}
 			}
 			out("");
 
-			int totalIterations = (xRange / increment + 1) * (yRange / increment + 1);
+			int totalIterations = (xRange / increment + 1) * (zRange / increment + 1);
 			int currentIteration = 0;
 
 			long differenceTime = System.currentTimeMillis();
 			Long[] timeTracking =
 					new Long[] { differenceTime, differenceTime, differenceTime, differenceTime };
 			for (int currentX = 0 - xRange / 2; currentX <= xRange / 2; currentX += increment) {
-				for (int currentY = 0 - yRange / 2; currentY <= yRange / 2; currentY += increment) {
+				for (int currentZ = 0 - zRange / 2; currentZ <= zRange / 2; currentZ += increment) {
 					currentIteration++;
 
 					out("Setting spawn to ["
 							+ Integer.toString(currentX + xOffset)
 							+ ", "
-							+ Integer.toString(currentY + yOffset)
+							+ Integer.toString(currentZ + zOffset)
 							+ "] ("
 							+ currentIteration
 							+ "/"
@@ -477,7 +536,7 @@ public class Main {
 					}
 
 					// Set the spawn point
-					setSpawn(serverLevel, currentX + xOffset, 128, currentY + yOffset);
+					setSpawn(serverLevel, currentX + xOffset, 128, currentZ + zOffset);
 
 					// Launch the server
 					runMinecraft(verbose, alternate);
@@ -489,6 +548,8 @@ public class Main {
 			copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			out("Restored original level.dat.");
+			finishedImage();
+			waitTenSec(false);
 		} catch (IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -533,7 +594,7 @@ public class Main {
 
 	/**
 	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.<br>
-	 * Note that, in Minecraft levels, the Y coordinate is height, while Z is what may normally be thought of as Y.<br>
+	 * Note that, in Minecraft levels, the Y coordinate is height.<br>
 	 * (We picture maps from above, but the game was made from a different perspective)
 	 * 
 	 * @param level
@@ -642,7 +703,6 @@ public class Main {
 			out("Alternate Launch");
 			Process process = minecraft.start();
 
-			byte[] saveall = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
 			// monitor output and print to console where required.
@@ -657,11 +717,6 @@ public class Main {
 				out(line);
 				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
-					// removed waitSave code for alternate launch.  Not needed here.  Alt launch is basic, no frills, etc.
-
-					out("Saving server data...");
-					outputStream.write(saveall);
-					outputStream.flush();
 
 					out("Stopping server...");
 					outputStream.write(stop);
@@ -927,7 +982,8 @@ public class Main {
 		File level = new File(worldPath + fileSeparator + "level.dat");
 		try {
 			Integer[] spawn = getSpawn(level);
-			out("The current spawn point is: [" + spawn[0] + ", " + spawn[2] + "]");
+			out("The current spawn point is: [X,Y,Z] [" + spawn[0] + ", " + spawn[1] + ", "
+					+ spawn[2] + "]");
 			return true;
 		} catch (IOException ex) {
 			err("Error while reading " + level.getPath());
@@ -968,7 +1024,7 @@ public class Main {
 				+ "-----------------------------------------------" + newLine
 				+ newLine
 				+ "This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program." + newLine
-				+ "When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Y ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Y ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -y switches to override the spawn offset and center the land generation on a different point." + newLine
+				+ "When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point." + newLine
 				+ "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + newLine
 				+ newLine
 				+ "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + newLine
@@ -983,6 +1039,13 @@ public class Main {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.1" + newLine
+				+ "- Added some modifications for scripting  (Mainly for a new Initial setup script)" + newLine
+				+ "- Changed MLG's Y to Z.  Now it matches Minecraft.  Y in the game is Height." + newLine
+				+ "- Renamed -y switch to -z.  MLG will remain backwards compatible if you use the old -y switch." + newLine
+				+ "- Updated -printspawn to show X,Y,Z" + newLine
+				+ "- Added End-of-Generation ASCII-Graphic" + newLine
+				+ newLine
 				+ "1.6.05" + newLine
 				+ "- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)" + newLine
 				+ "- Minor fixes/edits/typos" + newLine
@@ -1114,6 +1177,13 @@ public class Main {
 		boolean success = true;
 
 		String fileName = URL.substring(URL.lastIndexOf("/") + 1, URL.length());
+
+		if (fileName.startsWith("\"")) {
+			if (fileName.substring(fileName.length() - 1, fileName.length()) == "\"") {
+				fileName = fileName.substring(1, fileName.length() - 1);
+			}
+		}
+
 		int size = 1024 * 4; // 1024 * n should be tested to get the optimum size (for download speed.)
 
 		if (fileName.equals("")) {
@@ -1615,11 +1685,11 @@ public class Main {
 		}
 
 		//@formatter:off
-		Str =	"Usage: java -jar " + MLGFileNameShort + " x y [serverpath] [switches]" + NewLine
+		Str =	"Usage: java -jar " + MLGFileNameShort + " x z [serverpath] [switches]" + NewLine
 				+ NewLine
 				+ "Arguments:" + NewLine
 				+ "              x : X range to generate" + NewLine
-				+ "              y : Y range to generate" + NewLine
+				+ "              z : Z range to generate" + NewLine
 				+ "     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)" + NewLine
 				+ NewLine
 				+ "Switches:" + NewLine
@@ -1628,9 +1698,9 @@ public class Main {
 				+ "             -w : Ignore [WARNING] and [SEVERE] messages." + NewLine
 				+ "           -alt : alternate server launch sequence" + NewLine
 				+ "             -a : same as -alt" + NewLine
-				+ "            -i# : override the iteration spawn offset increment (default 300) (example: -i100)" + NewLine
-				+ "            -x# : set the X offset to generate land around (example: -x0)" + NewLine
-				+ "            -y# : set the X offset to generate land around (example: -y0)" + NewLine
+				+ "            -i# : override the iteration spawn offset increment (default 380) (example: -i100)" + NewLine
+				+ "            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)" + NewLine
+				+ "            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)" + NewLine
 				+ NewLine
 				+ "Other options:" + NewLine
 				+ "  java -jar " + MLGFileNameShort + " -update" + NewLine
@@ -2051,6 +2121,29 @@ public class Main {
 		}
 		return;
 
+	}
+
+	private static void finishedImage() {
+		System.out.println(newLine + "  .l0kkKMl                     lMKkk0l.  " + newLine
+				+ ".;kMc  ;KK;  .,,lkkkkkkkl,,.  ;KK,  cMk,." + newLine
+				+ "KKxkc..lKK;.oKKxxl,;;;;lkkKKo.,KKl..ckkKK" + newLine
+				+ "Mx. ...;x0OOl'.           .'lOOOx:... .xM" + newLine
+				+ "lKKk0l. ,KK;                 ,KK, .l0xKKl" + newLine
+				+ " .'',xOxOWl                   lMOxOx,''. " + newLine
+				+ "      .,xWl                   lWx;.      " + newLine
+				+ "        lMl ,.             ., lMl        " + newLine
+				+ "        ;XO';Odl:,.. .',:ldO;'OX;        " + newLine
+				+ "         ,KK,cxkkkc...ckxkx:,KK,         " + newLine
+				+ "          lMc .,,. .o. .,,. cMl          " + newLine
+				+ "          .lO;;'  .lkl.  ';;Ol.          " + newLine
+				+ "         .;;kMk.         .kMk;;.         " + newLine
+				+ "       .lKKK0kl;;.......;,lk0KKKl.       " + newLine
+				+ "  .;llxOx;.'Ox;llxxldlxxll;xO'.;xOxll;.  " + newLine
+				+ " ,KKcll.  .l0KKl...   ...lKK0l.  .llcKK, " + newLine
+				+ " lMx'''..lXX;:X0:'.   .':OX;,XXl..'''xMl " + newLine
+				+ " .lxXk.  ,KM; .lkKKxkkKKkl. ,MK,  .kXxl. " + newLine
+				+ "    oKl;;kMk.    .,,,,;.    .kMk,,lKo    " + newLine
+				+ "    .0MMMMO'                 .OMMMMO.    ");
 	}
 
 	/* Morlok8k:

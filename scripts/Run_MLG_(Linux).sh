@@ -1,4 +1,6 @@
 #!/bin/sh
+BINDIR=$(dirname "$(readlink -fn "$0")")
+cd "$BINDIR"
 
 java -client -showversion -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 2000 2000
 
