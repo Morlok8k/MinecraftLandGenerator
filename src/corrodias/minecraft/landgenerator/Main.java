@@ -263,7 +263,7 @@ public class Main {
 					BufferedReader in = new BufferedReader(new FileReader(config));
 					String line;
 					while ((line = in.readLine()) != null) {
-						if (line == "###RECHECK###") {
+						if (line.contains("###RECHECK###")) {
 							recheckFlag = !recheckFlag;
 						} else {
 							downloadFile(line, true);
@@ -283,7 +283,7 @@ public class Main {
 							BufferedReader in_recheck = new BufferedReader(new FileReader(config));
 							String line_recheck;
 							while ((line_recheck = in_recheck.readLine()) != null) {
-								if (line_recheck == "###RECHECK###") {
+								if (line_recheck.contains("###RECHECK###")) {
 									recheckFlag = !recheckFlag;
 								} else {
 									downloadFile(line_recheck, true);

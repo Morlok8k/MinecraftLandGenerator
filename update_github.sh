@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Minecraft Land Generator - GitHub Update Script
-## Morlok8k - Updated 3/27/2012
+## Morlok8k - Updated 4/15/2012
 
 zip ./bin/MinecraftLandGenerator.jar ./src/corrodias/minecraft/landgenerator/Main.java
 
@@ -20,6 +20,6 @@ rm ./MLG-BuildID
 git add .
 git commit -a
 git push origin master
-echo Pausing for 1 minute
-sleep 60
+echo Pausing for 20sec
+sleep 20
 
