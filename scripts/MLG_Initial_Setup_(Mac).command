@@ -1,9 +1,14 @@
 #!/bin/bash
 cd "$(dirname "$0")"
+echo Minecraft Land Generator - Initial Setup - Mac OSX
+echo $PWD
 
-exec java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -update
-exec java -jar MinecraftLandGenerator.jar -readme _MLG_Readme.txt
-exec java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist MLG_Update_Files.txt
-exec java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadfile https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
-exec java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -conf
-exec java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 0 0 -w
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -update
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -readme _MLG_Readme.txt
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist MLG_Update_Files_(Mac).txt
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadfile https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
+chmod +x *.command
+chmod +x *.jar
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -conf
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 0 0 -w
+

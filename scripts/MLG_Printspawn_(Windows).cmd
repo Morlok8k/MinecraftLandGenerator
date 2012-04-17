@@ -1,5 +1,8 @@
 @echo off
 SET BINDIR=%~dp0
 CD /D "%BINDIR%"
+echo Minecraft Land Generator - Print Spawn - Windows
+echo %BINDIR%
 
-java -jar MinecraftLandGenerator.jar -printspawn
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -printspawn
+

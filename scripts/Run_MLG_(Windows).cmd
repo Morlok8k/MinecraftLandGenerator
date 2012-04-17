@@ -1,5 +1,8 @@
 @echo off
 SET BINDIR=%~dp0
 CD /D "%BINDIR%"
+echo Minecraft Land Generator - Run MLG - Windows
+echo %BINDIR%
 
-java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 2000 2000
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar
+

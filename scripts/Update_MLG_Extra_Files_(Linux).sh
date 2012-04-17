@@ -1,6 +1,10 @@
 #!/bin/sh
 BINDIR=$(dirname "$(readlink -fn "$0")")
 cd "$BINDIR"
+echo Minecraft Land Generator - Update Extra MLG Files - Linux
+echo $BINDIR
 
-java -client -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist MLG_Update_Files.txt
+java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist MLG_Update_Files_(Linux).txt
 chmod +x *.sh
+chmod +x *.jar
+

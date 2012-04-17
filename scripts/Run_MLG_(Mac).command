@@ -1,8 +1,7 @@
 #!/bin/bash
 cd "$(dirname "$0")"
-exec java -Djava.awt.headless=true -Xms1024m -Xmx1024m -Xincgc -jar MinecraftLandGenerator.jar 2000 2000
+echo Minecraft Land Generator - Run MLG - Mac OSX
+echo $PWD
 
-
-
-
+java -Djava.awt.headless=true -Xms1024m -Xmx1024m -Xincgc -jar MinecraftLandGenerator.jar
 
