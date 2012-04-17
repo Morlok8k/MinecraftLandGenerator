@@ -1,6 +1,6 @@
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_(Linux).txt
 ###RECHECK###
-https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_(ALL).txt
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files.txt
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_MLG_%28Linux%29.sh
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_Server_%28Linux%29.sh
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_%28Linux%29.sh
