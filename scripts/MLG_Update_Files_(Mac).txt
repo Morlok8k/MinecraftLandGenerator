@@ -8,4 +8,3 @@ https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_Ser
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_Extra_Files_%28Mac%29.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Printspawn_%28Mac%29.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_%28Mac%29.command
-
