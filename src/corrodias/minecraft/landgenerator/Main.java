@@ -718,7 +718,7 @@ public class Main {
 				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
 
-					out("Stopping server...");
+					out("Stopping server...  (Please Wait...)");
 					outputStream.write(stop);
 					outputStream.flush();
 
@@ -833,7 +833,7 @@ public class Main {
 				if (line.contains(doneText)) { // now this is configurable!
 					outP(newLine);
 					if (waitSave) {
-						out("Waiting 30 seconds to save.");
+						out("Waiting 30 seconds to save...");
 
 						int count = 1;
 						while (count <= 30) {
@@ -848,11 +848,11 @@ public class Main {
 						}
 						out("");
 					}
-					out("Saving server data.");
+					out("Saving server data...");
 					outputStream.write(saveAll);
 					outputStream.flush();
 
-					out("Stopping server.");
+					out("Stopping server...  (Please Wait...)");
 					// OutputStream outputStream = process.getOutputStream();
 					outputStream.write(stop);
 					outputStream.flush();
@@ -1012,6 +1012,7 @@ public class Main {
 		ReadMeText = PROG_NAME + " version " + VERSION + newLine
 				+ newLine
 				+ "Updated " + dateFormat_MDY.format(MLG_Last_Modified_Date) + newLine
+				+ "(BuildID: " + MLG_Last_Modified_Date.getTime() + ")" + newLine
 				+ newLine
 				+ "Original Code by Corrodias		November 2010" + newLine
 				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + dateFormat_MDY.format(MLG_Last_Modified_Date) + "!)" + newLine
@@ -1045,6 +1046,7 @@ public class Main {
 				+ "- Renamed -y switch to -z.  MLG will remain backwards compatible if you use the old -y switch." + newLine
 				+ "- Updated -printspawn to show X,Y,Z" + newLine
 				+ "- Added End-of-Generation ASCII-Graphic" + newLine
+				+ "- Slightly altered some text output" + newLine
 				+ newLine
 				+ "1.6.05" + newLine
 				+ "- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)" + newLine
