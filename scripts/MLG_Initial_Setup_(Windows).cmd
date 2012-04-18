@@ -10,4 +10,5 @@ java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist "MLG
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadfile https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft_server.jar
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -conf
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 0 0 -w
+RMDIR /Q /S world
 

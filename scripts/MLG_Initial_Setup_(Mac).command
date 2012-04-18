@@ -11,4 +11,5 @@ chmod +x *.command
 chmod +x *.jar
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -conf
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar 0 0 -w
+rm -rf world
 

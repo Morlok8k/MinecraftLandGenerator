@@ -1,8 +1,8 @@
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files.txt
 ###RECHECK###
-https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_(Linux).txt
-https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_(Mac).txt
-https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_(Windows).txt
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_%28Linux%29.txt
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_%28Mac%29.txt
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Update_Files_%28Windows%29.txt
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_MLG_%28Linux%29.sh
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_MLG_%28Mac%29.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_MLG_%28Windows%29.cmd
