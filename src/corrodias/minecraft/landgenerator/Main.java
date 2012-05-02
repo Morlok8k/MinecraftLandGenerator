@@ -529,15 +529,24 @@ public class Main {
 					if (currentIteration >= 4) {
 						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
-						} else if (currentIteration == 3) {
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+					} else if (currentIteration == 3) {
 						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration == 2) {
 						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
+						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
+								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
+								/ (1000 * 60),
+								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
 					} else if (currentIteration <= 1) {
 						out("Estimated time remaining: Calculating...");
 					}
