@@ -53,7 +53,7 @@ public class Main {
 
 	// Version Number!
 	private static final String PROG_NAME = "Minecraft Land Generator";
-	private static final String VERSION = "1.6.1";
+	private static final String VERSION = "1.6.11";
 	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	private static final String fileSeparator = System.getProperty("file.separator");
@@ -129,6 +129,7 @@ public class Main {
 	private static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
 
 	private static Boolean recheckFlag = false;
+	private static long startTime = 0L;
 
 	//////
 
@@ -145,6 +146,7 @@ public class Main {
 	 *            the command line arguments
 	 */
 	public static void main(String[] args) {
+		startTime = System.currentTimeMillis();
 		(new Main()).run(args); // Why? this avoids "static" compiling issues.
 	}
 
@@ -443,6 +445,8 @@ public class Main {
 		try {
 			out("Launching server once to make sure there is a world.");
 
+			long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
+
 			runMinecraft(verbose, alternate);
 
 			if ((xRange == 0) & (zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
@@ -484,59 +488,63 @@ public class Main {
 			int currentIteration = 0;
 
 			long differenceTime = System.currentTimeMillis();
-			Long[] timeTracking =
-					new Long[] { differenceTime, differenceTime, differenceTime, differenceTime };
+			//Long[] timeTracking = new Long[] { differenceTime, differenceTime, differenceTime, differenceTime };
+			Long timeTracking = 0L;
+
 			for (int currentX = 0 - xRange / 2; currentX <= xRange / 2; currentX += increment) {
 				for (int currentZ = 0 - zRange / 2; currentZ <= zRange / 2; currentZ += increment) {
 					currentIteration++;
 
-					out("Setting spawn to ["
-							+ Integer.toString(currentX + xOffset)
-							+ ", "
-							+ Integer.toString(currentZ + zOffset)
-							+ "] ("
-							+ currentIteration
-							+ "/"
-							+ totalIterations
-							+ ") "
-							+ Float.toString((Float.parseFloat(Integer.toString(currentIteration)) / Float
-									.parseFloat(Integer.toString(totalIterations))) * 100)
+					String curX = Integer.toString(currentX + xOffset);
+					//String curY = "64";		//Y is always set to 64
+					String curZ = Integer.toString(currentZ + zOffset);
+					String percentDone =
+							Float.toString((Float.parseFloat(Integer.toString(currentIteration)) / Float
+									.parseFloat(Integer.toString(totalIterations))) * 100);
+					int percentIndex =
+							((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
+									.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
+					percentDone =
+							percentDone.substring(0,
+									(percentDone.indexOf(".") == -1 ? percentDone.length()
+											: percentIndex));			//Trim output, unless whole number
+
+					out("Setting spawn to (X,Y,Z): [" + curX + ", 64, " + curZ + "] ("
+							+ currentIteration + "/" + totalIterations + ") " + percentDone
 							+ "% Done"); // Time Remaining estimate
 
-					timeTracking[0] = timeTracking[1];
-					timeTracking[1] = timeTracking[2];
-					timeTracking[2] = timeTracking[3];
-					timeTracking[3] = System.currentTimeMillis();
+					//timeTracking[0] = timeTracking[1];
+					//timeTracking[1] = timeTracking[2];
+					//timeTracking[2] = timeTracking[3];
+					timeTracking = System.currentTimeMillis();
 
-					//TODO: update this time remaining section, so it doesnt do last 4 runs, but all runs.
+					//NEW CODE:
+					differenceTime =
+							(timeTracking - generationStartTimeTracking) / (currentIteration + 1);		// Updated.  we now count all runs, instead of the last 4.
+					differenceTime *= 1 + (totalIterations - currentIteration);									//this should provide a more accurate result.
+					out("Estimated time remaining: " + displayTime(differenceTime));
 
+					//OLD CODE:
+					/*
 					if (currentIteration >= 4) {
 						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
-					} else if (currentIteration == 3) {
+						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
+						} else if (currentIteration == 3) {
 						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
 					} else if (currentIteration == 2) {
 						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
 						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+						out("Estimated time remaining: " + displayEstimatedTime(differenceTime));
 					} else if (currentIteration <= 1) {
 						out("Estimated time remaining: Calculating...");
 					}
+					 */
 
 					// Set the spawn point
-					setSpawn(serverLevel, currentX + xOffset, 128, currentZ + zOffset);
+					setSpawn(serverLevel, currentX + xOffset, 64, currentZ + zOffset);
 
 					// Launch the server
 					runMinecraft(verbose, alternate);
@@ -548,7 +556,8 @@ public class Main {
 			copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			out("Restored original level.dat.");
-			finishedImage();
+			//finishedImage();			//disabled, because I didn't care for it - it didn't flow well with MLG
+			out("Generation complete in: " + displayTime(startTime, System.currentTimeMillis()));
 			waitTenSec(false);
 		} catch (IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -1032,7 +1041,7 @@ public class Main {
 				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
 				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3CÂ® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
 				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of " + PROG_NAME + "'s source code."
 				+ newLine
@@ -1040,6 +1049,12 @@ public class Main {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.11" + newLine
+				+ "- Removed End-of-Generation ASCII-Graphic - It didn't really fit with MLG." + newLine
+				+ "- Updated Time Output." + newLine
+				+ "- Changed estimated time remaining to count all runs, not just the last four." + newLine
+				+ "- Added the time it took to complete at the end of generation." + newLine
+				+ newLine
 				+ "1.6.1" + newLine
 				+ "- Added some modifications for scripting  (Mainly for a new Initial setup script)" + newLine
 				+ "- Changed MLG's Y to Z.  Now it matches Minecraft.  Y in the game is Height." + newLine
@@ -1229,11 +1244,11 @@ public class Main {
 				outP(newLine);
 				out(count + " byte(s) copied");
 			}
+
 			timeTracking[1] = System.currentTimeMillis();
-			differenceTime = (timeTracking[1] - timeTracking[0]) / 2;
+			//differenceTime = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				out(String.format(MLG + "Elapsed Time: %dm%ds", (differenceTime % (1000 * 60 * 60))
-						/ (1000 * 60), ((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
+				out("Elapsed Time: " + displayTime(timeTracking[0], timeTracking[1]));
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1298,7 +1313,7 @@ public class Main {
 
 			try {
 				MLG_Current_Hash = fileMD5(MLGFileName);
-				// out(hash + "  " + MLGFileName);®
+				// out(hash + "  " + MLGFileName);Â®
 			} catch (Exception e) {
 				out("Error: MD5 from file failed");
 				e.printStackTrace();
@@ -2125,6 +2140,7 @@ public class Main {
 
 	}
 
+	/*
 	private static void finishedImage() {
 		System.out.println(newLine + "  .l0kkKMl                     lMKkk0l.  " + newLine
 				+ ".;kMc  ;KK;  .,,lkkkkkkkl,,.  ;KK,  cMk,." + newLine
@@ -2147,6 +2163,59 @@ public class Main {
 				+ "    oKl;;kMk.    .,,,,;.    .kMk,,lKo    " + newLine
 				+ "    .0MMMMO'                 .OMMMMO.    ");
 	}
+	 */
+
+	/**
+	 * Returns the time in a readable format between two points of time given in Millis.
+	 * 
+	 * @param startTimeMillis
+	 * @param endTimeMillis
+	 * @author Morlok8k
+	 * @return String of Readable Time
+	 */
+	private static String displayTime(long startTimeMillis, long endTimeMillis) {
+
+		long millis = (endTimeMillis - startTimeMillis);
+		long seconds = millis / 1000;
+		long minutes = seconds / 60;
+		long hours = minutes / 60;
+		long days = hours / 24;
+		long years = days / 365;
+
+		String took =
+				(years > 0 ? String.format("%d Years, ", years) : "")
+						+ (days > 0 ? String.format("%d Days, ", days % 365) : "")
+						+ (hours > 0 ? String.format("%d Hours, ", hours % 24) : "")
+						+ (minutes > 0 ? String.format("%d Minutes, ", minutes % 60) : "")
+						+ String.format("%d Seconds", seconds % 60);
+
+		return (took);
+	}
+
+	/**
+	 * Returns the time in a readable format given in Millis.
+	 * 
+	 * @param timeMillis
+	 * @author Morlok8k
+	 * @return String of Readable Time
+	 */
+	private static String displayTime(long timeMillis) {
+
+		long seconds = timeMillis / 1000;
+		long minutes = seconds / 60;
+		long hours = minutes / 60;
+		long days = hours / 24;
+		long years = days / 365;
+
+		String took =
+				(years > 0 ? String.format("%d Years, ", years) : "")
+						+ (days > 0 ? String.format("%d Days, ", days % 365) : "")
+						+ (hours > 0 ? String.format("%d Hours, ", hours % 24) : "")
+						+ (minutes > 0 ? String.format("%d Minutes, ", minutes % 60) : "")
+						+ String.format("%d Seconds", seconds % 60);
+
+		return (took);
+	}
 
 	/* Morlok8k:
 	 * Just a note about this unescape method:
@@ -2163,8 +2232,8 @@ public class Main {
 	 * <br>
 	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
 	 * <br>
-	 * Copyright © 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
-	 * work is distributed under the W3C® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+	 * Copyright Â© 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
+	 * work is distributed under the W3CÂ® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 	 * PARTICULAR PURPOSE.<br>
 	 * <br>
 	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
