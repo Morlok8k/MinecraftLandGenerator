@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.6.1
+Minecraft Land Generator version 1.6.11
 
-Updated April 18, 2012
-(BuildID: 1334739407000)
+Updated May 2, 2012
+(BuildID: 1335956100000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to April 18, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to May 2, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -21,12 +21,18 @@ This program is public domain, and the source code is included in the .jar file.
 The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
 It is also available at: http://jnbt.sourceforge.net/
 
-The "unescape" method/function is also not Public Domain.  Its License is the W3C® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+The "unescape" method/function is also not Public Domain.  Its License is the W3C© Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
 -----------------------------------------------
 
 Version History:
 Morlok8k:
+1.6.11
+- Removed End-of-Generation ASCII-Graphic - It didn't really fit with MLG.
+- Updated Time Output.
+- Changed estimated time remaining to count all runs, not just the last four.
+- Added the time it took to complete at the end of generation.
+
 1.6.1
 - Added some modifications for scripting  (Mainly for a new Initial setup script)
 - Changed MLG's Y to Z.  Now it matches Minecraft.  Y in the game is Height.

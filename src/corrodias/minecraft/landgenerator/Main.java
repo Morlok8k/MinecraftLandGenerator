@@ -336,7 +336,7 @@ public class Main {
 
 		if (doneText == null) {					// MLG 1.4.0
 			oldConf = true;
-		} else if (preparingText == null) {		// MLG 1.4.0
+		} else if (preparingText == null) {	// MLG 1.4.0
 			oldConf = true;
 		} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
 			oldConf = true;
@@ -516,6 +516,7 @@ public class Main {
 					//timeTracking[0] = timeTracking[1];
 					//timeTracking[1] = timeTracking[2];
 					//timeTracking[2] = timeTracking[3];
+					//timeTracking[3] = System.currentTimeMillis();
 					timeTracking = System.currentTimeMillis();
 
 					//NEW CODE:
@@ -1050,7 +1051,7 @@ public class Main {
 				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
 				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
 				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3CÂ® Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
+				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C\u00A9 Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
 				+ newLine
 				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of " + PROG_NAME + "'s source code."
 				+ newLine
@@ -2185,24 +2186,12 @@ public class Main {
 	private static String displayTime(long startTimeMillis, long endTimeMillis) {
 
 		long millis = (endTimeMillis - startTimeMillis);
-		long seconds = millis / 1000;
-		long minutes = seconds / 60;
-		long hours = minutes / 60;
-		long days = hours / 24;
-		long years = days / 365;
-
-		String took =
-				(years > 0 ? String.format("%d Years, ", years) : "")
-						+ (days > 0 ? String.format("%d Days, ", days % 365) : "")
-						+ (hours > 0 ? String.format("%d Hours, ", hours % 24) : "")
-						+ (minutes > 0 ? String.format("%d Minutes, ", minutes % 60) : "")
-						+ String.format("%d Seconds", seconds % 60);
-
-		return (took);
+		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
+		return (displayTime(millis));
 	}
 
 	/**
-	 * Returns the time in a readable format given in Millis.
+	 * Returns the time in a readable format given a time in Millis.
 	 * 
 	 * @param timeMillis
 	 * @author Morlok8k
@@ -2241,9 +2230,9 @@ public class Main {
 	 * <br>
 	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
 	 * <br>
-	 * Copyright Â© 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved. This
-	 * work is distributed under the W3CÂ® Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-	 * PARTICULAR PURPOSE.<br>
+	 * Copyright &copy; 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved.
+	 * This work is distributed under the W3C&reg; Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+	 * FOR A PARTICULAR PURPOSE.<br>
 	 * <br>
 	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
 	 * 
