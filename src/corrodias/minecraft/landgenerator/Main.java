@@ -1,7 +1,5 @@
 package corrodias.minecraft.landgenerator;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,12 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -37,6 +32,10 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import morlok8k.minecraft.landgenerator.DownloadFile;
+import morlok8k.minecraft.landgenerator.MD5;
+import morlok8k.minecraft.landgenerator.Readme_and_HelpInfo;
+
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
 import org.jnbt.LongTag;
@@ -52,12 +51,12 @@ import org.jnbt.Tag;
 public class Main {
 
 	// Version Number!
-	private static final String PROG_NAME = "Minecraft Land Generator";
-	private static final String VERSION = "1.6.11";
-	private static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
+	public static final String PROG_NAME = "Minecraft Land Generator";
+	public static final String VERSION = "1.6.2";
+	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
-	private static final String fileSeparator = System.getProperty("file.separator");
-	private static final String newLine = System.getProperty("line.separator");
+	public static final String fileSeparator = System.getProperty("file.separator");
+	public static final String newLine = System.getProperty("line.separator");
 
 	private int increment = 380;
 	private static ProcessBuilder minecraft = null;
@@ -94,19 +93,19 @@ public class Main {
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
 
-	private static String MLG = "[MLG] ";
-	private static String MLGe = "[MLG-ERROR] ";
+	public static String MLG = "[MLG] ";
+	public static String MLGe = "[MLG-ERROR] ";
 
 	private static DateFormat dateFormat = null;
 	//private static DateFormat dateFormatBuildID = null;
-	private static DateFormat dateFormat_MDY = null;
+	public static DateFormat dateFormat_MDY = null;
 	private static Date date = null;
-	private static Date MLG_Last_Modified_Date = null;
+	public static Date MLG_Last_Modified_Date = null;
 	private static Long MLG_Last_Modified_Long = 0L;
 
 	private static final Class<?> cls = Main.class;
 	private static String MLGFileName = null;
-	private static String MLGFileNameShort = null;
+	public static String MLGFileNameShort = null;
 	private static final String rsrcError = "rsrcERROR";
 	private static String buildIDFile = "MLG-BuildID";
 	private static boolean isCompiledAsJar = false;
@@ -117,8 +116,8 @@ public class Main {
 
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
-	private static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
-	private static final String defaultReadmeFile = "_MLG_Readme.txt";
+	public static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
+	public static final String defaultReadmeFile = "_MLG_Readme.txt";
 	private static final String MLG_JarFile = "MinecraftLandGenerator.jar";
 
 	private static final String github_URL =
@@ -133,7 +132,7 @@ public class Main {
 
 	//////
 
-	private static final boolean testing = false;	// display more output when debugging
+	public static final boolean testing = false;	// display more output when debugging
 
 	//////
 
@@ -422,6 +421,7 @@ public class Main {
 				err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
 						+ " or restore the backup.");
 				err("You most likely will want to restore the backup!");
+				waitTenSec(false);
 				return;
 			}
 		}
@@ -484,23 +484,98 @@ public class Main {
 			}
 			out("");
 
-			int totalIterations = (xRange / increment + 1) * (zRange / increment + 1);
+			// new code to optimize the locations
+			Integer incrementX, incrementZ;
+			Double blah;
+			double xLoops, zLoops;
+
+			// X
+			blah = ((double) xRange / (double) increment);		//How many loops do we need?
+			xLoops = Math.ceil(blah);							//round up to find out!
+			blah = Math.floor(xRange / xLoops);						//optimal distance calculations here
+			incrementX = blah.intValue();							//save to an int
+			blah =
+					Math.floor((double) xRange
+							/ Math.ceil(((double) xRange / ((double) increment + 20))));
+			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
+				incrementX = blah.intValue();
+			}
+			if (blah.isInfinite()) {
+				incrementX = 0;			// An Infinity error.  this should never be less than (increment/2)!
+			} else if (incrementX < (increment / 2)) {
+				incrementX = 0;			// Should never happen except for the Infinity error
+			} else if (incrementX > increment) {
+				incrementX = increment;	// Should never happen. Just in case!
+			}
+
+			// Z
+			blah = ((double) zRange / (double) increment);		//How many loops do we need?
+			zLoops = Math.ceil(blah);							//round up to find out!
+			blah = Math.floor(zRange / zLoops);						//optimal distance calculations here
+			incrementZ = blah.intValue();							//save to an int
+			blah =
+					Math.floor((double) zRange
+							/ Math.ceil(((double) zRange / ((double) increment + 20))));
+			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
+				incrementZ = blah.intValue();
+			}
+			if (blah.isInfinite()) {
+				incrementZ = 0;			// An Infinity error.  this should never be less than (increment/2)!
+			} else if (incrementZ < (increment / 2)) {
+				incrementZ = 0;			// Should never happen except for the Infinity error
+			} else if (incrementZ > increment) {
+				incrementZ = increment;	// Should never happen. Just in case!
+			}
+
+			blah = null;	// I'm done with this temporary variable now.  I used it to make my code simplier,
+			// and so I wouldn't need to constantly use casting
+			// (as java will do it if one of the numbers is already a double)
+
+			if (verbose) {
+				if (incrementX != increment) {
+					out("Optimized X increments from: " + increment + " to: " + incrementX);
+				}
+				if (incrementZ != increment) {
+					out("Optimized Z increments from: " + increment + " to: " + incrementZ);
+				}
+			}
+			// end new code for location optimizations
+
+			int totalIterations = (int) (xLoops * zLoops);
 			int currentIteration = 0;
 
+			int curXloops = 0;
+			int curZloops = 0;
+
 			long differenceTime = System.currentTimeMillis();
-			//Long[] timeTracking = new Long[] { differenceTime, differenceTime, differenceTime, differenceTime };
+
 			Long timeTracking = 0L;
 
-			for (int currentX = 0 - xRange / 2; currentX <= xRange / 2; currentX += increment) {
-				for (int currentZ = 0 - zRange / 2; currentZ <= zRange / 2; currentZ += increment) {
+			for (int currentX = (((0 - xRange) / 2) + (incrementX / 2)); currentX <= (xRange / 2); currentX +=
+					incrementX) {
+				curXloops++;
+				if (curXloops == 1) {
+					currentX = (((0 - xRange) / 2) + (increment / 2));
+				} else if (curXloops == xLoops) {
+					currentX = (xRange / 2) - (increment / 2);
+				}
+
+				for (int currentZ = (((0 - zRange) / 2) + (incrementZ / 2)); currentZ <= (zRange / 2); currentZ +=
+						incrementZ) {
 					currentIteration++;
+
+					curZloops++;
+					if (curZloops == 1) {
+						currentZ = (((0 - zRange) / 2) + (increment / 2));
+					} else if (curZloops == zLoops) {
+						currentZ = (zRange / 2) - (increment / 2);
+					}
 
 					String curX = Integer.toString(currentX + xOffset);
 					//String curY = "64";		//Y is always set to 64
 					String curZ = Integer.toString(currentZ + zOffset);
 					String percentDone =
-							Float.toString((Float.parseFloat(Integer.toString(currentIteration)) / Float
-									.parseFloat(Integer.toString(totalIterations))) * 100);
+							Double.toString((double) (currentIteration / totalIterations) * 100);
 					int percentIndex =
 							((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
 									.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
@@ -513,45 +588,17 @@ public class Main {
 							+ currentIteration + "/" + totalIterations + ") " + percentDone
 							+ "% Done"); // Time Remaining estimate
 
-					//timeTracking[0] = timeTracking[1];
-					//timeTracking[1] = timeTracking[2];
-					//timeTracking[2] = timeTracking[3];
-					//timeTracking[3] = System.currentTimeMillis();
+					if (testing) {
+						out("X:" + curXloops + ", Z:" + curZloops);
+					}
+
 					timeTracking = System.currentTimeMillis();
 
 					//NEW CODE:
 					differenceTime =
 							(timeTracking - generationStartTimeTracking) / (currentIteration + 1);		// Updated.  we now count all runs, instead of the last 4.
-					differenceTime *= 1 + (totalIterations - currentIteration);									//this should provide a more accurate result.
-					out("Estimated time remaining: " + displayTime(differenceTime));
-
-					//OLD CODE:
-					/*
-					if (currentIteration >= 4) {
-						differenceTime = (timeTracking[3] - timeTracking[0]) / 3; // well, this is what it boils down to
-						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
-					} else if (currentIteration == 3) {
-						differenceTime = (timeTracking[3] - timeTracking[1]) / 2; // well, this is what it boils down to
-						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
-					} else if (currentIteration == 2) {
-						differenceTime = (timeTracking[3] - timeTracking[2]); // well, this is what it boils down to
-						differenceTime *= 1 + (totalIterations - currentIteration);
-						out(String.format("Estimated time remaining: %dh%dm%ds", differenceTime
-								/ (1000 * 60 * 60), (differenceTime % (1000 * 60 * 60))
-								/ (1000 * 60),
-								((differenceTime % (1000 * 60 * 60)) % (1000 * 60)) / 1000));
-					} else if (currentIteration <= 1) {
-						out("Estimated time remaining: Calculating...");
-					}
-					 */
+					differenceTime *= 1 + (totalIterations - currentIteration);							// this should provide a more accurate result.
+					out("Estimated time remaining: " + displayTime(differenceTime));					// I've noticed it gets pretty accurate after about 8 launches!
 
 					// Set the spawn point
 					setSpawn(serverLevel, currentX + xOffset, 64, currentZ + zOffset);
@@ -559,6 +606,15 @@ public class Main {
 					// Launch the server
 					runMinecraft(verbose, alternate);
 					out("");
+
+					if (curZloops == 1) {
+						currentZ = (((0 - zRange) / 2) + (incrementZ / 2));
+					}
+
+				}
+				curZloops = 0;
+				if (curXloops == 1) {
+					currentX = (((0 - xRange) / 2) + (incrementX / 2));
 				}
 			}
 
@@ -636,6 +692,9 @@ public class Main {
 
 			//@formatter:off
 			
+			//Note: The Following Information is Old (from 2010), compared to the Data inside a current "level.dat".
+			//However, What we look at (SpawnX,Y,Z and RandomSeed) have not changed.
+			
 			/* <editor-fold defaultstate="collapsed" desc="structure">
 			* Structure:
 			*
@@ -704,7 +763,9 @@ public class Main {
 	 * @author Corrodias
 	 */
 	protected static void runMinecraft(boolean verbose, boolean alternate) throws IOException {
-		out("Starting server.");
+		if (verbose) {
+			out("Starting server.");
+		}
 
 		boolean warning = false;
 		boolean cantKeepUp = false;
@@ -712,11 +773,6 @@ public class Main {
 
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
-
-		// Damn it Java! I hate you so much!
-		// I can't reuse code the way I want to, like in other langauges.
-		// So, here is a bunch of duplicate code...
-		// Stupid compile errors...
 
 		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
 			out("Alternate Launch");
@@ -1019,179 +1075,11 @@ public class Main {
 	 */
 	private static void readMe(String readmeFile) {
 
-		if (readmeFile == "" || readmeFile == null) {
-			readmeFile = defaultReadmeFile;
-		}
-
-		String showHelpSTR = "";
-		showHelpSTR = showHelp(false);		//stored as a string for easier manipulation in the future
-
-		//@formatter:off
-		String ReadMeText = "";
-		ReadMeText = PROG_NAME + " version " + VERSION + newLine
-				+ newLine
-				+ "Updated " + dateFormat_MDY.format(MLG_Last_Modified_Date) + newLine
-				+ "(BuildID: " + MLG_Last_Modified_Date.getTime() + ")" + newLine
-				+ newLine
-				+ "Original Code by Corrodias		November 2010" + newLine
-				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + dateFormat_MDY.format(MLG_Last_Modified_Date) + "!)" + newLine
-				+ "Additional Code by pr0f1x		October 2011" + newLine
-				+ newLine
-				+ "Website: https://sites.google.com/site/minecraftlandgenerator/" + newLine
-				+ "Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/" + newLine
-				+ "Source: https://github.com/Morlok8k/MinecraftLandGenerator" + newLine
-				+ newLine
-				+ "-----------------------------------------------" + newLine
-				+ newLine
-				+ "This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program." + newLine
-				+ "When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point." + newLine
-				+ "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + newLine
-				+ newLine
-				+ "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + newLine
-				+ "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + newLine
-				+ "It is also available at: http://jnbt.sourceforge.net/" + newLine
-				+ newLine
-				+ "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C\u00A9 Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
-				+ newLine
-				+ "Other Public Domain code has been used in this program, and references to sources are included in the comments of " + PROG_NAME + "'s source code."
-				+ newLine
-				+ "-----------------------------------------------" + newLine
-				+ newLine
-				+ "Version History:" + newLine
-				+ "Morlok8k:" + newLine
-				+ "1.6.11" + newLine
-				+ "- Removed End-of-Generation ASCII-Graphic - It didn't really fit with MLG." + newLine
-				+ "- Updated Time Output." + newLine
-				+ "- Changed estimated time remaining to count all runs, not just the last four." + newLine
-				+ "- Added the time it took to complete at the end of generation." + newLine
-				+ newLine
-				+ "1.6.1" + newLine
-				+ "- Added some modifications for scripting  (Mainly for a new Initial setup script)" + newLine
-				+ "- Changed MLG's Y to Z.  Now it matches Minecraft.  Y in the game is Height." + newLine
-				+ "- Renamed -y switch to -z.  MLG will remain backwards compatible if you use the old -y switch." + newLine
-				+ "- Updated -printspawn to show X,Y,Z" + newLine
-				+ "- Added End-of-Generation ASCII-Graphic" + newLine
-				+ "- Slightly altered some text output" + newLine
-				+ newLine
-				+ "1.6.05" + newLine
-				+ "- MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)" + newLine
-				+ "- Minor fixes/edits/typos" + newLine
-				+ "- Added link to new MLG website to readme file"
-				+ newLine
-				+ "1.6.03" + newLine
-				+ "- added decoding of escape characters of URL's (so a space is a \" \" and not \"%20\")" + newLine
-				+ "- added \"-downloadlist [list]\" where [list] is a text file with URL's on each line" + newLine
-				+ newLine
-				+ "1.6.02" + newLine
-				+ "- small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side"
-				+ "- quick Archive intergity fix after injecting source code into .jar after it compiled."
-				+ "- no new functionality, md5 issue doesnt affect -update on old versions."
-				+ newLine
-				+ "1.6.0" + newLine
-				+ "- NOW DOES NOT NEED ANY SCRIPT FILES!" + newLine
-				+ "- Added the ability to download files from the internet" + newLine
-				+ "- Added a switch to download any file off the internet, if needed (useless for most people, but included it in case I wanted it in the future.)" + newLine
-				+ "- Added the ability to check what version the .jar is. (Using MD5 hashes, timestamps, and the BuildID file)" + newLine
-				+ "- Added \"-update\" to download new versions of MLG directly from github." + newLine
-				+ "- Updated estimated time.  Now shows up on loop 2+ instead of loop 4+." + newLine
-				+ "- Standard % output of the Server should look nicer now." + newLine
-				+ "- Code Refactoring" + newLine
-				+ "- Code Formatting" + newLine
-				+ "- Code Optimization" + newLine
-				+ "- Duplicate sections of code have been turned into Methods/\"Functions\"" + newLine
-				+ newLine
-				+ "1.5.1" + newLine
-				+ "- pr0f1x: Added the \"save-all\" command to be sent to the server before shutting it down." + newLine
-				+ "- pr0f1x: Added a 40 second wait before shutting down." + newLine
-				+ "- Morlok8k: Made 40 second wait optional." + newLine
-				+ "- Morlok8k: Changed the Dimensions code.  (I had assumed it would be DIM-1, DIM-2, etc.  but it turned out to be DIM-1 and DIM1. Change reflects Server output of \"Level n\")" + newLine
-				+ "- Morlok8k: Config file is automatically updated to reflect these changes." + newLine
-				+ "- Morlok8k: Cleaned up code." + newLine
-				+ newLine
-				+ "1.5.0" + newLine
-				+ "- Supports Server Beta 1.6.4 (& hopefully future versions as well, while remaining backward compatible.)" + newLine
-				+ "- Added \"-a\",\"-alt\" to use alternate method (a slightly simplier version of 1.3.0's code - pure verbose only)" + newLine
-				+ "- Added world specific output for 9 dimensions (DIM-1 is the Nether, DIM-2 through DIM-9 dont exist yet, but if and when they do, you can configure it's text).  (\"Level 0\", the default world, is displayed as the worlds name)" + newLine
-				+ "- Updated Config File for these Dimensions." + newLine
-				+ "- Reads and outputs the Seed to the output. (If you had used text for the Seed, Minecraft converts it into a number. This outputs the number.)" + newLine
-				+ "- Changed the default 300 blocks to 380.  The server now makes a 400x400 square block terrain instead of 320x320.  Thus it is faster because there are less loops.  To use the old way, use \"-i300\"" + newLine
-				+ "- Added total Percentage done (technically, it displays the % done once the server finishes...)" + newLine
-				+ "- Added debugging output vars of conf file (disabled - need to re-compile source to activate)" + newLine
-				+ newLine
-				+ "\t\t+ (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)" + newLine
-				+ newLine
-				+ "*** 1.4.5 (pre 1.5.0) ***" + newLine
-				+ "- sorry!  I shouldn't release untested code..." + newLine
-				+ "*************************" + newLine
-				+ newLine
-				+ "1.4.4" + newLine
-				+ "- Added ablilty to ignore [WARNING] and [SEVERE] errors with \"-w\"" + newLine
-				+ newLine
-				+ "1.4.3" + newLine
-				+ "- Fixed \"-ps\",\"-printspawn\" as I had forgot I had broken it in 1.4.0 - due to config file change." + newLine
-				+ newLine
-				+ "1.4.2" + newLine
-				+ "- No New Features" + newLine
-				+ "- Changed non-verbose mode to display server progress on the same line, saving a lot of space." + newLine
-				+ "	- This couldn't wait for 1.5.0 ...  I (Morlok8k) liked it too much." + newLine
-				+ newLine
-				+ "1.4.0" + newLine
-				+ "- Future Proofing" + newLine
-				+ "- Configurble Server Message reading. (If server updates and breaks MLG, you can add the new text!)" + newLine
-				+ "- Updated config file, and auto updating from old format." + newLine
-				+ "- Added % of spawn area to non-verbose output." + newLine
-				+ "- Removed datetime stamps from server output in verbose mode" + newLine
-				+ "- Other Misc fixes." + newLine
-				+ newLine
-				+ "1.3.0" + newLine
-				+ "- Fixed Problems with Minecraft Beta 1.3 -- Morlok8k" + newLine
-				+ newLine
-				+ "-----------------------------------------------" + newLine
-				+ newLine
-				+ "Corrodias:" + newLine
-				+ "1.2.0" + newLine
-				+ "- land generation now centers on the spawn point instead of [0, 0]" + newLine
-				+ "- the server is launched once before the spawn point is changed, to verify that it can run and to create a world if one doesn't exist" + newLine
-				+ "- added -printspawn [-ps] switch to print the current spawn coordinates to the console" + newLine
-				+ "- added -x and -y switches to override the X and Y offsets" + newLine
-				+ "- added -v switch, does the same as -verbose" + newLine
-				+ "- improved status message spacing to make things easier to read" + newLine
-				+ "- improved time estimation algorithm: it now averages the last 3 launches" + newLine
-				+ newLine
-				+ "1.1.0" + newLine
-				+ "- added MinecraftLandGenerator.conf file to hold the java command line and the server path" + newLine
-				+ "- added -conf solo switch to generate a .conf file" + newLine
-				+ "- added -verbose switch to output server output to the console (default is to ignore it)" + newLine
-				+ "- added -i switch to allow customizing the block increment size (default is 300)" + newLine
-				+ "- added instructions output in this version, i think" + newLine
-				+ "- improved status message output to include current iteration and total iterations" + newLine
-				+ newLine
-				+ "1.0.0" + newLine
-				+ "- initial release" + newLine
-				+ newLine
-				+ "-----------------------------------------------" + newLine
-				+ newLine
-				+ "Notes:" + newLine
-				+ "Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time." + newLine
-				+ "However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated."
-				+ "I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level." + newLine
-				+ newLine
-				+ "-----------------------------------------------" + newLine
-				+ newLine;
-		//@formatter:on
-
-		writeTxtFile(readmeFile, ReadMeText + showHelpSTR);
+		Readme_and_HelpInfo.readMe(readmeFile);
 
 	}
 
 	/**
-	 * 
-	 * Downloads a File using a URL in a String.<br>
-	 * (If the file is a dynamic URL (Not like "http://example.com/file.txt") and it can't get the filename, it saves it as <i>"System.currentTimeMillis();"</i>) <br>
-	 * <br>
-	 * Thanks to bs123 at <br>
-	 * <a href="http://www.daniweb.com/software-development/java/threads/84370"> http://www.daniweb.com/software-development/java/threads/84370</a>
-	 * 
 	 * @author Morlok8k
 	 * @param URL
 	 *            URL in a String
@@ -1200,80 +1088,8 @@ public class Main {
 	 * @return Boolean: true if download was successful, false if download wasn't
 	 */
 	private static boolean downloadFile(String URL, boolean Output) {
-
-		boolean success = true;
-
-		String fileName = URL.substring(URL.lastIndexOf("/") + 1, URL.length());
-
-		if (fileName.startsWith("\"")) {
-			if (fileName.substring(fileName.length() - 1, fileName.length()) == "\"") {
-				fileName = fileName.substring(1, fileName.length() - 1);
-			}
-		}
-
-		int size = 1024 * 4; // 1024 * n should be tested to get the optimum size (for download speed.)
-
-		if (fileName.equals("")) {
-			fileName = String.valueOf(System.currentTimeMillis());
-		}
-
-		fileName = unescape(fileName);
-
-		if (Output) {
-			out("Downloading: " + URL);
-			out("Saving as: " + fileName);
-		}
-
-		long differenceTime = System.currentTimeMillis();
-		Long[] timeTracking = new Long[] { differenceTime, differenceTime };
-		timeTracking[0] = System.currentTimeMillis();
-
-		if (Output) {
-			outP(MLG + "*");
-		}
-
-		try {
-			BufferedInputStream in;
-			in = new BufferedInputStream(new URL(URL).openStream());
-			FileOutputStream fos;
-			fos = new FileOutputStream(fileName);
-			BufferedOutputStream bout = new BufferedOutputStream(fos, size);
-			byte[] data = new byte[size];
-			int x = 0;
-			int count = 0;
-			while ((x = in.read(data, 0, size)) >= 0) {
-				bout.write(data, 0, x);
-				count = count + x;
-				if (Output) {
-					outP("*");
-				}
-			}
-			bout.close();
-			in.close();
-			if (Output) {
-				outP(newLine);
-				out(count + " byte(s) copied");
-			}
-
-			timeTracking[1] = System.currentTimeMillis();
-			//differenceTime = (timeTracking[1] - timeTracking[0]);
-			if (Output) {
-				out("Elapsed Time: " + displayTime(timeTracking[0], timeTracking[1]));
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			success = false;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			success = false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			success = false;
-		}
-		if (Output) {
-			out("Done");
-		}
-		return success;
+		//This exists so I don't need to type "DownloadFile.downloadFile" every time.
+		return DownloadFile.downloadFile(URL, Output);
 	}
 
 	/**
@@ -1661,38 +1477,12 @@ public class Main {
 
 	/**
 	 * This gets the MD5 of a file <br>
-	 * <br>
-	 * Thanks to R.J. Lorimer at <br>
-	 * <a href="http://www.javalobby.org/java/forums/t84420.html">http://www. javalobby.org/java/forums/t84420.html</a>
 	 * 
 	 * @author Morlok8k
 	 */
 	private static String fileMD5(String fileName) throws NoSuchAlgorithmException,
 			FileNotFoundException {
-		// out("");
-		// out("");
-		MessageDigest digest = MessageDigest.getInstance("MD5");
-		InputStream is = new FileInputStream(fileName);
-		byte[] buffer = new byte[8192];
-		int read = 0;
-		try {
-			while ((read = is.read(buffer)) > 0) {
-				digest.update(buffer, 0, read);
-			}
-			byte[] md5sum = digest.digest();
-			BigInteger bigInt = new BigInteger(1, md5sum);
-			String output = String.format("%1$032X", bigInt);    //pad on left to 32 chars with 0's, also capitalize.
-			// out("MD5: " + output);
-			return output.toUpperCase(Locale.ENGLISH);
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to process file for MD5", e);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				throw new RuntimeException("Unable to close input stream for MD5 calculation", e);
-			}
-		}
+		return MD5.fileMD5(fileName);
 	}
 
 	/**
@@ -1705,86 +1495,8 @@ public class Main {
 	 * @author Morlok8k
 	 */
 	private static String showHelp(boolean SysOut) {
-		String Str = null;
-		String NewLine = newLine;
-		if (SysOut) {
-			NewLine = newLine + MLG;
-		}
 
-		//@formatter:off
-		Str =	"Usage: java -jar " + MLGFileNameShort + " x z [serverpath] [switches]" + NewLine
-				+ NewLine
-				+ "Arguments:" + NewLine
-				+ "              x : X range to generate" + NewLine
-				+ "              z : Z range to generate" + NewLine
-				+ "     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)" + NewLine
-				+ NewLine
-				+ "Switches:" + NewLine
-				+ "       -verbose : causes the application to output the server's messages to the console" + NewLine
-				+ "             -v : same as -verbose" + NewLine
-				+ "             -w : Ignore [WARNING] and [SEVERE] messages." + NewLine
-				+ "           -alt : alternate server launch sequence" + NewLine
-				+ "             -a : same as -alt" + NewLine
-				+ "            -i# : override the iteration spawn offset increment (default 380) (example: -i100)" + NewLine
-				+ "            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)" + NewLine
-				+ "            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)" + NewLine
-				+ NewLine
-				+ "Other options:" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -update" + NewLine
-				+ "        Checks for and downloads new versions of MLG online." + NewLine
-				+ NewLine
-				+ "  java -jar " + MLGFileNameShort + " -printspawn" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -ps" + NewLine
-				+ "        Outputs the current world's spawn point coordinates." + NewLine 
-				+ NewLine
-				+ "  java -jar " + MLGFileNameShort + " -conf" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -conf download" + NewLine
-				+ "        Generates or downloads a "+ MinecraftLandGeneratorConf + " file." + NewLine
-				+ NewLine
-				+ "  java -jar " + MLGFileNameShort + " -readme readme.txt" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -readme" + NewLine
-				+ "        Generates a readme file using supplied name or the default " + defaultReadmeFile + NewLine
-				+ NewLine
-				+ "  java -jar " + MLGFileNameShort + " -downloadfile http://example.com/file.txt" + NewLine
-				+ "        Downloads whatever file from the internet you give it." + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -downloadlist list.txt" + NewLine
-				+ "        list.txt (or any other file) contains a URL on each line which will be downloaded." + NewLine
-				+ NewLine
-				+ "  java -jar " + MLGFileNameShort + " -version" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " -help" + NewLine
-				+ "  java -jar " + MLGFileNameShort + " /?" + NewLine
-				+ "        Prints this message." + NewLine 
-				+ NewLine
-				+ "When launched with the -conf switch, this application creates a " + MinecraftLandGeneratorConf + " file that contains configuration options." + NewLine
-				+ "If this file does not exist or does not contain all required properties, the application will not run." + NewLine 
-				+ NewLine
-				+ MinecraftLandGeneratorConf + " properties:" + NewLine
-				+ "           Java : The command line to use to launch the server" + NewLine
-				+ "     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)" + NewLine
-				+ "      Done_Text : The output from the server that tells us that we are done" + NewLine
-				+ " Preparing_Text : The output from the server that tells us the percentage" + NewLine
-				+ "Preparing_Level : The output from the server that tells us the level it is working on" + NewLine 
-				+ "        Level-0 : Name of Level 0: The Overworld" + NewLine
-				+ "        Level-1 : Name of Level 1: The Nether" + NewLine
-				+ "        Level-2 : Name of Level 2: The End" + NewLine
-				+ "        Level-3 : Name of Level 3: (Future Level)" + NewLine
-				+ "        Level-4 : Name of Level 4: (Future Level)" + NewLine
-				+ "        Level-5 : Name of Level 5: (Future Level)" + NewLine
-				+ "        Level-6 : Name of Level 6: (Future Level)" + NewLine
-				+ "        Level-7 : Name of Level 7: (Future Level)" + NewLine
-				+ "        Level-8 : Name of Level 8: (Future Level)" + NewLine
-				+ "        Level-9 : Name of Level 9: (Future Level)" + NewLine
-				+ "       WaitSave : Optional: Wait before saving." + NewLine;
-		//@formatter:on
-
-		if (SysOut) {
-			out(Str);
-			out("");
-			return null;
-		} else {
-			return Str;
-		}
-
+		return Readme_and_HelpInfo.showHelp(SysOut);
 	}
 
 	/**
@@ -2045,7 +1757,7 @@ public class Main {
 
 	}
 
-	private static void writeTxtFile(String file, String txt) {
+	public static void writeTxtFile(String file, String txt) {
 		//TODO: element comment
 
 		/*
@@ -2077,7 +1789,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	private static void out(String str) {
+	public static void out(String str) {
 		System.out.println(MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
 	}
 
@@ -2088,7 +1800,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	private static void err(String str) {
+	public static void err(String str) {
 		System.err.println(MLGe + str);
 	}
 
@@ -2099,7 +1811,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	private static void outP(String str) {
+	public static void outP(String str) {
 		System.out.print(str);
 	}
 
@@ -2183,7 +1895,7 @@ public class Main {
 	 * @author Morlok8k
 	 * @return String of Readable Time
 	 */
-	private static String displayTime(long startTimeMillis, long endTimeMillis) {
+	public static String displayTime(long startTimeMillis, long endTimeMillis) {
 
 		long millis = (endTimeMillis - startTimeMillis);
 		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
@@ -2197,7 +1909,7 @@ public class Main {
 	 * @author Morlok8k
 	 * @return String of Readable Time
 	 */
-	private static String displayTime(long timeMillis) {
+	public static String displayTime(long timeMillis) {
 
 		long seconds = timeMillis / 1000;
 		long minutes = seconds / 60;
@@ -2206,91 +1918,19 @@ public class Main {
 		long years = days / 365;
 
 		String took =
-				(years > 0 ? String.format("%d Years, ", years) : "")
-						+ (days > 0 ? String.format("%d Days, ", days % 365) : "")
-						+ (hours > 0 ? String.format("%d Hours, ", hours % 24) : "")
-						+ (minutes > 0 ? String.format("%d Minutes, ", minutes % 60) : "")
-						+ String.format("%d Seconds", seconds % 60);
+				(years > 0 ? String.format("%d " + ((years) == 1 ? "Year, " : "Years, "), years)
+						: "")
+						+ (days > 0 ? String.format("%d "
+								+ ((days % 365) == 1 ? "Day, " : "Days, "), days % 365) : "")
+						+ (hours > 0 ? String.format("%d "
+								+ ((hours % 24) == 1 ? "Hour, " : "Hours, "), hours % 24) : "")
+						+ (minutes > 0 ? String.format("%d "
+								+ ((minutes % 60) == 1 ? "Minute, " : "Minutes, "), minutes % 60)
+								: "")
+						+ String.format("%d " + ((seconds % 60) == 1 ? "Second, " : "Seconds, "),
+								seconds % 60);
 
 		return (took);
-	}
-
-	/* Morlok8k:
-	 * Just a note about this unescape method:
-	 * I am quite amazed at this code.  It is vastly superior to my own coding ability.
-	 * I had to look up many things in it to see how it works, and I still don't quite follow it.
-	 * (I have never worked with raw bytes in Java... Never needed to.)
-	 * But it works and it works very well.   I tip my hat at you Bert!
-	 * 
-	 * I just needed to say this somewhere, even though very few people will ever read this. 
-	 */
-	/**
-	 * Created: 17 April 1997<br>
-	 * Author: Bert Bos &lt;<a href="mailto:bert@w3.org">bert@w3.org</a>&gt;<br>
-	 * <br>
-	 * unescape: <a href="http://www.w3.org/International/unescape.java">http://www.w3.org/International/unescape.java</a><br>
-	 * <br>
-	 * Copyright &copy; 1997 World Wide Web Consortium, (Massachusetts Institute of Technology, European Research Consortium for Informatics and Mathematics, Keio University). All Rights Reserved.
-	 * This work is distributed under the W3C&reg; Software License [1] in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-	 * FOR A PARTICULAR PURPOSE.<br>
-	 * <br>
-	 * [1] <a href="http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231">http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231</a>
-	 * 
-	 * @param s
-	 *            string of URL
-	 * @return decoded string of URL
-	 * @author Bert Bos
-	 */
-	private static String unescape(String s) {
-		StringBuffer sbuf = new StringBuffer();
-		int l = s.length();
-		int ch = -1;
-		int b, sumb = 0;
-		for (int i = 0, more = -1; i < l; i++) {
-			/* Get next byte b from URL segment s */
-			switch (ch = s.charAt(i)) {
-				case '%':
-					ch = s.charAt(++i);
-					int hb =
-							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
-									.toLowerCase((char) ch) - 'a') & 0xF;
-					ch = s.charAt(++i);
-					int lb =
-							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
-									.toLowerCase((char) ch) - 'a') & 0xF;
-					b = (hb << 4) | lb;
-					break;
-				case '+':
-					b = ' ';
-					break;
-				default:
-					b = ch;
-			}
-			/* Decode byte b as UTF-8, sumb collects incomplete chars */
-			if ((b & 0xc0) == 0x80) {			// 10xxxxxx (continuation byte)
-				sumb = (sumb << 6) | (b & 0x3f);	// Add 6 bits to sumb
-				if (--more == 0) sbuf.append((char) sumb); // Add char to sbuf
-			} else if ((b & 0x80) == 0x00) {		// 0xxxxxxx (yields 7 bits)
-				sbuf.append((char) b);			// Store in sbuf
-			} else if ((b & 0xe0) == 0xc0) {		// 110xxxxx (yields 5 bits)
-				sumb = b & 0x1f;
-				more = 1;				// Expect 1 more byte
-			} else if ((b & 0xf0) == 0xe0) {		// 1110xxxx (yields 4 bits)
-				sumb = b & 0x0f;
-				more = 2;				// Expect 2 more bytes
-			} else if ((b & 0xf8) == 0xf0) {		// 11110xxx (yields 3 bits)
-				sumb = b & 0x07;
-				more = 3;				// Expect 3 more bytes
-			} else if ((b & 0xfc) == 0xf8) {		// 111110xx (yields 2 bits)
-				sumb = b & 0x03;
-				more = 4;				// Expect 4 more bytes
-			} else /*if ((b & 0xfe) == 0xfc)*/{	// 1111110x (yields 1 bit)
-				sumb = b & 0x01;
-				more = 5;				// Expect 5 more bytes
-			}
-			/* We don't test if the UTF-8 encoding is well-formed */
-		}
-		return sbuf.toString();
 	}
 
 }
