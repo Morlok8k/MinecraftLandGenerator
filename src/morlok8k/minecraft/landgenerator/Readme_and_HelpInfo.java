@@ -226,6 +226,8 @@ public class Readme_and_HelpInfo {
 				+ "             -w : Ignore [WARNING] and [SEVERE] messages." + NewLine
 				+ "           -alt : alternate server launch sequence" + NewLine
 				+ "             -a : same as -alt" + NewLine
+				+ "        -nowait : don't pause for anything" + NewLine
+				+ "             -n : same as -nowait" + NewLine
 				+ "            -i# : override the iteration spawn offset increment (default 380) (example: -i100)" + NewLine
 				+ "            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)" + NewLine
 				+ "            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)" + NewLine

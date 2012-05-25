@@ -1,7 +1,7 @@
 Minecraft Land Generator version 1.6.2
 
 Updated May 24, 2012
-(BuildID: 1337852365000)
+(BuildID: 1337921188000)
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to May 24, 2012!)
@@ -159,6 +159,8 @@ Switches:
              -w : Ignore [WARNING] and [SEVERE] messages.
            -alt : alternate server launch sequence
              -a : same as -alt
+        -nowait : don't pause for anything
+             -n : same as -nowait
             -i# : override the iteration spawn offset increment (default 380) (example: -i100)
             -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)
             -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)

@@ -89,6 +89,7 @@ public class Main {
 	private Integer zOffset = null;
 	private boolean verbose = false;
 	private boolean alternate = false;
+	private static boolean dontWait = false;
 	private static boolean waitSave = false;
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
@@ -387,6 +388,10 @@ public class Main {
 					ignoreWarnings = true;
 					out("Notice: Warnings from Server are Ignored");
 
+				} else if (nextSwitch.equals("-nowait") || nextSwitch.equals("-n")) {
+					dontWait = true;
+					out("Notice: Not pausing for anything...");
+
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
 					alternate = true;
 					out("Notice: Using Alternate Launching");
@@ -395,7 +400,7 @@ public class Main {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
 					out("Notice: X Offset: " + xOffset);
 
-				} else if (nextSwitch.startsWith("-y") || nextSwitch.equals("-z")) {		//NOTE: "-y" is just here for backwards compatibility
+				} else if (nextSwitch.startsWith("-y") || nextSwitch.startsWith("-z")) {		//NOTE: "-y" is just here for backwards compatibility
 					zOffset = Integer.valueOf(args[i + 2].substring(2));
 					out("Notice: Z Offset: " + zOffset);
 					if (nextSwitch.startsWith("-y")) {
@@ -555,7 +560,7 @@ public class Main {
 					incrementX) {
 				curXloops++;
 				if (curXloops == 1) {
-					currentX = (((0 - xRange) / 2) + (increment / 2));
+					currentX = (((0 - xRange) / 2) + (increment / 2) + 16);
 				} else if (curXloops == xLoops) {
 					currentX = (xRange / 2) - (increment / 2);
 				}
@@ -566,7 +571,7 @@ public class Main {
 
 					curZloops++;
 					if (curZloops == 1) {
-						currentZ = (((0 - zRange) / 2) + (increment / 2));
+						currentZ = (((0 - zRange) / 2) + (increment / 2) + 16);
 					} else if (curZloops == zLoops) {
 						currentZ = (zRange / 2) - (increment / 2);
 					}
@@ -575,7 +580,7 @@ public class Main {
 					//String curY = "64";		//Y is always set to 64
 					String curZ = Integer.toString(currentZ + zOffset);
 					String percentDone =
-							Double.toString((double) (currentIteration / totalIterations) * 100);
+							Double.toString((double) ((double) currentIteration / (double) totalIterations) * 100);
 					int percentIndex =
 							((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
 									.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
@@ -1839,9 +1844,13 @@ public class Main {
 	 * @author Morlok8k
 	 */
 	private static void waitTenSec(boolean output) {
+
+		if (dontWait) { return; }			//Don't wait!
+
 		if (output) {
-			outP(MLG);		//here we wait 10 sec.
+			outP(MLG);						//here we wait 10 sec.
 		}
+
 		int count = 0;
 		while (count <= 100) {
 			if (output) {
@@ -1927,7 +1936,7 @@ public class Main {
 						+ (minutes > 0 ? String.format("%d "
 								+ ((minutes % 60) == 1 ? "Minute, " : "Minutes, "), minutes % 60)
 								: "")
-						+ String.format("%d " + ((seconds % 60) == 1 ? "Second, " : "Seconds, "),
+						+ String.format("%d " + ((seconds % 60) == 1 ? "Second" : "Seconds"),
 								seconds % 60);
 
 		return (took);
