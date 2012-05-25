@@ -1,7 +1,7 @@
 Minecraft Land Generator version 1.6.2
 
 Updated May 24, 2012
-(BuildID: 1337921188000)
+(BuildID: 1337921526000)
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to May 24, 2012!)
@@ -31,6 +31,7 @@ Morlok8k:
 - Major Code Optimization
 - Updated Time Output again.  Now says "1 Minute" instead of "1 Minutes".
 - Updated Location Code - the center of the square is now truely centered, and it trys to get as close to the given size as possible.
+- Added "-nowait" and its shorter version "-n"
 
 1.6.11
 - Removed End-of-Generation ASCII-Graphic - It didn't really fit with MLG.
