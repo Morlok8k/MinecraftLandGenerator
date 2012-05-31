@@ -35,8 +35,8 @@ import java.util.zip.ZipFile;
 import morlok8k.minecraft.landgenerator.MLG_DownloadFile;
 import morlok8k.minecraft.landgenerator.MLG_MD5;
 import morlok8k.minecraft.landgenerator.MLG_Readme_and_HelpInfo;
-import morlok8k.minecraft.landgenerator.MLG_input_CLI;
 import morlok8k.minecraft.landgenerator.MLG_StringArrayParse;
+import morlok8k.minecraft.landgenerator.MLG_input_CLI;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -54,7 +54,7 @@ public class Main {
 
 	// Version Number!
 	public static final String PROG_NAME = "Minecraft Land Generator";
-	public static final String VERSION = "1.6.2";
+	public static final String VERSION = "1.6.3";
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
 
 	public static final String fileSeparator = System.getProperty("file.separator");
@@ -482,6 +482,9 @@ public class Main {
 			if ((xRange == 0) & (zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
 				return;
 			}
+
+			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
 
 			out("");
 
