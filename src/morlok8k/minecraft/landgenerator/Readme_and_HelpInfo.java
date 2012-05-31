@@ -67,6 +67,7 @@ public class Readme_and_HelpInfo {
 				+ "- Updated Time Output again.  Now says \"1 Minute\" instead of \"1 Minutes\"." + newLine
 				+ "- Updated Location Code - the center of the square is now truely centered, and it trys to get as close to the given size as possible." + newLine
 				+ "- Added \"-nowait\" and its shorter version \"-n\"" + newLine
+				+ "- Added currently non-functional RCON code.  Will try to make functional in the future." + newLine
 				+ newLine
 				+ "1.6.11" + newLine
 				+ "- Removed End-of-Generation ASCII-Graphic - It didn't really fit with MLG." + newLine

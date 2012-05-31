@@ -131,9 +131,16 @@ public class Main {
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
 
+	private static boolean useRCON = false;				//use RCON to communicate with server.  ***Experimental***
+	@SuppressWarnings("unused")
+	private static boolean rcon_Enabled = false;			//is server is set to use RCON?
+	public static String rcon_IPaddress = "0.0.0.0";		//default is 0.0.0.0
+	public static String rcon_Port = "25575";					//default is 25575, we are just initializing here.
+	public static String rcon_Password = "test";			//default is "", but a password must be entered.
+
 	//////
 
-	public static final boolean testing = false;	// display more output when debugging
+	public static final boolean testing = false;		// display more output when debugging
 
 	//////
 
@@ -399,6 +406,15 @@ public class Main {
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
 					out("Notice: X Offset: " + xOffset);
+
+				} else if (nextSwitch.startsWith("-rcon")) {
+					if (testing) {
+						useRCON = true;
+						out("Notice: Attempting to use RCON to communicate with server...");
+					} else {
+						useRCON = false;
+						err("MLG Using RCON is not enabled yet.");
+					}
 
 				} else if (nextSwitch.startsWith("-y") || nextSwitch.startsWith("-z")) {		//NOTE: "-y" is just here for backwards compatibility
 					zOffset = Integer.valueOf(args[i + 2].substring(2));
@@ -1577,6 +1593,9 @@ public class Main {
 			File config = new File(MinecraftLandGeneratorConf);
 			BufferedReader in = new BufferedReader(new FileReader(config));
 			String line;
+			String property;
+			String value;
+
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
 				int end = line.lastIndexOf('#'); // comments, ignored lines
@@ -1588,40 +1607,42 @@ public class Main {
 					end = line.length();
 				}
 
+				property = line.substring(0, pos).toLowerCase();
+				value = line.substring(pos + 1, end);
+
 				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("serverpath")) {
-						serverPath = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("java")) {
-						javaLine = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("done_text")) {
-						doneText = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("preparing_text")) {
-						preparingText = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("preparing_level")) {
-						preparingLevel = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-0")) {
-						level_0 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-1")) {
-						level_1 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-2")) {
-						level_2 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-3")) {
-						level_3 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-4")) {
-						level_4 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-5")) {
-						level_5 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-6")) {
-						level_6 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-7")) {
-						level_7 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-8")) {
-						level_8 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("level-9")) {
-						level_9 = line.substring(pos + 1, end);
-					} else if (line.substring(0, pos).toLowerCase().equals("waitsave")) {
-						String wstmp = line.toLowerCase().substring(pos + 1, end);
-						if (wstmp.equals("true")) {
+					if (property.equals("serverpath")) {
+						serverPath = value;
+					} else if (property.equals("java")) {
+						javaLine = value;
+					} else if (property.equals("done_text")) {
+						doneText = value;
+					} else if (property.equals("preparing_text")) {
+						preparingText = value;
+					} else if (property.equals("preparing_level")) {
+						preparingLevel = value;
+					} else if (property.equals("level-0")) {
+						level_0 = value;
+					} else if (property.equals("level-1")) {
+						level_1 = value;
+					} else if (property.equals("level-2")) {
+						level_2 = value;
+					} else if (property.equals("level-3")) {
+						level_3 = value;
+					} else if (property.equals("level-4")) {
+						level_4 = value;
+					} else if (property.equals("level-5")) {
+						level_5 = value;
+					} else if (property.equals("level-6")) {
+						level_6 = value;
+					} else if (property.equals("level-7")) {
+						level_7 = value;
+					} else if (property.equals("level-8")) {
+						level_8 = value;
+					} else if (property.equals("level-9")) {
+						level_9 = value;
+					} else if (property.equals("waitsave")) {
+						if (value.toLowerCase().equals("true")) {
 							waitSave = true;
 						} else {
 							waitSave = false;
@@ -1737,10 +1758,53 @@ public class Main {
 			String line;
 			while ((line = props.readLine()) != null) {
 				int pos = line.indexOf('=');
+				int end = line.lastIndexOf('#'); // comments, ignored lines
+
+				if (end == -1) { // If we have no hash sign, then we read till the end of the line
+					end = line.length();
+				}
+				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+					end = line.length();
+				}
+
 				if (pos != -1) {
-					if (line.substring(0, pos).toLowerCase().equals("level-name")) {
-						worldPath = serverPath + fileSeparator + line.substring(pos + 1);
-						worldName = line.substring(pos + 1);
+
+					String property = line.substring(0, pos).toLowerCase();
+					String value = line.substring(pos + 1);
+
+					if (property.equals("level-name")) {
+						worldPath = serverPath + fileSeparator + value;
+						worldName = value;
+					}
+					if (useRCON) {
+						if (property.equals("enable-rcon")) {
+
+							if (value.contains("true")) {
+								rcon_Enabled = true;
+								out("RCON is set to be Enabled on the server.");
+							} else {
+								rcon_Enabled = false;
+								useRCON = false;
+								err("RCON is not Enabled on the server.");
+							}
+						} else if (property.equals("rcon.password")) {
+							rcon_Password = value;
+							if (rcon_Password.isEmpty()) {
+								useRCON = false;
+								err("RCON Needs a password!.");
+							}
+							out("RCON Password:" + rcon_Password);
+						} else if (property.equals("rcon.port")) {
+							rcon_Port = value;
+							out("RCON Port:" + rcon_Port);
+						} else if (property.equals("server-ip")) {
+							String IP = value;
+							if (IP.isEmpty()) {
+								IP = "0.0.0.0";
+							}
+							rcon_IPaddress = IP;
+
+						}
 					}
 
 				}
