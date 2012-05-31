@@ -2,7 +2,7 @@ package morlok8k.minecraft.landgenerator;
 
 import corrodias.minecraft.landgenerator.Main;
 
-public class Readme_and_HelpInfo {
+public class MLG_Readme_and_HelpInfo {
 
 	static String newLine = Main.newLine;
 	static String MLGFileNameShort = Main.MLGFileNameShort;

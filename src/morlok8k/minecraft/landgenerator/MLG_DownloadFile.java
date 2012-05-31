@@ -12,7 +12,7 @@ import org.w3c.bert_bos.UTF8URL.Unescape;
 
 import corrodias.minecraft.landgenerator.Main;
 
-public class DownloadFile {
+public class MLG_DownloadFile {
 
 	/**
 	 * 

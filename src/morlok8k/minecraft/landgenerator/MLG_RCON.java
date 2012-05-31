@@ -2,7 +2,7 @@ package morlok8k.minecraft.landgenerator;
 
 import corrodias.minecraft.landgenerator.Main;
 
-public class rcon_MLG {
+public class MLG_RCON {
 
 	/**
 	 * connects to server using RCON, sends a message, and disconnects. Not Functional yet.

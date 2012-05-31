@@ -32,9 +32,11 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import morlok8k.minecraft.landgenerator.DownloadFile;
-import morlok8k.minecraft.landgenerator.MD5;
-import morlok8k.minecraft.landgenerator.Readme_and_HelpInfo;
+import morlok8k.minecraft.landgenerator.MLG_DownloadFile;
+import morlok8k.minecraft.landgenerator.MLG_MD5;
+import morlok8k.minecraft.landgenerator.MLG_Readme_and_HelpInfo;
+import morlok8k.minecraft.landgenerator.MLG_input_CLI;
+import morlok8k.minecraft.landgenerator.MLG_StringArrayParse;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -87,7 +89,7 @@ public class Main {
 	private int zRange = 0;
 	private Integer xOffset = null;
 	private Integer zOffset = null;
-	private boolean verbose = false;
+	private static boolean verbose = false;
 	private boolean alternate = false;
 	private static boolean dontWait = false;
 	private static boolean waitSave = false;
@@ -113,7 +115,7 @@ public class Main {
 	private static String MLG_Current_Hash = null;
 	private static int inf_loop_protect_BuildID = 0;
 	private static boolean flag_downloadedBuildID = false;
-	private static Scanner sc = new Scanner(System.in);
+	public static Scanner sc = new Scanner(System.in);
 
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
@@ -191,11 +193,22 @@ public class Main {
 		if (args.length == 0) {
 			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			outP(MLG + "X:");
-			xRange = getInt("X:");
+			xRange = MLG_input_CLI.getInt("X:");
 			outP(MLG + "Z:");
-			zRange = getInt("Z:");
+			zRange = MLG_input_CLI.getInt("Z:");
 			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
 
+		}
+
+		// check for -nowait, and remove from arguments if it exists.  (we remove it for compatibility reasons with the rest of the existing code.)
+		// (-nowait is the only universal switch - it can be used with anything.  its basically for scripting, as it turns off the 10sec wait for human readability)
+		String[] newArgs = new String[args.length];
+		newArgs = args;
+		newArgs = MLG_StringArrayParse.Parse(newArgs, "-n");
+		newArgs = MLG_StringArrayParse.Parse(newArgs, "-nowait");
+		if (!(args.equals(newArgs))) {
+			dontWait = true;
+			args = newArgs;
 		}
 
 		if (args[0].equalsIgnoreCase("-version") || args[0].equalsIgnoreCase("-help")
@@ -370,8 +383,8 @@ public class Main {
 		} catch (NumberFormatException ex) {
 			err("Invalid X or Z argument.");
 			err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			xRange = getInt("X:");
-			zRange = getInt("Z:");
+			xRange = MLG_input_CLI.getInt("X:");
+			zRange = MLG_input_CLI.getInt("Z:");
 
 			//return;
 		}
@@ -394,10 +407,6 @@ public class Main {
 				} else if (nextSwitch.startsWith("-w")) {
 					ignoreWarnings = true;
 					out("Notice: Warnings from Server are Ignored");
-
-				} else if (nextSwitch.equals("-nowait") || nextSwitch.equals("-n")) {
-					dontWait = true;
-					out("Notice: Not pausing for anything...");
 
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
 					alternate = true;
@@ -1096,7 +1105,7 @@ public class Main {
 	 */
 	private static void readMe(String readmeFile) {
 
-		Readme_and_HelpInfo.readMe(readmeFile);
+		MLG_Readme_and_HelpInfo.readMe(readmeFile);
 
 	}
 
@@ -1109,8 +1118,8 @@ public class Main {
 	 * @return Boolean: true if download was successful, false if download wasn't
 	 */
 	private static boolean downloadFile(String URL, boolean Output) {
-		//This exists so I don't need to type "DownloadFile.downloadFile" every time.
-		return DownloadFile.downloadFile(URL, Output);
+		//This exists so I don't need to type "MLG_DownloadFile.downloadFile" every time.
+		return MLG_DownloadFile.downloadFile(URL, Output);
 	}
 
 	/**
@@ -1162,7 +1171,7 @@ public class Main {
 				MLG_Current_Hash = fileMD5(MLGFileName);
 				// out(hash + "  " + MLGFileName);Â®
 			} catch (Exception e) {
-				out("Error: MD5 from file failed");
+				out("Error: MLG_MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -1266,7 +1275,7 @@ public class Main {
 				MLG_Current_Hash = fileMD5(MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
-				out("Error: MD5 from file failed");
+				out("Error: MLG_MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -1497,13 +1506,13 @@ public class Main {
 	}
 
 	/**
-	 * This gets the MD5 of a file <br>
+	 * This gets the MLG_MD5 of a file <br>
 	 * 
 	 * @author Morlok8k
 	 */
 	private static String fileMD5(String fileName) throws NoSuchAlgorithmException,
 			FileNotFoundException {
-		return MD5.fileMD5(fileName);
+		return MLG_MD5.fileMD5(fileName);
 	}
 
 	/**
@@ -1517,7 +1526,7 @@ public class Main {
 	 */
 	private static String showHelp(boolean SysOut) {
 
-		return Readme_and_HelpInfo.showHelp(SysOut);
+		return MLG_Readme_and_HelpInfo.showHelp(SysOut);
 	}
 
 	/**
@@ -1885,24 +1894,6 @@ public class Main {
 	}
 
 	/**
-	 * getInt(String msg) - outputs a message, will only accept a valid integer from keyboard
-	 * 
-	 * @param msg
-	 *            String
-	 * @return int
-	 * @author Morlok8k
-	 */
-	private static int getInt(String msg) {
-
-		while (!sc.hasNextInt()) {
-			sc.nextLine();
-			outP(MLG + "Invalid Input. " + msg);
-		}
-		return sc.nextInt();
-
-	}
-
-	/**
 	 * waits ten seconds. outputs 10%, 20%, etc after each second.
 	 * 
 	 * @author Morlok8k
@@ -2002,6 +1993,16 @@ public class Main {
 								: "")
 						+ String.format("%d " + ((seconds % 60) == 1 ? "Second" : "Seconds"),
 								seconds % 60);
+
+		if (!(verbose)) {
+			int end = took.indexOf(",");
+			if (end == -1) {
+				end = took.length();
+			} else {
+				end = end - 1;
+			}
+			took = took.substring(0, end);
+		}
 
 		return (took);
 	}

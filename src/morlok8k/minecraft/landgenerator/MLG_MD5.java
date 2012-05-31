@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
-public class MD5 {
+public class MLG_MD5 {
 
 	/**
 	 * This gets the MD5 of a file <br>
