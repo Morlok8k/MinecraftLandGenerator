@@ -1623,7 +1623,7 @@ public class Main {
 					end = line.length();
 					out(" end: " + end);
 				}
-				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+				if (end <= (pos + 1)) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 					end = line.length();
 					pos = -1;
 				}
