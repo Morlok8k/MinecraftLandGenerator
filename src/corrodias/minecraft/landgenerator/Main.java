@@ -1605,7 +1605,7 @@ public class Main {
 
 	private void readConf() {
 		//TODO: element comment
-		String errorMsg = "";
+		//String errorMsg = "";
 
 		try {
 			File config = new File(MinecraftLandGeneratorConf);
@@ -1618,10 +1618,10 @@ public class Main {
 				int pos = line.indexOf('=');
 
 				int end = line.lastIndexOf('#'); // comments, ignored lines
-				out(" end: " + end);
+
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
 					end = line.length();
-					out(" end: " + end);
+
 				}
 				if (end <= (pos + 1)) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 					end = line.length();
@@ -1633,15 +1633,7 @@ public class Main {
 					pos = 0;
 				}
 
-				//if ((pos == -1) || (pos == 0)) {
-				//	property = "";
-				//	value = "";
-				//} else {
-				//	property = line.substring(0, pos).toLowerCase();
-				//	value = line.substring(pos + 1, end);
-				//}
-
-				errorMsg =
+				/*errorMsg =
 						line + " pos: " + pos + " end: " + end + " line.length(): " + line.length();
 				try {
 					property = line.substring(0, pos).toLowerCase();
@@ -1649,10 +1641,15 @@ public class Main {
 				} catch (Exception e) {
 					err(errorMsg);
 				}
-
+				*/
 				if (pos != -1) {
-					property = line.substring(0, pos).toLowerCase();
-					value = line.substring(pos + 1, end);
+					if (line.length() == 0) {
+						property = "";
+						value = "";
+					} else {
+						property = line.substring(0, pos).toLowerCase();
+						value = line.substring(pos + 1, end);
+					}
 
 					if (property.equals("serverpath")) {
 						serverPath = value;
