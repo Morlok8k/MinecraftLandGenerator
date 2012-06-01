@@ -1629,6 +1629,7 @@ public class Main {
 				}
 
 				if (end == 0) {	//hash is first char, meaning entire line is a comment
+					end = line.length();
 					pos = 0;
 				}
 
