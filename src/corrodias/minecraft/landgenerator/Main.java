@@ -1631,13 +1631,20 @@ public class Main {
 					pos = -1;
 				}
 
+				if ((pos == -1) || (pos == 0)) {
+					property = "";
+					value = "";
+				} else {
+					property = line.substring(0, pos).toLowerCase();
+					value = line.substring(pos + 1, end);
+				}
+
 				errorMsg = line + " pos: " + pos + " end: " + end;
 				try {
 					property = line.substring(0, pos).toLowerCase();
 					value = line.substring(pos + 1, end);
 				} catch (Exception e) {
 					err(errorMsg);
-					e.printStackTrace();
 				}
 
 				if (pos != -1) {
