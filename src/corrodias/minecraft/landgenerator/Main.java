@@ -1622,14 +1622,15 @@ public class Main {
 				//}
 
 				int end = line.lastIndexOf('#'); // comments, ignored lines
-
+				out(" end: " + end);
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
 					end = line.length();
+					out(" end: " + end);
 				}
-				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
-					end = line.length();
-					pos = -1;
-				}
+				//if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+				//	end = line.length();
+				//	pos = -1;
+				//}
 
 				if ((pos == -1) || (pos == 0)) {
 					property = "";
