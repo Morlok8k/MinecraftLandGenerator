@@ -1296,6 +1296,10 @@ public class Main {
 				while ((line = in.readLine()) != null) {
 
 					int pos = line.indexOf('=');
+					if (pos == -1) { // If we have no = sign
+						pos = 0;
+					}
+
 					int end = line.lastIndexOf('#'); // comments, ignored lines
 
 					if (end == -1) { // If we have no hash sign, then we read till the end of the line
@@ -1610,6 +1614,11 @@ public class Main {
 
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
+
+				if (pos == -1) { // If we have no = sign
+					pos = 0;
+				}
+
 				int end = line.lastIndexOf('#'); // comments, ignored lines
 
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
