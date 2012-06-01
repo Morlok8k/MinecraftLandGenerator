@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Minecraft Land Generator - GitHub Update Script
-## Morlok8k - Updated 5/28/2012
+## Morlok8k - Updated 5/31/2012
 
 zip -r ./bin/MinecraftLandGenerator.jar ./src/
 
