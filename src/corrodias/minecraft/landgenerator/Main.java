@@ -1617,28 +1617,28 @@ public class Main {
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
 
-				//if (pos == -1) { // If we have no = sign
-				//	pos = 0;
-				//}
-
 				int end = line.lastIndexOf('#'); // comments, ignored lines
 				out(" end: " + end);
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
 					end = line.length();
 					out(" end: " + end);
 				}
-				//if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
-				//	end = line.length();
-				//	pos = -1;
-				//}
-
-				if ((pos == -1) || (pos == 0)) {
-					property = "";
-					value = "";
-				} else {
-					property = line.substring(0, pos).toLowerCase();
-					value = line.substring(pos + 1, end);
+				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+					end = line.length();
+					pos = -1;
 				}
+
+				if (end == 0) {	//hash is first char, meaning entire line is a comment
+					pos = 0;
+				}
+
+				//if ((pos == -1) || (pos == 0)) {
+				//	property = "";
+				//	value = "";
+				//} else {
+				//	property = line.substring(0, pos).toLowerCase();
+				//	value = line.substring(pos + 1, end);
+				//}
 
 				errorMsg =
 						line + " pos: " + pos + " end: " + end + " line.length(): " + line.length();
@@ -1650,6 +1650,9 @@ public class Main {
 				}
 
 				if (pos != -1) {
+					property = line.substring(0, pos).toLowerCase();
+					value = line.substring(pos + 1, end);
+
 					if (property.equals("serverpath")) {
 						serverPath = value;
 					} else if (property.equals("java")) {
