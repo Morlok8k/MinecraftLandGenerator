@@ -190,16 +190,6 @@ public class Main {
 		//                           INSTRUCTIONS
 		// =====================================================================
 
-		if (args.length == 0) {
-			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			outP(MLG + "X:");
-			xRange = MLG_input_CLI.getInt("X:");
-			outP(MLG + "Z:");
-			zRange = MLG_input_CLI.getInt("Z:");
-			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
-
-		}
-
 		// check for -nowait, and remove from arguments if it exists.  (we remove it for compatibility reasons with the rest of the existing code.)
 		// (-nowait is the only universal switch - it can be used with anything.  its basically for scripting, as it turns off the 10sec wait for human readability)
 		String[] newArgs = new String[args.length];
@@ -209,6 +199,16 @@ public class Main {
 		if (!(args.equals(newArgs))) {
 			dontWait = true;
 			args = newArgs;
+		}
+
+		if (args.length == 0) {
+			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
+			outP(MLG + "X:");
+			xRange = MLG_input_CLI.getInt("X:");
+			outP(MLG + "Z:");
+			zRange = MLG_input_CLI.getInt("Z:");
+			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
+
 		}
 
 		if (args[0].equalsIgnoreCase("-version") || args[0].equalsIgnoreCase("-help")
