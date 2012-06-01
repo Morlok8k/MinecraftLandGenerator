@@ -8,10 +8,10 @@ zip -r ./bin/MinecraftLandGenerator.jar ./src/
 cd ./bin/
 chmod a+x ./MinecraftLandGenerator.jar
 
-java -jar ./MinecraftLandGenerator.jar -conf
+java -jar ./MinecraftLandGenerator.jar -nowait -conf
 
 cd ..
-java -jar ./bin/MinecraftLandGenerator.jar -readme README
+java -jar ./bin/MinecraftLandGenerator.jar -nowait -readme README
 
 rm ./MLG-BuildID
 
