@@ -1639,7 +1639,8 @@ public class Main {
 					value = line.substring(pos + 1, end);
 				}
 
-				errorMsg = line + " pos: " + pos + " end: " + end;
+				errorMsg =
+						line + " pos: " + pos + " end: " + end + " line.length(): " + line.length();
 				try {
 					property = line.substring(0, pos).toLowerCase();
 					value = line.substring(pos + 1, end);
