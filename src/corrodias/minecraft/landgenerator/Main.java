@@ -1605,19 +1605,21 @@ public class Main {
 
 	private void readConf() {
 		//TODO: element comment
+		String errorMsg = "";
+
 		try {
 			File config = new File(MinecraftLandGeneratorConf);
 			BufferedReader in = new BufferedReader(new FileReader(config));
-			String line;
-			String property;
-			String value;
+			String line = "";
+			String property = "";
+			String value = "";
 
 			while ((line = in.readLine()) != null) {
 				int pos = line.indexOf('=');
 
-				if (pos == -1) { // If we have no = sign
-					pos = 0;
-				}
+				//if (pos == -1) { // If we have no = sign
+				//	pos = 0;
+				//}
 
 				int end = line.lastIndexOf('#'); // comments, ignored lines
 
@@ -1626,10 +1628,17 @@ public class Main {
 				}
 				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 					end = line.length();
+					pos = -1;
 				}
 
-				property = line.substring(0, pos).toLowerCase();
-				value = line.substring(pos + 1, end);
+				errorMsg = line + " pos: " + pos + " end: " + end;
+				try {
+					property = line.substring(0, pos).toLowerCase();
+					value = line.substring(pos + 1, end);
+				} catch (Exception e) {
+					err(errorMsg);
+					e.printStackTrace();
+				}
 
 				if (pos != -1) {
 					if (property.equals("serverpath")) {
