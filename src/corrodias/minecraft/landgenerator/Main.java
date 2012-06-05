@@ -822,7 +822,7 @@ public class Main {
 
 				line = line.trim(); //Trim spaces off the beginning and end, if any.
 
-				out(line);
+				System.out.println(line);
 				if (line.contains(doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					OutputStream outputStream = process.getOutputStream();
 
@@ -878,9 +878,9 @@ public class Main {
 
 				if (verbose) {
 					if (line.contains("[INFO]")) {		//TODO: add to .conf
-						out(line.substring(line.lastIndexOf("]") + 2));
+						outS(line.substring(line.lastIndexOf("]") + 2));
 					} else {
-						out(line);
+						outS(line);
 					}
 				} else if (line.contains(preparingText) || line.contains("Converting...")) {
 					if (line.contains("Converting...")) {
@@ -935,11 +935,13 @@ public class Main {
 						outP(newLine + MLG + line.substring(line.lastIndexOf("]") + 2));
 					}
 				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
-					out(line.substring(line.lastIndexOf("]") + 2));
+					outS(line.substring(line.lastIndexOf("]") + 2));
 				}
 
 				if (line.contains(doneText)) { // now this is configurable!
+
 					outP(newLine);
+					outS(line.substring(line.lastIndexOf("]") + 2, line.indexOf("!")));
 					if (waitSave) {
 						out("Waiting 30 seconds to save...");
 
@@ -994,7 +996,7 @@ public class Main {
 						out("");
 						out("Warning found: Stopping " + PROG_NAME);
 						if (verbose == false) { // If verbose is true, we already displayed it.
-							out(line);
+							outS(line);
 						}
 						out("");
 						out("Forcing Save...");
@@ -1013,7 +1015,7 @@ public class Main {
 						out("");
 						out("Severe error found: Stopping server.");
 						if (verbose == false) { // If verbose is true, we already displayed it.
-							out(line);
+							outS(line);
 						}
 						out("");
 						out("Forcing Save...");
@@ -1296,20 +1298,30 @@ public class Main {
 				while ((line = in.readLine()) != null) {
 
 					int pos = line.indexOf('=');
-					if (pos == -1) { // If we have no = sign
-						pos = 0;
-					}
 
 					int end = line.lastIndexOf('#'); // comments, ignored lines
 
 					if (end == -1) { // If we have no hash sign, then we read till the end of the line
 						end = line.length();
+
 					}
-					if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+					if (end <= (pos + 1)) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 						end = line.length();
+						pos = -1;
 					}
 
-					timeStamps.add(line.substring(pos + 1, end));
+					if (end == 0) {	//hash is first char, meaning entire line is a comment
+						end = line.length();
+						pos = 0;
+					}
+
+					if (pos != -1) {
+						if (line.length() != 0) {
+							timeStamps.add(line.substring(pos + 1, end));
+						}
+					}
+
+					//timeStamps.add(line.substring(pos + 1, end));
 
 					if (testing) {
 						out(timeStamps.get(tsCount));
@@ -1633,15 +1645,6 @@ public class Main {
 					pos = 0;
 				}
 
-				/*errorMsg =
-						line + " pos: " + pos + " end: " + end + " line.length(): " + line.length();
-				try {
-					property = line.substring(0, pos).toLowerCase();
-					value = line.substring(pos + 1, end);
-				} catch (Exception e) {
-					err(errorMsg);
-				}
-				*/
 				if (pos != -1) {
 					if (line.length() == 0) {
 						property = "";
@@ -1797,20 +1800,35 @@ public class Main {
 							+ "server.properties")));
 			String line;
 			while ((line = props.readLine()) != null) {
+				String property = "";
+				String value = "";
+
 				int pos = line.indexOf('=');
+
 				int end = line.lastIndexOf('#'); // comments, ignored lines
 
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
 					end = line.length();
+
 				}
-				if (end <= pos) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
+				if (end <= (pos + 1)) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
 					end = line.length();
+					pos = -1;
+				}
+
+				if (end == 0) {	//hash is first char, meaning entire line is a comment
+					end = line.length();
+					pos = 0;
 				}
 
 				if (pos != -1) {
-
-					String property = line.substring(0, pos).toLowerCase();
-					String value = line.substring(pos + 1);
+					if (line.length() == 0) {
+						property = "";
+						value = "";
+					} else {
+						property = line.substring(0, pos).toLowerCase();
+						value = line.substring(pos + 1);
+					}
 
 					if (property.equals("level-name")) {
 						worldPath = serverPath + fileSeparator + value;
@@ -1922,6 +1940,17 @@ public class Main {
 	 */
 	public static void outP(String str) {
 		System.out.print(str);
+	}
+
+	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	private static void outS(String str) {
+		System.out.println("[Server] " + str);
 	}
 
 	/**
