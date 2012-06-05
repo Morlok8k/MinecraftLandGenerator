@@ -1,10 +1,10 @@
 Minecraft Land Generator version 1.6.3
 
-Updated June 1, 2012
-(BuildID: 1338535650000)
+Updated June 5, 2012
+(BuildID: 1338894449000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to June 1, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to June 5, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -27,6 +27,11 @@ Other Public Domain code has been used in this program, and references to source
 
 Version History:
 Morlok8k:
+1.6.3
+- Minor Code Optimization
+- Finely got on the ball and added the JNBT source and everything (as an internal .zip) to be completely faithful to his license
+- Also adding script files internally in the .jar for archive (or offline) purposes. (Manual Extract needed for use)
+- Modified output of MLG slightly to show whats the server and whats MLG. (I may do more with this later.)
 1.6.2
 - Major Code Optimization
 - Updated Time Output again.  Now says "1 Minute" instead of "1 Minutes".

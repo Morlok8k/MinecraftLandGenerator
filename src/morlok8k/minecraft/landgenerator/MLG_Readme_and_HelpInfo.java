@@ -62,6 +62,11 @@ public class MLG_Readme_and_HelpInfo {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.6.3" + newLine
+				+ "- Minor Code Optimization" + newLine
+				+ "- Finely got on the ball and added the JNBT source and everything (as an internal .zip) to be completely faithful to his license" + newLine
+				+ "- Also adding script files internally in the .jar for archive (or offline) purposes. (Manual Extract needed for use)" + newLine
+				+ "- Modified output of MLG slightly to show whats the server and whats MLG. (I may do more with this later.)" + newLine
 				+ "1.6.2" + newLine
 				+ "- Major Code Optimization" + newLine
 				+ "- Updated Time Output again.  Now says \"1 Minute\" instead of \"1 Minutes\"." + newLine
