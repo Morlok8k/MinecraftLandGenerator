@@ -3,8 +3,7 @@
 ## Minecraft Land Generator - GitHub Update Script
 ## Morlok8k - Updated 6/5/2012
 
-zip -r ./bin/MinecraftLandGenerator.jar ./src/
-zip -r ./bin/MinecraftLandGenerator.jar ./scripts/
+zip -r ./bin/MinecraftLandGenerator.jar ./src/ ./scripts/ ./lib/jnbt-1.1-src.zip
 
 cd ./bin/
 chmod a+x ./MinecraftLandGenerator.jar
