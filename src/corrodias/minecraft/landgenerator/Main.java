@@ -528,8 +528,8 @@ public class Main {
 			blah = Math.floor(xRange / xLoops);						//optimal distance calculations here
 			incrementX = blah.intValue();							//save to an int
 			blah =
-					Math.floor((double) xRange
-							/ Math.ceil(((double) xRange / ((double) increment + 20))));
+					Math.floor(xRange
+							/ Math.ceil((xRange / ((double) increment + 20))));
 			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
 				incrementX = blah.intValue();
 			}
@@ -547,8 +547,8 @@ public class Main {
 			blah = Math.floor(zRange / zLoops);						//optimal distance calculations here
 			incrementZ = blah.intValue();							//save to an int
 			blah =
-					Math.floor((double) zRange
-							/ Math.ceil(((double) zRange / ((double) increment + 20))));
+					Math.floor(zRange
+							/ Math.ceil((zRange / ((double) increment + 20))));
 			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
 				incrementZ = blah.intValue();
 			}
@@ -608,7 +608,7 @@ public class Main {
 					//String curY = "64";		//Y is always set to 64
 					String curZ = Integer.toString(currentZ + zOffset);
 					String percentDone =
-							Double.toString((double) ((double) currentIteration / (double) totalIterations) * 100);
+							Double.toString(((double) currentIteration / (double) totalIterations) * 100);
 					int percentIndex =
 							((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
 									.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
@@ -1581,7 +1581,7 @@ public class Main {
 			}
 
 			while (e.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) e.nextElement();
+				ZipEntry entry = e.nextElement();
 
 				Long modTime = entry.getTime();
 
