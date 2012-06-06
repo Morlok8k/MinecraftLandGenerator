@@ -527,9 +527,7 @@ public class Main {
 			xLoops = Math.ceil(blah);							//round up to find out!
 			blah = Math.floor(xRange / xLoops);						//optimal distance calculations here
 			incrementX = blah.intValue();							//save to an int
-			blah =
-					Math.floor(xRange
-							/ Math.ceil((xRange / ((double) increment + 20))));
+			blah = Math.floor(xRange / Math.ceil((xRange / ((double) increment + 20))));
 			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
 				incrementX = blah.intValue();
 			}
@@ -546,9 +544,7 @@ public class Main {
 			zLoops = Math.ceil(blah);							//round up to find out!
 			blah = Math.floor(zRange / zLoops);						//optimal distance calculations here
 			incrementZ = blah.intValue();							//save to an int
-			blah =
-					Math.floor(zRange
-							/ Math.ceil((zRange / ((double) increment + 20))));
+			blah = Math.floor(zRange / Math.ceil((zRange / ((double) increment + 20))));
 			if (blah < increment) {							//should we use 380 or 400 as our original increment?  This decides it.
 				incrementZ = blah.intValue();
 			}
@@ -2058,8 +2054,6 @@ public class Main {
 			int end = took.indexOf(",");
 			if (end == -1) {
 				end = took.length();
-			} else {
-				end = end - 1;
 			}
 			took = took.substring(0, end);
 		}
