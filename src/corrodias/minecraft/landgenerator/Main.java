@@ -140,6 +140,8 @@ public class Main {
 	public static String rcon_Port = "25575";					//default is 25575, we are just initializing here.
 	public static String rcon_Password = "test";			//default is "", but a password must be entered.
 
+	private static boolean assertsEnabled = false;				//future debugging use...
+
 	//////
 
 	public static final boolean testing = false;		// display more output when debugging
@@ -156,6 +158,14 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		startTime = System.currentTimeMillis();
+
+		assert assertsEnabled = true;  // Intentional side-effect!!!  (This will cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
+		if (assertsEnabled) {
+			out("assertsEnabled: " + assertsEnabled);
+			verbose = true;
+			out("Verbose mode forced!");
+		}
+
 		(new Main()).run(args); // Why? this avoids "static" compiling issues.
 	}
 
@@ -842,6 +852,7 @@ public class Main {
 			}
 
 			String line = null;
+			String shortLine = null;
 			String outTmp = "";
 			String outTmp2 = null;
 
@@ -870,14 +881,19 @@ public class Main {
 			// just so it gets a line ending after the % output finishes
 			while ((line = pOut.readLine()) != null) {
 
+				int posBracket = line.lastIndexOf("]");
+				if (posBracket != -1) {
+					shortLine = line.substring(posBracket + 2);
+				} else {
+					shortLine = line;
+				}
+
 				line = line.trim();
 
 				if (verbose) {
-					if (line.contains("[INFO]")) {		//TODO: add to .conf
-						outS(line.substring(line.lastIndexOf("]") + 2));
-					} else {
-						outS(line);
-					}
+					outS(shortLine);
+				} else if (line.toLowerCase().contains("saving")) {
+					outS(shortLine);
 				} else if (line.contains(preparingText) || line.contains("Converting...")) {
 					if (line.contains("Converting...")) {
 						convertedMapFormattingFlag = true;
@@ -928,10 +944,10 @@ public class Main {
 					} else if (line.contains("level 9")) { // "Preparing start region for level 9"
 						outP(newLine + MLG + worldName + ": " + level_9 + ":" + newLine);
 					} else {
-						outP(newLine + MLG + line.substring(line.lastIndexOf("]") + 2));
+						outP(newLine + MLG + shortLine);
 					}
 				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
-					outS(line.substring(line.lastIndexOf("]") + 2));
+					outS(shortLine);
 				}
 
 				if (line.contains(doneText)) { // now this is configurable!
