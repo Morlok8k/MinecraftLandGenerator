@@ -165,6 +165,7 @@ public class Main {
 	 * @param args
 	 *            the command line arguments
 	 */
+
 	public static void main(String[] args) {
 		startTime = System.currentTimeMillis();
 
@@ -184,18 +185,53 @@ public class Main {
 			outD("");
 		}
 
-		// Finally, Lets Start MLG!
-		(new Main()).run(args); // Why? this avoids "static" compiling issues.
+		boolean GUI = false;
+
+		//GUI Choosing code...
+		if (!java.awt.GraphicsEnvironment.isHeadless()
+				&& (args.length <= 0 || !args[0].equals("nogui"))) {
+			GUI = true;
+			if (testing) {
+				outD("GUI: This is a graphical enviroment.");
+			}
+
+			//////
+			GUI = false;				// forcing GUI to be false for now, because I don't have the GUI code ready yet!
+			//////
+
+		} else {
+			GUI = false;				// No GUI for us today...
+			if (testing) {
+				outD("GUI: Command Line Only!");
+			}
+		}
+
+		if (GUI) {	//GUI
+			// Launch GUI
+
+			/*
+			try {
+				(new Main()).runGUI(args);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			*/
+
+		} else {	//No GUI
+			// Finally, Lets Start MLG!
+			(new Main()).runCLI(args);				// this avoids "static" compiling issues.
+		}
+
 	}
 
 	/**
-	 * Start MinecraftLandGenerator
+	 * Start MinecraftLandGenerator (Command Line Interface)
 	 * 
 	 * @author Corrodias, Morlok8k
 	 * @param args
 	 * 
 	 */
-	private void run(String[] args) {
+	private void runCLI(String[] args) {
 
 		// Lets get the date, and our BuildID
 		date = new Date();
