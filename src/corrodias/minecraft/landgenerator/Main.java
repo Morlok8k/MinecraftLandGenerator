@@ -170,13 +170,18 @@ public class Main {
 
 		// This is really just here for debugging...
 		// I plan on adding more asserts later, but for now, this will do.
+		// to enable this, run:
+		// java -enableassertions -jar MinecraftLandGenerator.jar
 		assert assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
 		if (assertsEnabled) {
-			out("assertsEnabled: " + assertsEnabled);
+			outD("assertsEnabled: " + assertsEnabled);
 			verbose = true;
-			out("Verbose mode forced!");
+			outD("Verbose mode forced!");
 			testing = true;
-			out("Debug mode forced!");
+			outD("Debug mode forced!");
+			dontWait = true;
+			outD("-nowait mode forced!");
+			outD("");
 		}
 
 		// Finally, Lets Start MLG!
@@ -215,14 +220,15 @@ public class Main {
 		// (-nowait is the only universal switch - it can be used with anything.  its basically for scripting, as it turns off the 10sec wait for human readability)
 		String[] newArgs = new String[args.length];
 		newArgs = args;
-		newArgs = MLG_StringArrayParse.Parse(newArgs, "-n");
-		newArgs = MLG_StringArrayParse.Parse(newArgs, "-nowait");
-		if (!(args.equals(newArgs))) {
-			dontWait = true;
-			args = newArgs;
+		newArgs = MLG_StringArrayParse.Parse(newArgs, "-n");		//parse out -n
+		newArgs = MLG_StringArrayParse.Parse(newArgs, "-nowait");	//parse out -nowait
+		if (!(args.equals(newArgs))) {								//do the freshly parsed args match the original?
+			dontWait = true;											//if not, we dont wait for anything!
+			args = newArgs;												//use the freshly parsed args for everything else now...
+			out("Notice: Not waiting for anything...");
 		}
 
-		if (args.length == 0) {
+		if (args.length == 0) {																//we didnt find a an X and Z size, so lets ask for one.
 			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			outP(MLG + "X:");
 			xRange = MLG_input_CLI.getInt("X:");
@@ -639,7 +645,7 @@ public class Main {
 							+ "% Done"); // Time Remaining estimate
 
 					if (testing) {
-						out("X:" + curXloops + ", Z:" + curZloops);
+						outD("X:" + curXloops + ", Z:" + curZloops);
 					}
 
 					timeTracking = System.currentTimeMillis();
@@ -1243,7 +1249,7 @@ public class Main {
 				if (line.contains(MLG_Current_Hash)) {
 					notNew = true;
 					if (testing) {
-						out("[DEBUG] NotNew");
+						outD("NotNew");
 					}
 				}
 
@@ -1307,7 +1313,7 @@ public class Main {
 						MLGFileName.length());
 
 		if (testing) {
-			out("Currently Running as file:" + MLGFileNameShort);
+			outD("Currently Running as file:" + MLGFileNameShort);
 		}
 
 		if (MLG_Current_Hash == null) {
@@ -1331,6 +1337,9 @@ public class Main {
 				BufferedReader in = new BufferedReader(new FileReader(buildIDFile));
 				String line;
 
+				if (testing) {
+					outD("TimeStamps in buildIDFile:");
+				}
 				while ((line = in.readLine()) != null) {
 
 					int pos = line.indexOf('=');
@@ -1360,7 +1369,7 @@ public class Main {
 					//timeStamps.add(line.substring(pos + 1, end));
 
 					if (testing) {
-						out(timeStamps.get(tsCount));
+						outD(timeStamps.get(tsCount));
 					}
 
 					tsCount++;
@@ -1378,7 +1387,7 @@ public class Main {
 								long tCalc = MLG_Last_Modified_Long - highestModTime;
 
 								if (testing) {
-									err("tCalc\tMLG_Last_Modified_Long\thighestModTime" + newLine
+									outD("tCalc\tMLG_Last_Modified_Long\thighestModTime" + newLine
 											+ tCalc + "\t" + MLG_Last_Modified_Long + "\t"
 											+ highestModTime);
 								}
@@ -1613,7 +1622,7 @@ public class Main {
 			Enumeration<? extends ZipEntry> e = zipF.entries();
 
 			if (testing) {
-				out("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
+				outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
 			}
 
 			while (e.hasMoreElements()) {
@@ -1635,7 +1644,7 @@ public class Main {
 					Date modificationTime = new Date(modTime);
 					String CRC = Long.toHexString(entry.getCrc());
 
-					out(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
+					outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
 							+ modTime.toString());
 				}
 
@@ -1732,23 +1741,23 @@ public class Main {
 			in.close();
 
 			if (testing) {
-				err("[TEST] Test Output: Reading of Config File ");
-				err("[TEST]     serverPath: " + serverPath);
-				err("[TEST]       javaLine: " + javaLine);
-				err("[TEST]       doneText: " + doneText);
-				err("[TEST]  preparingText: " + preparingText);
-				err("[TEST] preparingLevel: " + preparingLevel);
-				err("[TEST]        level_0: " + level_0);
-				err("[TEST]        level_1: " + level_1);
-				err("[TEST]        level_2: " + level_2);
-				err("[TEST]        level_3: " + level_3);
-				err("[TEST]        level_4: " + level_4);
-				err("[TEST]        level_5: " + level_5);
-				err("[TEST]        level_6: " + level_6);
-				err("[TEST]        level_7: " + level_7);
-				err("[TEST]        level_8: " + level_8);
-				err("[TEST]        level_9: " + level_9);
-				err("[TEST]       waitSave: " + waitSave);
+				outD("Test Output: Reading of Config File ");
+				outD("    serverPath: " + serverPath);
+				outD("      javaLine: " + javaLine);
+				outD("      doneText: " + doneText);
+				outD(" preparingText: " + preparingText);
+				outD("preparingLevel: " + preparingLevel);
+				outD("       level_0: " + level_0);
+				outD("       level_1: " + level_1);
+				outD("       level_2: " + level_2);
+				outD("       level_3: " + level_3);
+				outD("       level_4: " + level_4);
+				outD("       level_5: " + level_5);
+				outD("       level_6: " + level_6);
+				outD("       level_7: " + level_7);
+				outD("       level_8: " + level_8);
+				outD("       level_9: " + level_9);
+				outD("      waitSave: " + waitSave);
 			}
 		} catch (FileNotFoundException ex) {
 			out("Could not find "
@@ -1987,6 +1996,17 @@ public class Main {
 	 */
 	private static void outS(String str) {
 		System.out.println("[Server] " + str);
+	}
+
+	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void outD(String str) {
+		System.out.println(MLG + "[DEBUG] " + str);
 	}
 
 	/**
