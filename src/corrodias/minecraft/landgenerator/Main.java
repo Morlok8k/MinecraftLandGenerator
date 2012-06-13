@@ -52,15 +52,35 @@ import org.jnbt.Tag;
  */
 public class Main {
 
-	// Version Number!
-	public static final String PROG_NAME = "Minecraft Land Generator";
-	public static final String VERSION = "1.6.3";
-	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";
+	//
+	//
+	// Public Vars:
+	public static boolean testing = false;								// display more output when debugging
+
+	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
+	public static final String VERSION = "1.6.3";								// Version Number!
+	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
 
 	public static final String fileSeparator = System.getProperty("file.separator");
 	public static final String newLine = System.getProperty("line.separator");
 
-	private int increment = 380;
+	public static String MLG = "[MLG] ";
+	public static String MLGe = "[MLG-ERROR] ";
+
+	public static DateFormat dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+	public static Date MLG_Last_Modified_Date = null;
+
+	public static String MLGFileNameShort = null;
+	public static Scanner sc = new Scanner(System.in);
+	public static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
+	public static final String defaultReadmeFile = "_MLG_Readme.txt";
+
+	//
+	//
+	//Private Vars:
+	private static int MinecraftServerChunkPlayerCache = 625;
+	private static int increment = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16) - 20;			//private int increment = 380;
+
 	private static ProcessBuilder minecraft = null;
 	private static String javaLine = null;
 	private static final String defaultJavaLine =
@@ -96,36 +116,27 @@ public class Main {
 	private static boolean ignoreWarnings = false;
 	private static LongTag randomSeed = null;
 
-	public static String MLG = "[MLG] ";
-	public static String MLGe = "[MLG-ERROR] ";
-
-	private static DateFormat dateFormat = null;
-	//private static DateFormat dateFormatBuildID = null;
-	public static DateFormat dateFormat_MDY = null;
-	private static Date date = null;
-	public static Date MLG_Last_Modified_Date = null;
+	private static DateFormat dateFormat = new SimpleDateFormat(			// Lets get a nice Date format for display
+			"EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
+	private static Date date = null;										// date stuff
 	private static Long MLG_Last_Modified_Long = 0L;
 
 	private static final Class<?> cls = Main.class;
 	private static String MLGFileName = null;
-	public static String MLGFileNameShort = null;
+
 	private static final String rsrcError = "rsrcERROR";
 	private static String buildIDFile = "MLG-BuildID";
 	private static boolean isCompiledAsJar = false;
 	private static String MLG_Current_Hash = null;
 	private static int inf_loop_protect_BuildID = 0;
 	private static boolean flag_downloadedBuildID = false;
-	public static Scanner sc = new Scanner(System.in);
 
 	private static ArrayList<String> timeStamps = new ArrayList<String>();
 
-	public static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
-	public static final String defaultReadmeFile = "_MLG_Readme.txt";
 	private static final String MLG_JarFile = "MinecraftLandGenerator.jar";
 
 	private static final String github_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";			// just removing some redundancy
-
 	private static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
 	private static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
 	private static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
@@ -133,6 +144,7 @@ public class Main {
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
 
+	// RCON Stuff (not currently used yet...)
 	private static boolean useRCON = false;				//use RCON to communicate with server.  ***Experimental***
 	@SuppressWarnings("unused")
 	private static boolean rcon_Enabled = false;			//is server is set to use RCON?
@@ -142,15 +154,12 @@ public class Main {
 
 	private static boolean assertsEnabled = false;				//future debugging use...
 
-	//////
-
-	public static final boolean testing = false;		// display more output when debugging
-
-	//////
-
-	// REMINDER: because I always forget/mix up languages:
-	// "static" in java means "global"
-	// "final" means "constant"
+	//////////////////////////////////////////////////////////
+	// REMINDER: Because I always forget/mix up languages:	//
+	// "static" in java means "global" to this class		//
+	// "final" means "constant"								//
+	// public/private shows/hides between classes			//
+	//////////////////////////////////////////////////////////
 
 	/**
 	 * @param args
@@ -159,13 +168,18 @@ public class Main {
 	public static void main(String[] args) {
 		startTime = System.currentTimeMillis();
 
-		assert assertsEnabled = true;  // Intentional side-effect!!!  (This will cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
+		// This is really just here for debugging...
+		// I plan on adding more asserts later, but for now, this will do.
+		assert assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
 		if (assertsEnabled) {
 			out("assertsEnabled: " + assertsEnabled);
 			verbose = true;
 			out("Verbose mode forced!");
+			testing = true;
+			out("Debug mode forced!");
 		}
 
+		// Finally, Lets Start MLG!
 		(new Main()).run(args); // Why? this avoids "static" compiling issues.
 	}
 
@@ -178,11 +192,8 @@ public class Main {
 	 */
 	private void run(String[] args) {
 
-		// Lets get a nice Date format for display
-		dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
-		dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+		// Lets get the date, and our BuildID
 		date = new Date();
-
 		readBuildID();
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
@@ -487,7 +498,7 @@ public class Main {
 
 			long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
 
-			runMinecraft(verbose, alternate);
+			runMinecraft(alternate);
 
 			if ((xRange == 0) & (zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
 				return;
@@ -643,7 +654,7 @@ public class Main {
 					setSpawn(serverLevel, currentX + xOffset, 64, currentZ + zOffset);
 
 					// Launch the server
-					runMinecraft(verbose, alternate);
+					runMinecraft(alternate);
 					out("");
 
 					if (curZloops == 1) {
@@ -797,17 +808,17 @@ public class Main {
 	 * one is printed to the console when the Done! message is detected. If "verbose" is true, the process's output will also be printed to the console.
 	 * 
 	 * @param minecraft
-	 * @param verbose
+	 * 
 	 * @throws IOException
 	 * @author Corrodias
 	 */
-	protected static void runMinecraft(boolean verbose, boolean alternate) throws IOException {
+	protected static void runMinecraft(boolean alternate) throws IOException {
 		if (verbose) {
 			out("Starting server.");
 		}
 
 		boolean warning = false;
-		boolean cantKeepUp = false;
+		boolean warningsWeCanIgnore = false;
 		final boolean ignoreWarningsOriginal = ignoreWarnings;
 
 		// monitor output and print to console where required.
@@ -999,8 +1010,20 @@ public class Main {
 
 				//Here we want to ignore the most common warning: "Can't keep up!"
 				if (line.contains("Can't keep up!")) {	//TODO: add to .conf
-					cantKeepUp = true;			//[WARNING] Can't keep up! Did the system time change, or is the server overloaded?
+					warningsWeCanIgnore = true;			//[WARNING] Can't keep up! Did the system time change, or is the server overloaded?
 					ignoreWarnings = true;
+				} else if (line.contains("[WARNING] To start the server with more ram")) {
+					if (verbose == false) { // If verbose is true, we already displayed it.
+						outS(line);
+					}
+					warningsWeCanIgnore = true;			//we can safely ignore this...
+					ignoreWarnings = true;
+				} else if (line.contains("Error occurred during initialization of VM")
+						|| line.contains("Could not reserve enough space for object heap")) {
+					if (verbose == false) { // If verbose is true, we already displayed it.
+						outP("[Java Error] " + line);
+					}
+					warning = true;
 				}
 
 				if (ignoreWarnings == false) {
@@ -1045,7 +1068,7 @@ public class Main {
 					}
 				}
 
-				if (cantKeepUp) {
+				if (warningsWeCanIgnore) {
 					ignoreWarnings = ignoreWarningsOriginal;
 				}
 			}
@@ -1094,7 +1117,7 @@ public class Main {
 	/**
 	 * @return
 	 */
-	private boolean printSpawn() {
+	private static boolean printSpawn() {
 		// ugh, sorry, this is an ugly hack, but it's a last-minute feature. this is a lot of duplicated code.
 		// - Fixed by Morlok8k
 
@@ -1186,14 +1209,15 @@ public class Main {
 
 			try {
 				MLG_Current_Hash = fileMD5(MLGFileName);
-				// out(hash + "  " + MLGFileName);Â®
+				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
 				out("Error: MLG_MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
 
-		Date time = null;
+		Date time = new Date(new Long(0));
+
 		try {
 			time = getCompileTimeStamp(cls);
 		} catch (Exception e) {
@@ -1627,7 +1651,7 @@ public class Main {
 		}
 	}
 
-	private void readConf() {
+	private static void readConf() {
 		//TODO: element comment
 		//String errorMsg = "";
 
@@ -1744,7 +1768,7 @@ public class Main {
 	 *            true: Uses Default values. false: uses existing values
 	 * @author Morlok8k
 	 */
-	private void saveConf(boolean newConf) {
+	private static void saveConf(boolean newConf) {
 
 		String jL = null;			//javaLine
 		String sP = null;			//serverPath
@@ -1795,7 +1819,7 @@ public class Main {
 
 	}
 
-	private void verifyWorld() {
+	private static void verifyWorld() {
 		//TODO: element comment
 
 		// verify that we ended up with a good server path, either from the file or from an argument.

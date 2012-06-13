@@ -215,9 +215,9 @@ public class MLG_Readme_and_HelpInfo {
 			NewLine = NewLine + Main.MLG;
 		}
 
-		String MLGFileNameShort = Main.MLGFileNameShort;
-		String MinecraftLandGeneratorConf = Main.MinecraftLandGeneratorConf;
-		String defaultReadmeFile = Main.defaultReadmeFile;
+		MLGFileNameShort = Main.MLGFileNameShort;
+		MinecraftLandGeneratorConf = Main.MinecraftLandGeneratorConf;
+		defaultReadmeFile = Main.defaultReadmeFile;
 
 		//@formatter:off
 		Str =	"Usage: java -jar " + MLGFileNameShort + " x z [serverpath] [switches]" + NewLine
@@ -287,13 +287,15 @@ public class MLG_Readme_and_HelpInfo {
 				+ "       WaitSave : Optional: Wait before saving." + NewLine;
 		//@formatter:on
 
+		String returnString = null;
+
 		if (SysOut) {
 			Main.out(Str);
 			Main.out("");
-			return null;
 		} else {
-			return Str;
+			returnString = Str;
 		}
+		return returnString;
 
 	}
 }

@@ -40,9 +40,8 @@ public class MLG_StringArrayParse {
 			}
 
 			return returnArray;
-		} else {
-			return array;			//no changes have been done, return the original array
 		}
+		return array;			//no changes have been done, return the original array
 
 	}
 
