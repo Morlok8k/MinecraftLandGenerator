@@ -18,7 +18,7 @@ public class MLG_StringArrayParse {
 			int ii = 0;
 			for (int i = 0; i < array.length; i++) {
 				workingArray[ii] = array[i];								// copy
-				if ((array[i].equals(ParseOut)) && (removed == false)) {	// we only remove the first match!
+				if ((array[i].contains(ParseOut)) && (removed == false)) {	// we only remove the first match!
 					workingArray[ii] = null;								// we make sure this is set to null (if the last arg is the match it would otherwise be copied... granted it would later be removed... but whatever.)
 					ii = ii - 1;											// we just simply move back one
 					removed = true;											// set our flag

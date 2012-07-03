@@ -12,30 +12,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import morlok8k.minecraft.landgenerator.MLG_DownloadFile;
 import morlok8k.minecraft.landgenerator.MLG_MD5;
 import morlok8k.minecraft.landgenerator.MLG_Readme_and_HelpInfo;
 import morlok8k.minecraft.landgenerator.MLG_StringArrayParse;
+import morlok8k.minecraft.landgenerator.MLG_Update;
 import morlok8k.minecraft.landgenerator.MLG_input_CLI;
 
 import org.jnbt.CompoundTag;
@@ -58,7 +52,7 @@ public class Main {
 	public static boolean testing = false;								// display more output when debugging
 
 	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
-	public static final String VERSION = "1.6.3";								// Version Number!
+	public static final String VERSION = "1.6.9 (1.7pre)";								// Version Number!
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
 
 	public static final String fileSeparator = System.getProperty("file.separator");
@@ -80,6 +74,7 @@ public class Main {
 	//Private Vars:
 	private static int MinecraftServerChunkPlayerCache = 625;
 	private static int increment = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16) - 20;			//private int increment = 380;
+	private static boolean incrementSwitch = false;
 
 	private static ProcessBuilder minecraft = null;
 	private static String javaLine = null;
@@ -109,7 +104,7 @@ public class Main {
 	private int zRange = 0;
 	private Integer xOffset = null;
 	private Integer zOffset = null;
-	private static boolean verbose = false;
+	public static boolean verbose = false;
 	private boolean alternate = false;
 	private static boolean dontWait = false;
 	private static boolean waitSave = false;
@@ -119,27 +114,27 @@ public class Main {
 	private static DateFormat dateFormat = new SimpleDateFormat(			// Lets get a nice Date format for display
 			"EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
 	private static Date date = null;										// date stuff
-	private static Long MLG_Last_Modified_Long = 0L;
+	public static Long MLG_Last_Modified_Long = 0L;
 
-	private static final Class<?> cls = Main.class;
-	private static String MLGFileName = null;
+	public static final Class<?> cls = Main.class;
+	public static String MLGFileName = null;
 
-	private static final String rsrcError = "rsrcERROR";
-	private static String buildIDFile = "MLG-BuildID";
-	private static boolean isCompiledAsJar = false;
-	private static String MLG_Current_Hash = null;
-	private static int inf_loop_protect_BuildID = 0;
-	private static boolean flag_downloadedBuildID = false;
+	public static final String rsrcError = "rsrcERROR";
+	public static String buildIDFile = "MLG-BuildID";
+	public static boolean isCompiledAsJar = false;
+	public static String MLG_Current_Hash = null;
+	public static int inf_loop_protect_BuildID = 0;
+	public static boolean flag_downloadedBuildID = false;
 
-	private static ArrayList<String> timeStamps = new ArrayList<String>();
+	public static ArrayList<String> timeStamps = new ArrayList<String>();
 
-	private static final String MLG_JarFile = "MinecraftLandGenerator.jar";
+	public static final String MLG_JarFile = "MinecraftLandGenerator.jar";
 
-	private static final String github_URL =
+	public static final String github_URL =
 			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";			// just removing some redundancy
-	private static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
-	private static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
-	private static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
+	public static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
+	public static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
+	public static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
 
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
@@ -186,10 +181,18 @@ public class Main {
 		}
 
 		boolean GUI = false;
+		boolean NOGUI = false;
+
+		String[] argsNOGUI = new String[args.length];
+		argsNOGUI = args;
+		argsNOGUI = MLG_StringArrayParse.Parse(argsNOGUI, "nogui");		//parse out "nogui"
+		if (!(args.equals(argsNOGUI))) {								//do the freshly parsed args match the original?
+			args = argsNOGUI;											//use the freshly parsed args for everything else now...
+			NOGUI = true;
+		}
 
 		//GUI Choosing code...
-		if (!java.awt.GraphicsEnvironment.isHeadless()
-				&& (args.length <= 0 || !args[0].equals("nogui"))) {
+		if (!java.awt.GraphicsEnvironment.isHeadless() || (!NOGUI)) {
 			GUI = true;
 			if (testing) {
 				outD("GUI: This is a graphical enviroment.");
@@ -342,7 +345,6 @@ public class Main {
 					try {
 						origMD5 = fileMD5(config.toString());
 					} catch (NoSuchAlgorithmException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					BufferedReader in = new BufferedReader(new FileReader(config));
@@ -360,7 +362,6 @@ public class Main {
 						try {
 							recheckMD5 = fileMD5(config.toString());
 						} catch (NoSuchAlgorithmException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 
@@ -465,6 +466,7 @@ public class Main {
 
 				} else if (nextSwitch.startsWith("-i")) {
 					increment = Integer.parseInt(args[i + 2].substring(2));
+					incrementSwitch = true;
 					out("Notice: Non-Default Increment: " + increment);
 
 				} else if (nextSwitch.startsWith("-w")) {
@@ -585,6 +587,13 @@ public class Main {
 			Double blah;
 			double xLoops, zLoops;
 
+			//TODO: add code to check for user input for increment, and use that instead!  (this should take priority)
+
+			//TODO: have main loop make an arraylist of spawnpoints
+			// read from a file if MLG has run before on this world.  save to arraylist
+			// remove existing points from new list.
+			// run mlg on remaining list of spawn points.
+
 			// X
 			blah = ((double) xRange / (double) increment);		//How many loops do we need?
 			xLoops = Math.ceil(blah);							//round up to find out!
@@ -622,6 +631,11 @@ public class Main {
 			blah = null;	// I'm done with this temporary variable now.  I used it to make my code simplier,
 			// and so I wouldn't need to constantly use casting
 			// (as java will do it if one of the numbers is already a double)
+
+			if (incrementSwitch) {		//user input takes priority over any calculations we make!
+				incrementX = increment;
+				incrementZ = increment;
+			}
 
 			if (verbose) {
 				if (incrementX != increment) {
@@ -1001,6 +1015,7 @@ public class Main {
 					}
 				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
 					outS(shortLine);
+					//TODO: if server version, save string to some variable, for use in arraylist save file.
 				}
 
 				if (line.contains(doneText)) { // now this is configurable!
@@ -1138,7 +1153,7 @@ public class Main {
 	 * @param dst
 	 * @throws IOException
 	 */
-	private static void copyFile(File src, File dst) throws IOException {
+	public static void copyFile(File src, File dst) throws IOException {
 		InputStream copyIn = new FileInputStream(src);
 		OutputStream copyOut = new FileOutputStream(dst);
 
@@ -1218,106 +1233,7 @@ public class Main {
 	 * @author Morlok8k
 	 */
 	private static void buildID(boolean downloadOnly) {
-
-		// download BuildID from Github.
-		boolean fileSuccess = downloadFile(github_MLG_BuildID_URL, testing);
-		if (fileSuccess) {
-			out(buildIDFile + " file downloaded.");
-			flag_downloadedBuildID = true;
-
-			if (downloadOnly) { return; }
-
-		}
-
-		if (downloadOnly) {
-			err("Couldn't Download new " + buildIDFile);
-			return;
-		}
-
-		// If not available, create.
-		// After downloading, check to see if it matches hash.
-
-		if (MLGFileName == null) {
-			try {
-				MLGFileName = getClassLoader(cls);
-			} catch (Exception e) {
-				out("Error: Finding file failed");
-				e.printStackTrace();
-			}
-			if (MLGFileName.equals(rsrcError)) { return; }
-		}
-
-		if (MLG_Current_Hash == null) {
-
-			try {
-				MLG_Current_Hash = fileMD5(MLGFileName);
-				// out(hash + "  " + MLGFileName);
-			} catch (Exception e) {
-				out("Error: MLG_MD5 from file failed");
-				e.printStackTrace();
-			}
-		}
-
-		Date time = new Date(new Long(0));
-
-		try {
-			time = getCompileTimeStamp(cls);
-		} catch (Exception e) {
-			out("Error: TimeStamp from file failed");
-			e.printStackTrace();
-		}
-		// out(d.toString());
-
-		boolean notNew = false;
-		String INFO = "";
-		if (isCompiledAsJar == false) {
-			INFO = " (Class File, Not .Jar)";
-		}
-
-		try {
-			String line;
-
-			BufferedReader inFile = new BufferedReader(new FileReader(buildIDFile));
-			BufferedWriter outFile = new BufferedWriter(new FileWriter(buildIDFile + ".temp"));
-
-			while ((line = inFile.readLine()) != null) {
-
-				if (line.contains(MLG_Current_Hash)) {
-					notNew = true;
-					if (testing) {
-						outD("NotNew");
-					}
-				}
-
-				outFile.write(line);
-				outFile.newLine();
-			}
-
-			if (notNew == false) {
-				outFile.write(MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "# MLG v"
-						+ VERSION + INFO);
-				outFile.newLine();
-			}
-			outFile.close();
-			inFile.close();
-
-			File fileDelete = new File(buildIDFile);
-			fileDelete.delete();
-			File fileRename = new File(buildIDFile + ".temp");
-			fileRename.renameTo(new File(buildIDFile));
-
-		} catch (FileNotFoundException ex) {
-			out("\"" + buildIDFile + "\" file not Found.  Generating New \"" + buildIDFile
-					+ "\" File");
-
-			writeTxtFile(buildIDFile, MLG_Current_Hash + "=" + String.valueOf(time.getTime())
-					+ "#MLG v" + VERSION + INFO);
-
-		} catch (IOException ex) {
-			err("Could not create \"" + buildIDFile + "\".");
-			return;
-		}
-
+		MLG_Update.buildID(downloadOnly);
 	}
 
 	/**
@@ -1326,164 +1242,8 @@ public class Main {
 	 * @author Morlok8k
 	 * 
 	 */
-	private void readBuildID() {
-
-		if (inf_loop_protect_BuildID > 10) {
-			MLG_Last_Modified_Date = new Date(new Long(0));  //set the day to Jan 1, 1970 for failure
-			return;
-		}
-		inf_loop_protect_BuildID++;		// this is to prevent an infinite loop (however unlikely)
-
-		if (MLGFileName == null) {
-			try {
-				MLGFileName = getClassLoader(cls);
-			} catch (Exception e) {
-				out("Error: Finding file failed");
-				e.printStackTrace();
-			}
-			if (MLGFileName.equals(rsrcError)) { return; }
-		}
-
-		MLGFileNameShort =
-				MLGFileName.substring(MLGFileName.lastIndexOf(fileSeparator) + 1,
-						MLGFileName.length());
-
-		if (testing) {
-			outD("Currently Running as file:" + MLGFileNameShort);
-		}
-
-		if (MLG_Current_Hash == null) {
-
-			try {
-				MLG_Current_Hash = fileMD5(MLGFileName);
-				// out(hash + "  " + MLGFileName);
-			} catch (Exception e) {
-				out("Error: MLG_MD5 from file failed");
-				e.printStackTrace();
-			}
-		}
-
-		int tsCount = 0;
-
-		timeStamps.clear();
-
-		if (MLG_Last_Modified_Date == null) {
-			boolean foundLine = false;
-			try {
-				BufferedReader in = new BufferedReader(new FileReader(buildIDFile));
-				String line;
-
-				if (testing) {
-					outD("TimeStamps in buildIDFile:");
-				}
-				while ((line = in.readLine()) != null) {
-
-					int pos = line.indexOf('=');
-
-					int end = line.lastIndexOf('#'); // comments, ignored lines
-
-					if (end == -1) { // If we have no hash sign, then we read till the end of the line
-						end = line.length();
-
-					}
-					if (end <= (pos + 1)) { // If hash is before the '=', we may have an issue... it should be fine, cause we check for issues next, but lets make sure.
-						end = line.length();
-						pos = -1;
-					}
-
-					if (end == 0) {	//hash is first char, meaning entire line is a comment
-						end = line.length();
-						pos = 0;
-					}
-
-					if (pos != -1) {
-						if (line.length() != 0) {
-							timeStamps.add(line.substring(pos + 1, end));
-						}
-					}
-
-					//timeStamps.add(line.substring(pos + 1, end));
-
-					if (testing) {
-						outD(timeStamps.get(tsCount));
-					}
-
-					tsCount++;
-
-					if (line.contains(MLG_Current_Hash)) {
-						// out("[DEBUG] Found!");
-						foundLine = true;
-
-						if (pos != -1) {
-							if (line.substring(0, pos).equals(MLG_Current_Hash)) {
-								MLG_Last_Modified_Long = new Long(line.substring(pos + 1, end));
-								MLG_Last_Modified_Date = new Date(MLG_Last_Modified_Long);
-
-								Long highestModTime = ZipGetModificationTime(MLGFileName);
-								long tCalc = MLG_Last_Modified_Long - highestModTime;
-
-								if (testing) {
-									outD("tCalc\tMLG_Last_Modified_Long\thighestModTime" + newLine
-											+ tCalc + "\t" + MLG_Last_Modified_Long + "\t"
-											+ highestModTime);
-								}
-
-								if (highestModTime == 0L) {
-
-									err("Archive Intergrity Check Failed: .zip/.jar file Issue.");
-									err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
-
-								} else {
-									if (tCalc < -15000L) {
-
-										//time is newer?  (.zip file is newer than BuildID)
-										err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
-												+ (tCalc / 1000) + "sec.");
-										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
-									}
-
-									if (tCalc < 15000L) {
-
-										//times are within 30 seconds (+/- 15 seconds) of each other.  (typically 1-2 seconds, but left room for real-world error)
-										if (testing | flag_downloadedBuildID) {
-											out("Archive Intergrity Check Passed. Offset: "
-													+ (tCalc / 1000) + "sec.");
-										}
-
-									} else {
-										//times dont match.  (.zip file is older than specified BuildID)
-										err("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
-												+ (tCalc / 1000) + "sec.");
-										err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
-									}
-								}
-								//return;
-							}
-
-						}
-					}
-
-				}
-				in.close();
-
-				if (foundLine == false) {
-					// out("[DEBUG] FoundLine False");
-					buildID(false);
-					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
-					return;
-				}
-			} catch (Exception e) {
-				err("Cant Read " + buildIDFile + "!");
-				err(e.getLocalizedMessage());
-				err("");
-				// e.printStackTrace();
-				buildID(false);
-				readBuildID();
-				return;
-
-			}
-		}
-
+	private static void readBuildID() {
+		MLG_Update.readBuildID();
 	}
 
 	/**
@@ -1492,117 +1252,9 @@ public class Main {
 	 * @author Morlok8k
 	 * 
 	 */
-	private void updateMLG() {
+	private static void updateMLG() {
 
-		buildID(true);		//get latest BuildID file.  
-		MLG_Last_Modified_Date = null;
-		readBuildID();
-
-		Iterator<String> e = timeStamps.iterator();
-		String s;
-		int diff;
-
-		//boolean renameFailed = false;
-
-		while (e.hasNext()) {
-			s = e.next();
-			diff = MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
-			//out(diff);
-
-			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-				out("There is a NEW VERSION Of " + PROG_NAME + " available online!");
-
-				try {
-					File fileRename = new File(MLG_JarFile);
-					fileRename.renameTo(new File(MLG_JarFile + ".old"));
-				} catch (Exception e1) {
-					out("Rename attempt #1 failed!");
-					e1.printStackTrace();
-
-					try {
-						copyFile(new File(MLG_JarFile), new File(MLG_JarFile + ".old"));
-						File fileDelete = new File(MLG_JarFile);
-						fileDelete.delete();
-					} catch (Exception e2) {
-						out("Rename attempt #2 failed!");
-						e2.printStackTrace();
-						//renameFailed = true;
-						return;
-					}
-
-				}
-
-				boolean fileSuccess = downloadFile(github_MLG_jar_URL, true);
-				if (fileSuccess) {
-					out(MLG_JarFile + " downloaded.");
-					return;
-				}
-
-			}
-		}
-
-	}
-
-	/**
-	 * This gets the filename of a .jar (typically this one!)
-	 * 
-	 * @author Morlok8k
-	 */
-	private static String getClassLoader(Class<?> classFile) throws IOException {
-		ClassLoader loader = classFile.getClassLoader();
-		String filename = classFile.getName().replace('.', '/') + ".class";
-		URL resource =
-				(loader != null) ? loader.getResource(filename) : ClassLoader
-						.getSystemResource(filename);
-		filename = URLDecoder.decode(resource.toString(), "UTF-8");
-		// out(filename);
-
-		// START Garbage removal:
-		int bang = filename.indexOf("!");		// remove everything after xxxx.jar
-		if (bang == -1) { 						// a real example:
-			bang = filename.length();			// jar:file:/home/morlok8k/test.jar!/me/Morlok8k/test/Main.class
-		}
-		int file = filename.indexOf("file:");	// removes junk from the beginning of the path
-		file = file + 5;
-		if (file == -1) {
-			file = 0;
-		}
-		if (filename.contains("rsrc:")) {
-			err("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
-			err("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
-			err("(Your Libraries need to be extracted.)");
-			return rsrcError;
-		}
-		if (filename.contains(".jar")) {
-			isCompiledAsJar = true;
-		}
-		filename = filename.replace('/', File.separatorChar);
-		String returnString = filename.substring(file, bang);
-		// END Garbage removal
-		return returnString;
-	}
-
-	/**
-	 * This gets the TimeStamp (last modified date) of a class file (typically this one!) <br>
-	 * <br>
-	 * Thanks to Roedy Green at <br>
-	 * <a href="http://mindprod.com/jgloss/compiletimestamp.html">http://mindprod .com/jgloss/compiletimestamp.html</a>
-	 * 
-	 * @author Morlok8k
-	 */
-	private static Date getCompileTimeStamp(Class<?> classFile) throws IOException {
-		ClassLoader loader = classFile.getClassLoader();
-		String filename = classFile.getName().replace('.', '/') + ".class";
-		// get the corresponding class file as a Resource.
-		URL resource =
-				(loader != null) ? loader.getResource(filename) : ClassLoader
-						.getSystemResource(filename);
-		URLConnection connection = resource.openConnection();
-		// Note, we are using Connection.getLastModified not File.lastModifed.
-		// This will then work both or members of jars or standalone class files.
-		// NOTE: NOT TRUE! IT READS THE JAR, NOT THE FILES INSIDE!
-		long time = connection.getLastModified();
-		return (time != 0L) ? new Date(time) : null;
+		MLG_Update.updateMLG();
 	}
 
 	/**
@@ -1610,7 +1262,7 @@ public class Main {
 	 * 
 	 * @author Morlok8k
 	 */
-	private static String fileMD5(String fileName) throws NoSuchAlgorithmException,
+	public static String fileMD5(String fileName) throws NoSuchAlgorithmException,
 			FileNotFoundException {
 		return MLG_MD5.fileMD5(fileName);
 	}
@@ -1643,59 +1295,13 @@ public class Main {
 	 * @param timeBuildID
 	 * @author Morlok8k
 	 */
-	private static Long ZipGetModificationTime(String zipFile) {
-
-		Long highestModTime = 0L;
-
-		try {
-
-			ZipFile zipF = new ZipFile(zipFile);
-
-			/*
-			 * Get list of zip entries using entries method of ZipFile class.
-			 */
-
-			Enumeration<? extends ZipEntry> e = zipF.entries();
-
-			if (testing) {
-				outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
-			}
-
-			while (e.hasMoreElements()) {
-				ZipEntry entry = e.nextElement();
-
-				Long modTime = entry.getTime();
-
-				if (entry.getName().toUpperCase().contains("MAIN.JAVA")) {			//ignore highest timestamp for the source code, as that can be injected into the .jar file much later after compiling.
-					modTime = 0L;
-				}
-
-				if (highestModTime < modTime) {
-					highestModTime = modTime;
-				}
-
-				if (testing) {
-
-					String entryName = entry.getName();
-					Date modificationTime = new Date(modTime);
-					String CRC = Long.toHexString(entry.getCrc());
-
-					outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
-							+ modTime.toString());
-				}
-
-			}
-
-			zipF.close();
-
-			return highestModTime;
-
-		} catch (IOException ioe) {
-			out("Error opening zip file" + ioe);
-			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
-		}
+	public static Long ZipGetModificationTime(String zipFile) {
+		return MLG_Update.ZipGetModificationTime(zipFile);
 	}
 
+	/**
+	 * 
+	 */
 	private static void readConf() {
 		//TODO: element comment
 		//String errorMsg = "";
@@ -1864,6 +1470,9 @@ public class Main {
 
 	}
 
+	/**
+	 * 
+	 */
 	private static void verifyWorld() {
 		//TODO: element comment
 
@@ -1965,6 +1574,10 @@ public class Main {
 
 	}
 
+	/**
+	 * @param file
+	 * @param txt
+	 */
 	public static void writeTxtFile(String file, String txt) {
 		//TODO: element comment
 
@@ -2078,31 +1691,6 @@ public class Main {
 
 	}
 
-	/*
-	private static void finishedImage() {
-		System.out.println(newLine + "  .l0kkKMl                     lMKkk0l.  " + newLine
-				+ ".;kMc  ;KK;  .,,lkkkkkkkl,,.  ;KK,  cMk,." + newLine
-				+ "KKxkc..lKK;.oKKxxl,;;;;lkkKKo.,KKl..ckkKK" + newLine
-				+ "Mx. ...;x0OOl'.           .'lOOOx:... .xM" + newLine
-				+ "lKKk0l. ,KK;                 ,KK, .l0xKKl" + newLine
-				+ " .'',xOxOWl                   lMOxOx,''. " + newLine
-				+ "      .,xWl                   lWx;.      " + newLine
-				+ "        lMl ,.             ., lMl        " + newLine
-				+ "        ;XO';Odl:,.. .',:ldO;'OX;        " + newLine
-				+ "         ,KK,cxkkkc...ckxkx:,KK,         " + newLine
-				+ "          lMc .,,. .o. .,,. cMl          " + newLine
-				+ "          .lO;;'  .lkl.  ';;Ol.          " + newLine
-				+ "         .;;kMk.         .kMk;;.         " + newLine
-				+ "       .lKKK0kl;;.......;,lk0KKKl.       " + newLine
-				+ "  .;llxOx;.'Ox;llxxldlxxll;xO'.;xOxll;.  " + newLine
-				+ " ,KKcll.  .l0KKl...   ...lKK0l.  .llcKK, " + newLine
-				+ " lMx'''..lXX;:X0:'.   .':OX;,XXl..'''xMl " + newLine
-				+ " .lxXk.  ,KM; .lkKKxkkKKkl. ,MK,  .kXxl. " + newLine
-				+ "    oKl;;kMk.    .,,,,;.    .kMk,,lKo    " + newLine
-				+ "    .0MMMMO'                 .OMMMMO.    ");
-	}
-	 */
-
 	/**
 	 * Returns the time in a readable format between two points of time given in Millis.
 	 * 
@@ -2147,13 +1735,22 @@ public class Main {
 								seconds % 60);
 
 		if (!(verbose)) {
-			int end = took.indexOf(",");
-			if (end == -1) {
+			int commaFirst = took.indexOf(",");
+			int commaSecond = took.substring((commaFirst + 1), took.length()).indexOf(",");
+			int end = (commaFirst + 1 + commaSecond);
+
+			if (commaSecond == -1) {
+				end = commaFirst;
+			}
+
+			if (commaFirst == -1) {
 				end = took.length();
 			}
+
 			took = took.substring(0, end);
 		}
 
+		took.trim();
 		return (took);
 	}
 

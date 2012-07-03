@@ -62,6 +62,12 @@ public class MLG_Readme_and_HelpInfo {
 				+ newLine
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.7.0" + newLine
+				+ "- Major Code Optimization" + newLine
+				+ "- Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!" + newLine
+				+ "- (To do this, I needed to rewrite the Main loop of the program, and add my own Coordinate object)" + newLine
+				+ "- Updated Time Output yet again." + newLine
+				+ "- Misc. Tweaks." + newLine
 				+ "1.6.3" + newLine
 				+ "- Minor Code Optimization" + newLine
 				+ "- Finely got on the ball and added the JNBT source and everything (as an internal .zip) to be completely faithful to his license" + newLine
