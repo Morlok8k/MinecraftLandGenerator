@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import corrodias.minecraft.landgenerator.MLG_Misc;
 import corrodias.minecraft.landgenerator.Main;
 
 public class MLG_Update {
@@ -67,7 +68,7 @@ public class MLG_Update {
 		if (Main.MLG_Current_Hash == null) {
 
 			try {
-				Main.MLG_Current_Hash = Main.fileMD5(Main.MLGFileName);
+				Main.MLG_Current_Hash = MLG_MD5.fileMD5(Main.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
 				Main.out("Error: MLG_MD5 from file failed");
@@ -127,7 +128,7 @@ public class MLG_Update {
 			Main.out("\"" + Main.buildIDFile + "\" file not Found.  Generating New \""
 					+ Main.buildIDFile + "\" File");
 
-			Main.writeTxtFile(Main.buildIDFile,
+			MLG_FileWrite.writeTxtFile(Main.buildIDFile,
 					Main.MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
 							+ Main.VERSION + INFO);
 
@@ -173,7 +174,7 @@ public class MLG_Update {
 		if (Main.MLG_Current_Hash == null) {
 
 			try {
-				Main.MLG_Current_Hash = Main.fileMD5(Main.MLGFileName);
+				Main.MLG_Current_Hash = MLG_MD5.fileMD5(Main.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (Exception e) {
 				Main.out("Error: MLG_MD5 from file failed");
@@ -238,7 +239,8 @@ public class MLG_Update {
 										new Long(line.substring(pos + 1, end));
 								Main.MLG_Last_Modified_Date = new Date(Main.MLG_Last_Modified_Long);
 
-								Long highestModTime = Main.ZipGetModificationTime(Main.MLGFileName);
+								Long highestModTime =
+										MLG_Update.ZipGetModificationTime(Main.MLGFileName);
 								long tCalc = Main.MLG_Last_Modified_Long - highestModTime;
 
 								if (Main.testing) {
@@ -339,7 +341,7 @@ public class MLG_Update {
 					e1.printStackTrace();
 
 					try {
-						Main.copyFile(new File(Main.MLG_JarFile), new File(Main.MLG_JarFile
+						MLG_Misc.copyFile(new File(Main.MLG_JarFile), new File(Main.MLG_JarFile
 								+ ".old"));
 						File fileDelete = new File(Main.MLG_JarFile);
 						fileDelete.delete();

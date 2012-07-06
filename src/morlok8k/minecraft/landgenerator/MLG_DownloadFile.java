@@ -88,7 +88,7 @@ public class MLG_DownloadFile {
 			timeTracking[1] = System.currentTimeMillis();
 			//differenceTime = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				Main.out("Elapsed Time: " + Main.displayTime(timeTracking[0], timeTracking[1]));
+				Main.out("Elapsed Time: " + MLG_Time.displayTime(timeTracking[0], timeTracking[1]));
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

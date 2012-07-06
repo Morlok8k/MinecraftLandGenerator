@@ -26,8 +26,4 @@ public class MLG_ArrayList {
 		return list;
 	}
 
-	//TODO: add read arraylist file
-
-	//TODO: add save arraylist file  (save this file only after generation is complete)
-
 }

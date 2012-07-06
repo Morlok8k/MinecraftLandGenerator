@@ -201,7 +201,7 @@ public class MLG_Readme_and_HelpInfo {
 				+ newLine;
 		//@formatter:on
 
-		Main.writeTxtFile(readmeFile, ReadMeText + showHelpSTR);
+		MLG_FileWrite.writeTxtFile(readmeFile, ReadMeText + showHelpSTR);
 
 	}
 
@@ -304,4 +304,5 @@ public class MLG_Readme_and_HelpInfo {
 		return returnString;
 
 	}
+
 }

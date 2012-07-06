@@ -10,7 +10,7 @@ package morlok8k.minecraft.landgenerator;
  */
 public class Coordinates {
 	//FYI: int's (Integer's) are good enough for Minecraft.  They have a range of -2,147,483,648 to 2,147,483,647
-	//		Minecraft starts failing around ± 12,550,820 and ends at either ± 30,000,000 or ± 32,000,000 (depending on the version).
+	//		Minecraft starts failing around (+/-) 12,550,820 and ends at either (+/-) 30,000,000 or (+/-) 32,000,000 (depending on the version).
 	// See: http://www.minecraftwiki.net/wiki/Far_Lands for more info.
 
 	public int X = 0;
@@ -89,7 +89,7 @@ public class Coordinates {
 
 	public static Coordinates parseString(String StringOfCoords) {
 		//parse out string
-		StringOfCoords.trim();
+		StringOfCoords = StringOfCoords.trim();
 
 		int x = 0, y = 0, z = 0;
 
@@ -108,13 +108,13 @@ public class Coordinates {
 		firstComma = StringOfCoords.indexOf(",");
 		secComma = StringOfCoords.lastIndexOf(",");
 
-		System.out.println(start + " " + end + " " + firstComma + " " + secComma);
+		//System.out.println(start + " " + end + " " + firstComma + " " + secComma);
 
 		sX = StringOfCoords.substring(start + 1, firstComma);
 		sY = StringOfCoords.substring(firstComma + 1, secComma);
 		sZ = StringOfCoords.substring(secComma + 1, end);
 
-		System.out.println(sX + " " + sY + " " + sZ);
+		//System.out.println(sX + " " + sY + " " + sZ);
 
 		x = Integer.parseInt(sX);
 		y = Integer.parseInt(sY);
