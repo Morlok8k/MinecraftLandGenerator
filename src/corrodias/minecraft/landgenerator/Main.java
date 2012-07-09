@@ -39,10 +39,10 @@ public class Main {
 	//
 	//
 	// Public Vars:
-	public static boolean testing = false;								// display more output when debugging
+	public static boolean testing = false;		// display more output when debugging
 
 	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
-	public static final String VERSION = "1.6.99 (1.7.0 test3)";				// Version Number!
+	public static final String VERSION = "1.7.0 test7";						// Version Number!
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
 
 	public static final String fileSeparator = System.getProperty("file.separator");
@@ -120,6 +120,9 @@ public class Main {
 	public static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
 	public static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
 
+	public static int resumeX = 0;				//resume data, if needed.
+	public static int resumeZ = 0;
+
 	//
 	//
 	//Private Vars:
@@ -142,7 +145,7 @@ public class Main {
 	public static boolean useRCON = false;				//use RCON to communicate with server.  ***Experimental***
 	public static boolean rcon_Enabled = false;			//is server is set to use RCON?
 	public static String rcon_IPaddress = "0.0.0.0";		//default is 0.0.0.0
-	public static String rcon_Port = "25575";					//default is 25575, we are just initializing here.
+	public static String rcon_Port = "25575";				//default is 25575, we are just initializing here.
 	public static String rcon_Password = "test";			//default is "", but a password must be entered.
 
 	//////////////////////////////////////////////////////////
@@ -443,6 +446,16 @@ public class Main {
 		try {
 			xRange = Integer.parseInt(args[0]);
 			zRange = Integer.parseInt(args[1]);
+
+			if ((xRange < 1000) && (xRange != 0)) {
+				xRange = 1000;							//if less than 1000, (and not 0) set to 1000 (Calculations don't work well on very small maps)
+				err("X size too small - Changing X to 1000");
+			}
+			if ((zRange < 1000) && (zRange != 0)) {
+				zRange = 1000;
+				err("Z size too small - Changing Z to 1000");
+			}
+
 		} catch (NumberFormatException ex) {
 			err("Invalid X or Z argument.");
 			err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
@@ -511,14 +524,33 @@ public class Main {
 		{
 			File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
 			if (backupLevel.exists()) {
-				err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
-						+ " or restore the backup.");
-				err("You most likely will want to restore the backup!");
-				MLG_Time.waitTenSec(false);
+				//err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
+				//		+ " or restore the backup.");
+				//err("You most likely will want to restore the backup!");
+				//MLG_Time.waitTenSec(false);
 
-				//TODO: use resume data
+				err("There is a level_backup.dat file left over from a previous attempt that failed.");
+				out("Resuming...");
 
-				return;
+				//use resume data
+				File serverLevel = new File(worldPath + fileSeparator + "level.dat");
+				try {
+					MLG_Misc.copyFile(backupLevel, serverLevel);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				backupLevel.delete();
+
+				//return;
+
+				MLG_FileRead.readArrayListCoordLog(worldPath + fileSeparator
+						+ "MinecraftLandGenerator.log");		// we read the .log just for any resume data, if any.
+
+				System.gc();		//run the garbage collector - hopefully free up some memory!
+
+				xRange = resumeX;
+				zRange = resumeZ;
+
 			}
 		}
 
@@ -543,20 +575,25 @@ public class Main {
 
 			long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
 
-			MLG_Server.runMinecraft(alternate);
+			boolean serverLaunch = MLG_Server.runMinecraft(alternate);
+
+			if (!(serverLaunch)) {
+				System.exit(1);				// we got a warning or severe error
+			}
 
 			if ((xRange == 0) & (zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
 				return;
 			}
 
+			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+
 			MLG_FileWrite.AppendTxtFile(
 					worldPath + fileSeparator + "MinecraftLandGenerator.log",
 					"# " + PROG_NAME + " " + VERSION + " - " + MLG_SelfAware.JVMinfo() + newLine
 							+ "# " + MC_Server_Version + newLine + "# Started: "
-							+ dateFormat.format(generationStartTimeTracking) + newLine);
-
-			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
-			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+							+ dateFormat.format(generationStartTimeTracking) + newLine
+							+ "##Size: X" + xRange + "Z" + zRange + newLine);
 
 			out("");
 
@@ -593,6 +630,10 @@ public class Main {
 			out("");
 
 			double xLoops, zLoops;
+			int curXloops = 0;
+			int curZloops = 0;
+			int xRangeAdj = 0;
+			int zRangeAdj = 0;
 
 			// have main loop make an arraylist of spawnpoints
 			// read from a file if MLG has run before on this world.  save to arraylist
@@ -601,19 +642,20 @@ public class Main {
 
 			// X
 			xLoops = ((double) xRange / (double) increment);		//How many loops do we need?
-			xLoops = Math.ceil(xLoops);							//round up to find out!
+			xLoops = Math.ceil(xLoops);								//round up to find out!
+			xRangeAdj = (int) (xLoops * increment);
+			xLoops = xLoops + 1;
 
 			// Z
 			zLoops = ((double) zRange / (double) increment);		//How many loops do we need?
-			zLoops = Math.ceil(zLoops);							//round up to find out!
+			zLoops = Math.ceil(zLoops);								//round up to find out!
+			zRangeAdj = (int) (zLoops * increment);
+			zLoops = zLoops + 1;
 
 			out("Calculating Spawn Points...");
 
 			int totalIterations = (int) (xLoops * zLoops);
 			int currentIteration = 0;
-
-			int curXloops = 0;
-			int curZloops = 0;
 
 			long differenceTime = System.currentTimeMillis();
 
@@ -621,8 +663,7 @@ public class Main {
 
 			ArrayList<Coordinates> launchList = new ArrayList<Coordinates>(totalIterations);
 
-			for (int currentX = (int) ((Math.ceil((((0 - xRange) / 2) / increment))) * increment); currentX <= (xRange / 2); currentX +=
-					increment) {
+			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += increment) {
 				curXloops++;
 				if (curXloops == 1) {
 					currentX = (((0 - xRange) / 2) + (increment / 2) + 16);
@@ -630,9 +671,7 @@ public class Main {
 					currentX = (xRange / 2) - (increment / 2);
 				}
 
-				for (int currentZ =
-						(int) ((Math.ceil((((0 - zRange) / 2) / increment))) * increment); currentZ <= (zRange / 2); currentZ +=
-						increment) {
+				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += increment) {
 					currentIteration++;
 
 					curZloops++;
@@ -642,20 +681,25 @@ public class Main {
 						currentZ = (zRange / 2) - (increment / 2);
 					}
 
-					// add coords to arraylist here
-					Coordinates tempCoords =
-							new Coordinates(currentX + xOffset, 64, currentZ + zOffset);
-					launchList.add(tempCoords);
+					{
+						// add Coordinates to arraylist here
+						Coordinates tempCoords =
+								new Coordinates(currentX + xOffset, 64, currentZ + zOffset);
+						launchList.add(tempCoords);
+
+						//TODO: remove this before release:
+						System.out.println(tempCoords);
+					}
 
 					if (curZloops == 1) {
 						currentZ =
-								(int) ((Math.ceil((((0 - zRange) / 2) / increment))) * increment);
+								(int) ((Math.ceil((((0 - zRangeAdj) / 2) / increment))) * increment);
 					}
 
 				}
 				curZloops = 0;
 				if (curXloops == 1) {
-					currentX = (int) ((Math.ceil((((0 - xRange) / 2) / increment))) * increment);
+					currentX = (int) ((Math.ceil((((0 - xRangeAdj) / 2) / increment))) * increment);
 				}
 			}
 
@@ -666,11 +710,6 @@ public class Main {
 
 			if (!(removeList.isEmpty())) {
 				MLG_ArrayList.arrayListRemove(launchList, removeList);
-			}
-
-			int numRemoved = totalIterations - launchList.size();
-			if (numRemoved > 0) {
-				out("Reduced number of server launches by: " + numRemoved);
 			}
 
 			removeList.clear();		// we are done with this now.
@@ -738,12 +777,12 @@ public class Main {
 			MLG_Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			out("Restored original level.dat.");
-			//finishedImage();			//disabled, because I didn't care for it - it didn't flow well with MLG
+
 			out("Generation complete in: "
 					+ MLG_Time.displayTime(startTime, System.currentTimeMillis()));
 			MLG_Time.waitTenSec(false);
 		} catch (IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	}
 

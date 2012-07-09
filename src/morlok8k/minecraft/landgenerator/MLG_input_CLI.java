@@ -14,11 +14,22 @@ public class MLG_input_CLI {
 	 */
 	public static int getInt(String msg) {
 
+		int Return = 0;
+
 		while (!(Main.sc.hasNextInt())) {
 			Main.sc.nextLine();
 			Main.outP(Main.MLG + "Invalid Input. " + msg);
 		}
-		return Main.sc.nextInt();
+
+		Return = Main.sc.nextInt();
+
+		if (Return < 1000) {
+			Main.out("Input must be 1000 or larger.");
+			Main.outP(Main.MLG + msg);
+			Return = getInt(msg);
+		}
+
+		return Return;
 
 	}
 

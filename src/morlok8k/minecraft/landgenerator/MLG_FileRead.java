@@ -20,6 +20,9 @@ public class MLG_FileRead {
 			String line = "";
 
 			while ((line = in.readLine()) != null) {
+
+				line = line.trim();
+
 				int end = line.indexOf('#'); // comments, ignored lines
 				boolean ignoreLine = false;
 				Coordinates c = new Coordinates();
@@ -35,10 +38,19 @@ public class MLG_FileRead {
 				if (!(ignoreLine)) {
 					c = Coordinates.parseString(line.substring(0, end));
 					Return.add(c);
-				} /* else {
-						// other future stuff may go here.
+				} else {
+					if (line.startsWith("##Size:")) {				// Potential Resume data.
+						int xx = 0;
+						int zz = 0;
+
+						xx = line.indexOf('X');
+						zz = line.indexOf('Z');
+
+						Main.resumeX = Integer.parseInt(line.substring(xx + 1, zz));
+						Main.resumeZ = Integer.parseInt(line.substring(zz + 1));
+
 					}
-					*/
+				}
 
 			}
 			in.close();

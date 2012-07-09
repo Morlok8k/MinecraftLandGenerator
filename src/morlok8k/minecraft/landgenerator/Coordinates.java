@@ -94,31 +94,58 @@ public class Coordinates {
 		int x = 0, y = 0, z = 0;
 
 		//TODO: add validity checks:
-		//TODO: add short version...  (Y = 0)
+		//TODO: add short version...  (Y = 64)
 
 		int start = 0, end = 0, firstComma = 0, secComma = 0;
-
 		String sX = "", sY = "", sZ = "";
+		boolean shortMode = false, notCoords = false;
 
 		start = StringOfCoords.indexOf("[");
 		end = StringOfCoords.indexOf("]");
 
-		StringOfCoords = StringOfCoords.substring(start, end);
+		if ((start == -1) || (end == -1)) {
+			start = StringOfCoords.indexOf("(");
+			end = StringOfCoords.indexOf(")");
 
-		firstComma = StringOfCoords.indexOf(",");
-		secComma = StringOfCoords.lastIndexOf(",");
+			if ((start != -1) || (end != -1)) {
+				shortMode = true;
+			} else {
+				notCoords = true;
+			}
+		}
 
-		//System.out.println(start + " " + end + " " + firstComma + " " + secComma);
+		if (notCoords) { return new Coordinates(0, 0, 0); }
 
-		sX = StringOfCoords.substring(start + 1, firstComma);
-		sY = StringOfCoords.substring(firstComma + 1, secComma);
-		sZ = StringOfCoords.substring(secComma + 1, end);
+		if (shortMode) {
 
-		//System.out.println(sX + " " + sY + " " + sZ);
+			StringOfCoords = StringOfCoords.substring(start, end);
 
-		x = Integer.parseInt(sX);
-		y = Integer.parseInt(sY);
-		z = Integer.parseInt(sZ);
+			firstComma = StringOfCoords.indexOf(",");
+
+			sX = StringOfCoords.substring(start + 1, firstComma);
+			sY = "64";
+			sZ = StringOfCoords.substring(firstComma + 1, end);
+
+		} else {
+
+			StringOfCoords = StringOfCoords.substring(start, end);
+
+			firstComma = StringOfCoords.indexOf(",");
+			secComma = StringOfCoords.lastIndexOf(",");
+
+			sX = StringOfCoords.substring(start + 1, firstComma);
+			sY = StringOfCoords.substring(firstComma + 1, secComma);
+			sZ = StringOfCoords.substring(secComma + 1, end);
+
+		}
+
+		try {
+			x = Integer.parseInt(sX);
+			y = Integer.parseInt(sY);
+			z = Integer.parseInt(sZ);
+		} catch (NumberFormatException e) {
+			return new Coordinates(0, 0, 0);
+		}
 
 		return new Coordinates(x, y, z);
 	}
