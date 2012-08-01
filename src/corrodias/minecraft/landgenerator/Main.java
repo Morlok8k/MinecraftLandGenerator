@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ import morlok8k.minecraft.landgenerator.MLG_input_CLI;
  */
 public class Main {
 
-	//
+	//java.awt.Desktop.getDesktop().browse(splashPage);
 	//
 	// Public Vars:
 	public static boolean testing = false;		// display more output when debugging
@@ -138,6 +139,7 @@ public class Main {
 
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
+	private static boolean webLaunch = true;				// Launch website after generation.
 
 	private static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
 
@@ -781,6 +783,31 @@ public class Main {
 			out("Generation complete in: "
 					+ MLG_Time.displayTime(startTime, System.currentTimeMillis()));
 			MLG_Time.waitTenSec(false);
+
+			//TODO: add if's
+
+			if (webLaunch) {		//if webLaunch is already false, don't check for these things
+				if (java.awt.GraphicsEnvironment.isHeadless()) {
+					webLaunch = false;					//headless enviroment - cant bring up webpage!
+				}
+				File web1 = new File("web");
+				File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage	
+				File web3 = new File("web.txt.txt");
+				if (web2.exists() || (web1.exists() || web3.exists())) {  //check for "web.txt", if not found, check for "web", and if still not found, check for "web.txt.txt"
+					webLaunch = false;
+				}
+			}
+
+			if (webLaunch && java.awt.Desktop.isDesktopSupported()) {
+				URI splashPage =
+						URI.create("https://sites.google.com/site/minecraftlandgenerator/home/mlg_splash");
+				try {
+					java.awt.Desktop.getDesktop().browse(splashPage);
+				} catch (IOException e) {
+					err("Error displaying webpage... " + e.getLocalizedMessage());
+				}
+			}
+
 		} catch (IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
