@@ -139,7 +139,7 @@ public class Main {
 
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
-	private static boolean webLaunch = true;				// Launch website after generation.
+	public static boolean webLaunch = true;				// Launch website after generation.
 
 	private static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
 
@@ -800,12 +800,17 @@ public class Main {
 
 			if (webLaunch && java.awt.Desktop.isDesktopSupported()) {
 				URI splashPage =
-						URI.create("https://sites.google.com/site/minecraftlandgenerator/home/mlg_splash");
+				//URI.create("https://sites.google.com/site/minecraftlandgenerator/home/mlg_splash");
+						URI.create("http://adf.ly/520855/splashbanner");
 				try {
 					java.awt.Desktop.getDesktop().browse(splashPage);
 				} catch (IOException e) {
 					err("Error displaying webpage... " + e.getLocalizedMessage());
 				}
+			} else {
+				out("Please Visit: http://adf.ly/520855/mlg");
+				out("Or: https://sites.google.com/site/minecraftlandgenerator/");
+				out("Thanks!");
 			}
 
 		} catch (IOException ex) {

@@ -144,6 +144,12 @@ public class MLG_FileRead {
 						} else {
 							Main.waitSave = false;
 						}
+					} else if (property.equals("weblaunch")) {
+						if (value.toLowerCase().equals("true")) {
+							Main.webLaunch = true;
+						} else {
+							Main.webLaunch = false;
+						}
 					}
 				}
 			}
@@ -167,6 +173,7 @@ public class MLG_FileRead {
 				Main.outD("       level_8: " + Main.level_8);
 				Main.outD("       level_9: " + Main.level_9);
 				Main.outD("      waitSave: " + Main.waitSave);
+				Main.outD("     webLaunch: " + Main.webLaunch);
 			}
 		} catch (FileNotFoundException ex) {
 			Main.out("Could not find "

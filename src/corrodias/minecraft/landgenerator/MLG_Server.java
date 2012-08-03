@@ -32,6 +32,7 @@ public class MLG_Server {
 			Main.out("Alternate Launch");
 			Process process = Main.minecraft.start();
 
+			//byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
 			// monitor output and print to console where required.
@@ -39,9 +40,7 @@ public class MLG_Server {
 			BufferedReader pOut =
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
-			while ((line = pOut.readLine()) != null) {		// readLine() returns null when the process exits
-
-				line = line.trim(); //Trim spaces off the beginning and end, if any.
+			while ((line = pOut.readLine().trim()) != null) {		// readLine() returns null when the process exits
 
 				System.out.println(line);
 				if (line.contains(Main.doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
@@ -82,17 +81,15 @@ public class MLG_Server {
 
 			boolean convertedMapFormattingFlag = false;		// This allows MLG to track if we converted a map to a new format (such as Chunk-file -> McRegion, or McRegion -> Anvil)
 			// just so it gets a line ending after the % output finishes
-			while ((line = pOut.readLine()) != null) {			// readLine() returns null when the process exits
+			while ((line = pOut.readLine().trim()) != null) {			// readLine() returns null when the process exits
 
-				int posBracket = line.lastIndexOf("]");
+				int posBracket = line.indexOf("]");			//changed from .lastIndexOf to .indexOf, in case we have a custom server that outputs something with an "]".  we want the first one anyways.
 				if (posBracket != -1) {
 					shortLine = line.substring(posBracket + 2);
 					shortLine = shortLine.trim();
 				} else {
 					shortLine = line;
 				}
-
-				line = line.trim();
 
 				if (Main.verbose) {
 					Main.outS(shortLine);

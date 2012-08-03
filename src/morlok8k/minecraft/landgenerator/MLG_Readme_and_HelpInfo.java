@@ -76,7 +76,8 @@ public class MLG_Readme_and_HelpInfo {
 			+ "  (To do this, I needed to rewrite the Main loop of the program, and add my own Coordinate object)" + newLine
 			+ "- Added Resume Functionality" + newLine
 			+ "- Updated Time Output yet again." + newLine
-			+ "- Misc. Tweaks." + newLine
+			+ "- Made xx% output nicer by rewriting previous existing line." + newLine
+			+ "- Misc. Tweaks" + newLine
 			+ "- Misc. Additions" + newLine
 			+ "1.6.3" + newLine
 			+ "- Minor Code Optimization" + newLine

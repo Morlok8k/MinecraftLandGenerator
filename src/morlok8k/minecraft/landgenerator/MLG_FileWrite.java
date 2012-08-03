@@ -70,10 +70,10 @@ public class MLG_FileWrite {
 	 * @author Morlok8k
 	 */
 	public static void saveConf(boolean newConf) {
-	
+
 		String jL = null;			//javaLine
 		String sP = null;			//serverPath
-	
+
 		if (newConf) {
 			jL = Main.defaultJavaLine;	// reads the default from a constant, makes it easier!
 			sP = ".";				// 
@@ -81,7 +81,7 @@ public class MLG_FileWrite {
 			jL = Main.javaLine;			// we read these values from an existing Conf File.
 			sP = Main.serverPath;		//
 		}
-	
+
 		String txt = null;
 		//@formatter:off
 		txt = "#" + Main.PROG_NAME + " Configuration File:  Version: " + Main.VERSION + Main.newLine
@@ -111,13 +111,15 @@ public class MLG_FileWrite {
 					+ "Level-8=Level 8 (Future Level)" + Main.newLine 
 					+ "Level-9=Level 9 (Future Level)" + Main.newLine 
 					+ Main.newLine
-					+ "#Optional: Wait a few seconds after saving." + Main.newLine + "WaitSave=false";
+					+ "#Optional: Wait a few seconds after saving." + Main.newLine
+					+ "WaitSave=false" + Main.newLine
+					+ "webLaunch=true";
 			//@formatter:on
-	
+
 		writeTxtFile(Main.MinecraftLandGeneratorConf, txt);
-	
+
 		return;
-	
+
 	}
 
 }
