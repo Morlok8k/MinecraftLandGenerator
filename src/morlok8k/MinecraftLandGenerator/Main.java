@@ -1,4 +1,4 @@
-package corrodias.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,19 +17,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import morlok8k.minecraft.landgenerator.Coordinates;
-import morlok8k.minecraft.landgenerator.MLG_ArrayList;
-import morlok8k.minecraft.landgenerator.MLG_DownloadFile;
-import morlok8k.minecraft.landgenerator.MLG_FileRead;
-import morlok8k.minecraft.landgenerator.MLG_FileWrite;
-import morlok8k.minecraft.landgenerator.MLG_MD5;
-import morlok8k.minecraft.landgenerator.MLG_Readme_and_HelpInfo;
-import morlok8k.minecraft.landgenerator.MLG_SelfAware;
-import morlok8k.minecraft.landgenerator.MLG_StringArrayParse;
-import morlok8k.minecraft.landgenerator.MLG_Time;
-import morlok8k.minecraft.landgenerator.MLG_Update;
-import morlok8k.minecraft.landgenerator.MLG_input_CLI;
-
 /**
  * 
  * @author Corrodias, Morlok8k, pr0f1x
@@ -37,13 +24,13 @@ import morlok8k.minecraft.landgenerator.MLG_input_CLI;
  */
 public class Main {
 
-	//java.awt.Desktop.getDesktop().browse(splashPage);
+	//
 	//
 	// Public Vars:
 	public static boolean testing = false;		// display more output when debugging
 
 	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
-	public static final String VERSION = "1.7.0 test7";						// Version Number!
+	public static final String VERSION = "1.7.0";								// Version Number!
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
 
 	public static final String fileSeparator = System.getProperty("file.separator");
@@ -188,7 +175,7 @@ public class Main {
 
 		String[] argsNOGUI = new String[args.length];
 		argsNOGUI = args;
-		argsNOGUI = MLG_StringArrayParse.Parse(argsNOGUI, "nogui");		//parse out "nogui"
+		argsNOGUI = StringArrayParse.Parse(argsNOGUI, "nogui");		//parse out "nogui"
 		if (!(args.equals(argsNOGUI))) {								//do the freshly parsed args match the original?
 			args = argsNOGUI;											//use the freshly parsed args for everything else now...
 			NOGUI = true;
@@ -221,7 +208,7 @@ public class Main {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			*/
+			 */
 
 		} else {	//No GUI
 			// Finally, Lets Start MLG!
@@ -241,7 +228,7 @@ public class Main {
 
 		// Lets get the date, and our BuildID
 		date = new Date();
-		MLG_Update.readBuildID();
+		Update.readBuildID();
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
@@ -262,8 +249,8 @@ public class Main {
 		// (-nowait is the only universal switch - it can be used with anything.  its basically for scripting, as it turns off the 10sec wait for human readability)
 		String[] newArgs = new String[args.length];
 		newArgs = args;
-		newArgs = MLG_StringArrayParse.Parse(newArgs, "-n");		//parse out -n
-		newArgs = MLG_StringArrayParse.Parse(newArgs, "-nowait");	//parse out -nowait
+		newArgs = StringArrayParse.Parse(newArgs, "-n");		//parse out -n
+		newArgs = StringArrayParse.Parse(newArgs, "-nowait");	//parse out -nowait
 		if (!(args.equals(newArgs))) {								//do the freshly parsed args match the original?
 			dontWait = true;											//if not, we dont wait for anything!
 			args = newArgs;												//use the freshly parsed args for everything else now...
@@ -273,9 +260,9 @@ public class Main {
 		if (args.length == 0) {																//we didnt find a an X and Z size, so lets ask for one.
 			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			outP(MLG + "X:");
-			xRange = MLG_input_CLI.getInt("X:");
+			xRange = Input_CLI.getInt("X:");
 			outP(MLG + "Z:");
-			zRange = MLG_input_CLI.getInt("Z:");
+			zRange = Input_CLI.getInt("Z:");
 			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
 
 		}
@@ -283,7 +270,7 @@ public class Main {
 		if (args[0].equalsIgnoreCase("-version") || args[0].equalsIgnoreCase("-help")
 				|| args[0].equals("/?")) {
 
-			MLG_Readme_and_HelpInfo.showHelp(true);
+			Readme_and_HelpInfo.showHelp(true);
 
 			return;
 		}
@@ -297,8 +284,8 @@ public class Main {
 
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("download")) {
-					boolean fileSuccess =
-							MLG_DownloadFile.downloadFile(github_MLG_Conf_URL, testing);
+					final boolean fileSuccess =
+							DownloadFile.downloadFile(github_MLG_Conf_URL, testing);
 					if (fileSuccess) {
 						out(MinecraftLandGeneratorConf + " file downloaded.");
 						return;
@@ -306,35 +293,35 @@ public class Main {
 				}
 			}
 
-			MLG_FileWrite.saveConf(true);  //new conf file
+			FileWrite.saveConf(true);  //new conf file
 			return;
 
 		} else if (args[0].equalsIgnoreCase("-ps") || args[0].equalsIgnoreCase("-printspawn")) {
 			// okay, sorry, this is an ugly hack, but it's just a last-minute feature.
-			MLG_Misc.printSpawn();
-			MLG_Time.waitTenSec(false);
+			Misc.printSpawn();
+			Time.waitTenSec(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-build")) {
-			MLG_Update.buildID(false);
+			Update.buildID(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-update")) {
-			MLG_Update.updateMLG();
-			MLG_Time.waitTenSec(false);
+			Update.updateMLG();
+			Time.waitTenSec(false);
 			return;
 		} else if (args[0].equalsIgnoreCase("-readme")) {
 
 			if (args.length == 2) {
-				MLG_Readme_and_HelpInfo.readMe(args[1]);
+				Readme_and_HelpInfo.readMe(args[1]);
 			} else {
-				MLG_Readme_and_HelpInfo.readMe(null);
+				Readme_and_HelpInfo.readMe(null);
 			}
 			return;
 		} else if (args[0].equalsIgnoreCase("-downloadfile")) {
 			if (args.length == 2) {
-				MLG_DownloadFile.downloadFile(args[1], true);
+				DownloadFile.downloadFile(args[1], true);
 			} else {
 				out("No File to Download!");
-				MLG_Time.waitTenSec(false);
+				Time.waitTenSec(false);
 			}
 			return;
 
@@ -345,38 +332,39 @@ public class Main {
 				String recheckMD5 = "";
 
 				try {
-					File config = new File(args[1]);
+					final File config = new File(args[1]);
 					try {
-						origMD5 = MLG_MD5.fileMD5(config.toString());
-					} catch (NoSuchAlgorithmException e) {
+						origMD5 = MD5.fileMD5(config.toString());
+					} catch (final NoSuchAlgorithmException e) {
 						e.printStackTrace();
 					}
-					BufferedReader in = new BufferedReader(new FileReader(config));
+					final BufferedReader in = new BufferedReader(new FileReader(config));
 					String line;
 					while ((line = in.readLine()) != null) {
 						if (line.contains("###RECHECK###")) {
 							recheckFlag = !recheckFlag;
 						} else {
-							MLG_DownloadFile.downloadFile(line, true);
+							DownloadFile.downloadFile(line, true);
 						}
 					}
 					in.close();
 
 					if (recheckFlag == true) {
 						try {
-							recheckMD5 = MLG_MD5.fileMD5(config.toString());
-						} catch (NoSuchAlgorithmException e) {
+							recheckMD5 = MD5.fileMD5(config.toString());
+						} catch (final NoSuchAlgorithmException e) {
 							e.printStackTrace();
 						}
 
 						if (!origMD5.contentEquals(recheckMD5)) {
-							BufferedReader in_recheck = new BufferedReader(new FileReader(config));
+							final BufferedReader in_recheck =
+									new BufferedReader(new FileReader(config));
 							String line_recheck;
 							while ((line_recheck = in_recheck.readLine()) != null) {
 								if (line_recheck.contains("###RECHECK###")) {
 									recheckFlag = !recheckFlag;
 								} else {
-									MLG_DownloadFile.downloadFile(line_recheck, true);
+									DownloadFile.downloadFile(line_recheck, true);
 								}
 							}
 							in_recheck.close();
@@ -384,32 +372,32 @@ public class Main {
 
 					}
 
-				} catch (FileNotFoundException ex) {
+				} catch (final FileNotFoundException ex) {
 					System.err.println(args[1] + " - File not found");
-					MLG_Time.waitTenSec(false);
+					Time.waitTenSec(false);
 					return;
-				} catch (IOException ex) {
+				} catch (final IOException ex) {
 					System.err.println(args[1] + " - Could not read file.");
-					MLG_Time.waitTenSec(false);
+					Time.waitTenSec(false);
 					return;
 				}
 			} else {
 				out("No File with links!");
-				MLG_Time.waitTenSec(false);
+				Time.waitTenSec(false);
 			}
 			return;
 
 		} else if (args.length == 1) {
 			out("For help, use java -jar " + MLGFileNameShort + " -help");
-			MLG_Time.waitTenSec(false);
+			Time.waitTenSec(false);
 			return;
 		}
 
-		MLG_FileRead.readConf();
+		FileRead.readConf();
 
 		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
 
-		if (serverPath == null || javaLine == null) { 			// MLG 1.2 Check for a valid .conf file.
+		if ((serverPath == null) || (javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
 			err(MinecraftLandGeneratorConf
 					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
 
@@ -437,9 +425,9 @@ public class Main {
 		if (oldConf) {
 			err("Old Version of " + MinecraftLandGeneratorConf + " found.  Updating...");
 
-			MLG_FileWrite.saveConf(false);		//old conf
+			FileWrite.saveConf(false);		//old conf
 
-			MLG_Time.waitTenSec(false);
+			Time.waitTenSec(false);
 			return;
 
 		}
@@ -458,11 +446,11 @@ public class Main {
 				err("Z size too small - Changing Z to 1000");
 			}
 
-		} catch (NumberFormatException ex) {
+		} catch (final NumberFormatException ex) {
 			err("Invalid X or Z argument.");
 			err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			xRange = MLG_input_CLI.getInt("X:");
-			zRange = MLG_input_CLI.getInt("Z:");
+			xRange = Input_CLI.getInt("X:");
+			zRange = Input_CLI.getInt("Z:");
 
 			//return;
 		}
@@ -472,8 +460,8 @@ public class Main {
 
 		// This is embarrassing. Don't look.
 		try {
-			for (int i = 0; i < args.length - 2; i++) {
-				String nextSwitch = args[i + 2].toLowerCase();
+			for (int i = 0; i < (args.length - 2); i++) {
+				final String nextSwitch = args[i + 2].toLowerCase();
 				if (nextSwitch.equals("-verbose") || nextSwitch.equals("-v")) {
 					verbose = true;
 					out("Notice: Verbose Mode");
@@ -508,7 +496,7 @@ public class Main {
 					out("Notice: Z Offset: " + zOffset);
 					if (nextSwitch.startsWith("-y")) {
 						out("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
-						MLG_Time.waitTenSec(false);
+						Time.waitTenSec(false);
 					}
 
 				} else {
@@ -516,36 +504,36 @@ public class Main {
 					out("Notice: Attempting to use Alternate Server:" + serverPath);
 				}
 			}
-		} catch (NumberFormatException ex) {
+		} catch (final NumberFormatException ex) {
 			err("Invalid switch value.");
 			return;
 		}
 
-		MLG_WorldVerify.verifyWorld();
+		WorldVerify.verifyWorld();
 
 		{
-			File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
+			final File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
 			if (backupLevel.exists()) {
 				//err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
 				//		+ " or restore the backup.");
 				//err("You most likely will want to restore the backup!");
-				//MLG_Time.waitTenSec(false);
+				//Time.waitTenSec(false);
 
 				err("There is a level_backup.dat file left over from a previous attempt that failed.");
 				out("Resuming...");
 
 				//use resume data
-				File serverLevel = new File(worldPath + fileSeparator + "level.dat");
+				final File serverLevel = new File(worldPath + fileSeparator + "level.dat");
 				try {
-					MLG_Misc.copyFile(backupLevel, serverLevel);
-				} catch (IOException e) {
+					Misc.copyFile(backupLevel, serverLevel);
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 				backupLevel.delete();
 
 				//return;
 
-				MLG_FileRead.readArrayListCoordLog(worldPath + fileSeparator
+				FileRead.readArrayListCoordLog(worldPath + fileSeparator
 						+ "MinecraftLandGenerator.log");		// we read the .log just for any resume data, if any.
 
 				System.gc();		//run the garbage collector - hopefully free up some memory!
@@ -575,9 +563,9 @@ public class Main {
 		try {
 			out("Launching server once to make sure there is a world.");
 
-			long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
+			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
 
-			boolean serverLaunch = MLG_Server.runMinecraft(alternate);
+			final boolean serverLaunch = Server.runMinecraft(alternate);
 
 			if (!(serverLaunch)) {
 				System.exit(1);				// we got a warning or severe error
@@ -590,26 +578,26 @@ public class Main {
 			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
 			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
 
-			MLG_FileWrite.AppendTxtFile(
+			FileWrite.AppendTxtFile(
 					worldPath + fileSeparator + "MinecraftLandGenerator.log",
-					"# " + PROG_NAME + " " + VERSION + " - " + MLG_SelfAware.JVMinfo() + newLine
-							+ "# " + MC_Server_Version + newLine + "# Started: "
+					"# " + PROG_NAME + " " + VERSION + " - " + SelfAware.JVMinfo() + newLine + "# "
+							+ MC_Server_Version + newLine + "# Started: "
 							+ dateFormat.format(generationStartTimeTracking) + newLine
 							+ "##Size: X" + xRange + "Z" + zRange + newLine);
 
 			out("");
 
-			File serverLevel = new File(worldPath + fileSeparator + "level.dat");
-			File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
+			final File serverLevel = new File(worldPath + fileSeparator + "level.dat");
+			final File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
 
 			out("Backing up level.dat to level_backup.dat.");
-			MLG_Misc.copyFile(serverLevel, backupLevel);
+			Misc.copyFile(serverLevel, backupLevel);
 			out("");
 
-			Coordinates spawn = MLG_SpawnPoint.getSpawn(serverLevel);
+			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
 			out("Spawn point detected: [X,Y,Z] " + spawn);
 
-			MLG_FileWrite.AppendTxtFile(worldPath + fileSeparator + "MinecraftLandGenerator.log",
+			FileWrite.AppendTxtFile(worldPath + fileSeparator + "MinecraftLandGenerator.log",
 					"# Seed: " + randomSeed + newLine + "# Spawn: " + spawn.toString() + newLine);
 
 			{
@@ -663,7 +651,7 @@ public class Main {
 
 			Long timeTracking = 0L;
 
-			ArrayList<Coordinates> launchList = new ArrayList<Coordinates>(totalIterations);
+			final ArrayList<Coordinates> launchList = new ArrayList<Coordinates>(totalIterations);
 
 			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += increment) {
 				curXloops++;
@@ -685,7 +673,7 @@ public class Main {
 
 					{
 						// add Coordinates to arraylist here
-						Coordinates tempCoords =
+						final Coordinates tempCoords =
 								new Coordinates(currentX + xOffset, 64, currentZ + zOffset);
 						launchList.add(tempCoords);
 
@@ -706,12 +694,12 @@ public class Main {
 			}
 
 			//get existing list, and remove this list from launchList
-			ArrayList<Coordinates> removeList =
-					MLG_FileRead.readArrayListCoordLog(worldPath + fileSeparator
+			final ArrayList<Coordinates> removeList =
+					FileRead.readArrayListCoordLog(worldPath + fileSeparator
 							+ "MinecraftLandGenerator.log");
 
 			if (!(removeList.isEmpty())) {
-				MLG_ArrayList.arrayListRemove(launchList, removeList);
+				Arraylist.arrayListRemove(launchList, removeList);
 			}
 
 			removeList.clear();		// we are done with this now.
@@ -721,7 +709,7 @@ public class Main {
 			currentIteration = 0;
 			totalIterations = launchList.size();
 			Coordinates xyz = null;
-			Iterator<Coordinates> coordArrayIterator = launchList.iterator();
+			final Iterator<Coordinates> coordArrayIterator = launchList.iterator();
 			while (coordArrayIterator.hasNext()) {
 				currentIteration++;
 				xyz = coordArrayIterator.next();
@@ -730,7 +718,7 @@ public class Main {
 
 				String percentDone =
 						Double.toString(((double) currentIteration / (double) totalIterations) * 100);
-				int percentIndex =
+				final int percentIndex =
 						((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
 								.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
 				percentDone =
@@ -747,22 +735,22 @@ public class Main {
 				differenceTime =
 						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);		// Updated.  we now count all runs, instead of the last 4.
 				differenceTime *= 1 + (totalIterations - currentIteration);									// this should provide a more accurate result.
-				out("Estimated time remaining: " + MLG_Time.displayTime(differenceTime));						// I've noticed it gets pretty accurate after about 8 launches!
+				out("Estimated time remaining: " + Time.displayTime(differenceTime));						// I've noticed it gets pretty accurate after about 8 launches!
 
 				// Set the spawn point
-				MLG_SpawnPoint.setSpawn(serverLevel, xyz);
+				SpawnPoint.setSpawn(serverLevel, xyz);
 
 				// Launch the server
 				boolean serverSuccess = false;
 
-				serverSuccess = MLG_Server.runMinecraft(alternate);
+				serverSuccess = Server.runMinecraft(alternate);
 				out("");
 
 				//////// End server launch code
 
 				if (serverSuccess) {
 					// Write the current Coordinates to log file!
-					MLG_FileWrite.AppendTxtFile(worldPath + fileSeparator
+					FileWrite.AppendTxtFile(worldPath + fileSeparator
 							+ "MinecraftLandGenerator.log", xyz.toString() + newLine);
 				} else {
 					System.exit(1);				// we got a warning or severe error
@@ -776,13 +764,13 @@ public class Main {
 				out("Finished generating chunks.");
 			}
 
-			MLG_Misc.copyFile(backupLevel, serverLevel);
+			Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			out("Restored original level.dat.");
 
 			out("Generation complete in: "
-					+ MLG_Time.displayTime(startTime, System.currentTimeMillis()));
-			MLG_Time.waitTenSec(false);
+					+ Time.displayTime(startTime, System.currentTimeMillis()));
+			Time.waitTenSec(false);
 
 			//TODO: add if's
 
@@ -790,21 +778,21 @@ public class Main {
 				if (java.awt.GraphicsEnvironment.isHeadless()) {
 					webLaunch = false;					//headless enviroment - cant bring up webpage!
 				}
-				File web1 = new File("web");
-				File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage	
-				File web3 = new File("web.txt.txt");
+				final File web1 = new File("web");
+				final File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage	
+				final File web3 = new File("web.txt.txt");
 				if (web2.exists() || (web1.exists() || web3.exists())) {  //check for "web.txt", if not found, check for "web", and if still not found, check for "web.txt.txt"
 					webLaunch = false;
 				}
 			}
 
 			if (webLaunch && java.awt.Desktop.isDesktopSupported()) {
-				URI splashPage =
+				final URI splashPage =
 				//URI.create("https://sites.google.com/site/minecraftlandgenerator/home/mlg_splash");
 						URI.create("http://adf.ly/520855/splashbanner");
 				try {
 					java.awt.Desktop.getDesktop().browse(splashPage);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					err("Error displaying webpage... " + e.getLocalizedMessage());
 				}
 			} else {
@@ -813,7 +801,7 @@ public class Main {
 				out("Thanks!");
 			}
 
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	}
@@ -825,7 +813,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	public static void out(String str) {
+	public static void out(final String str) {
 		System.out.println(MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
 	}
 
@@ -836,7 +824,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	public static void err(String str) {
+	public static void err(final String str) {
 		System.err.println(MLGe + str);
 	}
 
@@ -847,7 +835,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	public static void outP(String str) {
+	public static void outP(final String str) {
 		System.out.print(str);
 	}
 
@@ -858,7 +846,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	static void outS(String str) {
+	static void outS(final String str) {
 		System.out.println("[Server] " + str);
 	}
 
@@ -869,7 +857,7 @@ public class Main {
 	 *            String to display and format
 	 * @author Morlok8k
 	 */
-	public static void outD(String str) {
+	public static void outD(final String str) {
 		System.out.println(MLG + "[DEBUG] " + str);
 	}
 

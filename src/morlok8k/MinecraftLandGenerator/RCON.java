@@ -1,8 +1,7 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_RCON {
+public class RCON {
 
 	/**
 	 * connects to server using RCON, sends a message, and disconnects. Not Functional yet.
@@ -10,7 +9,7 @@ public class MLG_RCON {
 	 * @param message
 	 */
 	@SuppressWarnings("unused")
-	private static void rconConnectAndSendMsg(String message) {
+	private static void rconConnectAndSendMsg(final String message) {
 		//This is a placeholder for future code.
 		/*
 		step 1: connect to rcon_IPaddress : rcon_Port, with rcon_Password.
@@ -30,7 +29,7 @@ public class MLG_RCON {
 	 */
 	@SuppressWarnings("unused")
 	private static boolean rconQueryServer() {
-		boolean QuerySucess = false;
+		final boolean QuerySucess = false;
 
 		//This is a placeholder for future code.
 		/*

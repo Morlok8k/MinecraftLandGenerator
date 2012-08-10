@@ -1,8 +1,7 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_input_CLI {
+public class Input_CLI {
 
 	/**
 	 * getInt(String msg) - outputs a message, will only accept a valid integer from keyboard
@@ -12,7 +11,7 @@ public class MLG_input_CLI {
 	 * @return int
 	 * @author Morlok8k
 	 */
-	public static int getInt(String msg) {
+	public static int getInt(final String msg) {
 
 		int Return = 0;
 

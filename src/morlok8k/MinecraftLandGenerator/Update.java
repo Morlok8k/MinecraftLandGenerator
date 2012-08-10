@@ -1,4 +1,4 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,10 +16,8 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import corrodias.minecraft.landgenerator.MLG_Misc;
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_Update {
+public class Update {
 
 	/**
 	 * This is an "undocumented" function to create a BuildID file. It should only be used right after compiling a .jar file<br>
@@ -34,11 +32,11 @@ public class MLG_Update {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static void buildID(boolean downloadOnly) {
+	public static void buildID(final boolean downloadOnly) {
 
 		// download BuildID from Github.
-		boolean fileSuccess =
-				MLG_DownloadFile.downloadFile(Main.github_MLG_BuildID_URL, Main.testing);
+		final boolean fileSuccess =
+				DownloadFile.downloadFile(Main.github_MLG_BuildID_URL, Main.testing);
 		if (fileSuccess) {
 			Main.out(Main.buildIDFile + " file downloaded.");
 			Main.flag_downloadedBuildID = true;
@@ -58,7 +56,7 @@ public class MLG_Update {
 		if (Main.MLGFileName == null) {
 			try {
 				Main.MLGFileName = getClassLoader(Main.cls);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Main.out("Error: Finding file failed");
 				e.printStackTrace();
 			}
@@ -68,10 +66,10 @@ public class MLG_Update {
 		if (Main.MLG_Current_Hash == null) {
 
 			try {
-				Main.MLG_Current_Hash = MLG_MD5.fileMD5(Main.MLGFileName);
+				Main.MLG_Current_Hash = MD5.fileMD5(Main.MLGFileName);
 				// out(hash + "  " + MLGFileName);
-			} catch (Exception e) {
-				Main.out("Error: MLG_MD5 from file failed");
+			} catch (final Exception e) {
+				Main.out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -80,7 +78,7 @@ public class MLG_Update {
 
 		try {
 			time = getCompileTimeStamp(Main.cls);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Main.out("Error: TimeStamp from file failed");
 			e.printStackTrace();
 		}
@@ -95,8 +93,9 @@ public class MLG_Update {
 		try {
 			String line;
 
-			BufferedReader inFile = new BufferedReader(new FileReader(Main.buildIDFile));
-			BufferedWriter outFile = new BufferedWriter(new FileWriter(Main.buildIDFile + ".temp"));
+			final BufferedReader inFile = new BufferedReader(new FileReader(Main.buildIDFile));
+			final BufferedWriter outFile =
+					new BufferedWriter(new FileWriter(Main.buildIDFile + ".temp"));
 
 			while ((line = inFile.readLine()) != null) {
 
@@ -119,20 +118,20 @@ public class MLG_Update {
 			outFile.close();
 			inFile.close();
 
-			File fileDelete = new File(Main.buildIDFile);
+			final File fileDelete = new File(Main.buildIDFile);
 			fileDelete.delete();
-			File fileRename = new File(Main.buildIDFile + ".temp");
+			final File fileRename = new File(Main.buildIDFile + ".temp");
 			fileRename.renameTo(new File(Main.buildIDFile));
 
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			Main.out("\"" + Main.buildIDFile + "\" file not Found.  Generating New \""
 					+ Main.buildIDFile + "\" File");
 
-			MLG_FileWrite.writeTxtFile(Main.buildIDFile,
+			FileWrite.writeTxtFile(Main.buildIDFile,
 					Main.MLG_Current_Hash + "=" + String.valueOf(time.getTime()) + "#MLG v"
 							+ Main.VERSION + INFO);
 
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Main.err("Could not create \"" + Main.buildIDFile + "\".");
 			return;
 		}
@@ -156,7 +155,7 @@ public class MLG_Update {
 		if (Main.MLGFileName == null) {
 			try {
 				Main.MLGFileName = getClassLoader(Main.cls);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Main.out("Error: Finding file failed");
 				e.printStackTrace();
 			}
@@ -174,10 +173,10 @@ public class MLG_Update {
 		if (Main.MLG_Current_Hash == null) {
 
 			try {
-				Main.MLG_Current_Hash = MLG_MD5.fileMD5(Main.MLGFileName);
+				Main.MLG_Current_Hash = MD5.fileMD5(Main.MLGFileName);
 				// out(hash + "  " + MLGFileName);
-			} catch (Exception e) {
-				Main.out("Error: MLG_MD5 from file failed");
+			} catch (final Exception e) {
+				Main.out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -189,7 +188,7 @@ public class MLG_Update {
 		if (Main.MLG_Last_Modified_Date == null) {
 			boolean foundLine = false;
 			try {
-				BufferedReader in = new BufferedReader(new FileReader(Main.buildIDFile));
+				final BufferedReader in = new BufferedReader(new FileReader(Main.buildIDFile));
 				String line;
 
 				if (Main.testing) {
@@ -239,9 +238,9 @@ public class MLG_Update {
 										new Long(line.substring(pos + 1, end));
 								Main.MLG_Last_Modified_Date = new Date(Main.MLG_Last_Modified_Long);
 
-								Long highestModTime =
-										MLG_Update.ZipGetModificationTime(Main.MLGFileName);
-								long tCalc = Main.MLG_Last_Modified_Long - highestModTime;
+								final Long highestModTime =
+										Update.ZipGetModificationTime(Main.MLGFileName);
+								final long tCalc = Main.MLG_Last_Modified_Long - highestModTime;
 
 								if (Main.testing) {
 									Main.outD("tCalc\tMLG_Last_Modified_Long\thighestModTime"
@@ -293,7 +292,7 @@ public class MLG_Update {
 					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
 					return;
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Main.err("Cant Read " + Main.buildIDFile + "!");
 				Main.err(e.getLocalizedMessage());
 				Main.err("");
@@ -319,7 +318,7 @@ public class MLG_Update {
 		Main.MLG_Last_Modified_Date = null;
 		readBuildID();
 
-		Iterator<String> e = Main.timeStamps.iterator();
+		final Iterator<String> e = Main.timeStamps.iterator();
 		String s;
 		int diff;
 
@@ -334,18 +333,18 @@ public class MLG_Update {
 				Main.out("There is a NEW VERSION Of " + Main.PROG_NAME + " available online!");
 
 				try {
-					File fileRename = new File(Main.MLG_JarFile);
+					final File fileRename = new File(Main.MLG_JarFile);
 					fileRename.renameTo(new File(Main.MLG_JarFile + ".old"));
-				} catch (Exception e1) {
+				} catch (final Exception e1) {
 					Main.out("Rename attempt #1 failed!");
 					e1.printStackTrace();
 
 					try {
-						MLG_Misc.copyFile(new File(Main.MLG_JarFile), new File(Main.MLG_JarFile
+						Misc.copyFile(new File(Main.MLG_JarFile), new File(Main.MLG_JarFile
 								+ ".old"));
-						File fileDelete = new File(Main.MLG_JarFile);
+						final File fileDelete = new File(Main.MLG_JarFile);
 						fileDelete.delete();
-					} catch (Exception e2) {
+					} catch (final Exception e2) {
 						Main.out("Rename attempt #2 failed!");
 						e2.printStackTrace();
 						//renameFailed = true;
@@ -354,7 +353,8 @@ public class MLG_Update {
 
 				}
 
-				boolean fileSuccess = MLG_DownloadFile.downloadFile(Main.github_MLG_jar_URL, true);
+				final boolean fileSuccess =
+						DownloadFile.downloadFile(Main.github_MLG_jar_URL, true);
 				if (fileSuccess) {
 					Main.out(Main.MLG_JarFile + " downloaded.");
 					return;
@@ -370,10 +370,10 @@ public class MLG_Update {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static String getClassLoader(Class<?> classFile) throws IOException {
-		ClassLoader loader = classFile.getClassLoader();
+	public static String getClassLoader(final Class<?> classFile) throws IOException {
+		final ClassLoader loader = classFile.getClassLoader();
 		String filename = classFile.getName().replace('.', '/') + ".class";
-		URL resource =
+		final URL resource =
 				(loader != null) ? loader.getResource(filename) : ClassLoader
 						.getSystemResource(filename);
 		filename = URLDecoder.decode(resource.toString(), "UTF-8");
@@ -399,7 +399,7 @@ public class MLG_Update {
 			Main.isCompiledAsJar = true;
 		}
 		filename = filename.replace('/', File.separatorChar);
-		String returnString = filename.substring(file, bang);
+		final String returnString = filename.substring(file, bang);
 		// END Garbage removal
 		return returnString;
 	}
@@ -412,18 +412,18 @@ public class MLG_Update {
 	 * 
 	 * @author Morlok8k
 	 */
-	public static Date getCompileTimeStamp(Class<?> classFile) throws IOException {
-		ClassLoader loader = classFile.getClassLoader();
-		String filename = classFile.getName().replace('.', '/') + ".class";
+	public static Date getCompileTimeStamp(final Class<?> classFile) throws IOException {
+		final ClassLoader loader = classFile.getClassLoader();
+		final String filename = classFile.getName().replace('.', '/') + ".class";
 		// get the corresponding class file as a Resource.
-		URL resource =
+		final URL resource =
 				(loader != null) ? loader.getResource(filename) : ClassLoader
 						.getSystemResource(filename);
-		URLConnection connection = resource.openConnection();
+		final URLConnection connection = resource.openConnection();
 		// Note, we are using Connection.getLastModified not File.lastModifed.
 		// This will then work both or members of jars or standalone class files.
 		// NOTE: NOT TRUE! IT READS THE JAR, NOT THE FILES INSIDE!
-		long time = connection.getLastModified();
+		final long time = connection.getLastModified();
 		return (time != 0L) ? new Date(time) : null;
 	}
 
@@ -441,26 +441,26 @@ public class MLG_Update {
 	 * @param timeBuildID
 	 * @author Morlok8k
 	 */
-	public static Long ZipGetModificationTime(String zipFile) {
+	public static Long ZipGetModificationTime(final String zipFile) {
 
 		Long highestModTime = 0L;
 
 		try {
 
-			ZipFile zipF = new ZipFile(zipFile);
+			final ZipFile zipF = new ZipFile(zipFile);
 
 			/*
 			 * Get list of zip entries using entries method of ZipFile class.
 			 */
 
-			Enumeration<? extends ZipEntry> e = zipF.entries();
+			final Enumeration<? extends ZipEntry> e = zipF.entries();
 
 			if (Main.testing) {
 				Main.outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
 			}
 
 			while (e.hasMoreElements()) {
-				ZipEntry entry = e.nextElement();
+				final ZipEntry entry = e.nextElement();
 
 				Long modTime = entry.getTime();
 
@@ -474,9 +474,9 @@ public class MLG_Update {
 
 				if (Main.testing) {
 
-					String entryName = entry.getName();
-					Date modificationTime = new Date(modTime);
-					String CRC = Long.toHexString(entry.getCrc());
+					final String entryName = entry.getName();
+					final Date modificationTime = new Date(modTime);
+					final String CRC = Long.toHexString(entry.getCrc());
 
 					Main.outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
 							+ modTime.toString());
@@ -488,7 +488,7 @@ public class MLG_Update {
 
 			return highestModTime;
 
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 			Main.out("Error opening zip file" + ioe);
 			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
 		}

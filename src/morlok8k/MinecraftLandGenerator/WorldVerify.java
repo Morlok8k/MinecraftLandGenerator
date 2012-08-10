@@ -1,4 +1,4 @@
-package corrodias.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MLG_WorldVerify {
+public class WorldVerify {
 
 	/**
 	 * 
@@ -17,7 +17,7 @@ public class MLG_WorldVerify {
 		//TODO: element comment
 
 		// verify that we ended up with a good server path, either from the file or from an argument.
-		File file = new File(Main.serverPath);
+		final File file = new File(Main.serverPath);
 		if (!file.exists() || !file.isDirectory()) {
 			Main.err("The server directory is invalid: " + Main.serverPath);
 			return;
@@ -25,7 +25,7 @@ public class MLG_WorldVerify {
 
 		try {
 			// read the name of the current world from the server.properties file
-			BufferedReader props =
+			final BufferedReader props =
 					new BufferedReader(new FileReader(new File(Main.serverPath + Main.fileSeparator
 							+ "server.properties")));
 			String line;
@@ -98,15 +98,15 @@ public class MLG_WorldVerify {
 				}
 			}
 
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			Main.err("Could not open " + Main.serverPath + Main.fileSeparator + "server.properties");
 			return;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 			return;
 		}
 
-		File level = new File(Main.worldPath + Main.fileSeparator + "level.dat");
+		final File level = new File(Main.worldPath + Main.fileSeparator + "level.dat");
 		if (!level.exists() || !level.isFile()) {
 			Main.err("The currently-configured world does not exist.");
 			return;

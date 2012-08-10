@@ -1,4 +1,4 @@
-package corrodias.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import morlok8k.minecraft.landgenerator.Coordinates;
-import morlok8k.minecraft.landgenerator.MLG_FileRead;
 
-public class MLG_Misc {
+public class Misc {
 
 	//TODO: add description
 	/**
@@ -19,16 +17,16 @@ public class MLG_Misc {
 	static boolean printSpawn() {
 		// ugh, sorry, this is an ugly hack, but it's a last-minute feature. this is a lot of duplicated code.
 		// - Fixed by Morlok8k
-	
-		MLG_FileRead.readConf();
-		MLG_WorldVerify.verifyWorld();
-	
-		File level = new File(Main.worldPath + Main.fileSeparator + "level.dat");
+
+		FileRead.readConf();
+		WorldVerify.verifyWorld();
+
+		final File level = new File(Main.worldPath + Main.fileSeparator + "level.dat");
 		try {
-			Coordinates spawn = MLG_SpawnPoint.getSpawn(level);
+			final Coordinates spawn = SpawnPoint.getSpawn(level);
 			Main.out("The current spawn point is: [X,Y,Z] " + spawn);
 			return true;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Main.err("Error while reading " + level.getPath());
 			return false;
 		}
@@ -45,12 +43,12 @@ public class MLG_Misc {
 	 * @param dst
 	 * @throws IOException
 	 */
-	public static void copyFile(File src, File dst) throws IOException {
-		InputStream copyIn = new FileInputStream(src);
-		OutputStream copyOut = new FileOutputStream(dst);
-	
+	public static void copyFile(final File src, final File dst) throws IOException {
+		final InputStream copyIn = new FileInputStream(src);
+		final OutputStream copyOut = new FileOutputStream(dst);
+
 		// Transfer bytes from in to out
-		byte[] buf = new byte[1024];
+		final byte[] buf = new byte[1024];
 		int len;
 		while ((len = copyIn.read(buf)) >= 0) {
 			if (len > 0) {

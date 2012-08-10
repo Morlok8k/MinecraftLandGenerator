@@ -1,11 +1,11 @@
-package corrodias.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
-public class MLG_Server {
+public class Server {
 
 	/**
 	 * Starts the process in the given ProcessBuilder, monitors its output for a "[INFO] Done!" message, and sends it a "stop\r\n" message. One message is printed to the console before launching and
@@ -16,7 +16,7 @@ public class MLG_Server {
 	 * @throws IOException
 	 * @author Corrodias
 	 */
-	protected static boolean runMinecraft(boolean alternate) throws IOException {
+	protected static boolean runMinecraft(final boolean alternate) throws IOException {
 		if (Main.verbose) {
 			Main.out("Starting server.");
 		}
@@ -30,21 +30,21 @@ public class MLG_Server {
 
 		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
 			Main.out("Alternate Launch");
-			Process process = Main.minecraft.start();
+			final Process process = Main.minecraft.start();
 
 			//byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
-			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
+			final byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
 			// monitor output and print to console where required.
 			// STOP the server when it's done.
-			BufferedReader pOut =
+			final BufferedReader pOut =
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			while ((line = pOut.readLine().trim()) != null) {		// readLine() returns null when the process exits
 
 				System.out.println(line);
 				if (line.contains(Main.doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
-					OutputStream outputStream = process.getOutputStream();
+					final OutputStream outputStream = process.getOutputStream();
 
 					Main.out("Stopping server...  (Please Wait...)");
 					outputStream.write(stop);
@@ -55,11 +55,11 @@ public class MLG_Server {
 			// End while loop
 
 		} else { // start minecraft server normally!
-			Process process = Main.minecraft.start();
+			final Process process = Main.minecraft.start();
 			if (Main.verbose) {
 				Main.out("Started Server.");
 			}
-			BufferedReader pOut =
+			final BufferedReader pOut =
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
 			if (Main.verbose) {
 				Main.out("Accessing Server Output...");
@@ -70,20 +70,20 @@ public class MLG_Server {
 			String outTmp = "";
 			String outTmp2 = null;
 
-			byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so this code wont run every loop, thus Faster!
+			final byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' }; // Moved here, so this code wont run every loop, thus Faster!
 			// and no, i can't use a string here!
 
-			byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
+			final byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 
 			boolean prepTextFirst = true;
 
-			OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
+			final OutputStream outputStream = process.getOutputStream(); // moved here to remove some redundancy
 
 			boolean convertedMapFormattingFlag = false;		// This allows MLG to track if we converted a map to a new format (such as Chunk-file -> McRegion, or McRegion -> Anvil)
 			// just so it gets a line ending after the % output finishes
 			while ((line = pOut.readLine().trim()) != null) {			// readLine() returns null when the process exits
 
-				int posBracket = line.indexOf("]");			//changed from .lastIndexOf to .indexOf, in case we have a custom server that outputs something with an "]".  we want the first one anyways.
+				final int posBracket = line.indexOf("]");			//changed from .lastIndexOf to .indexOf, in case we have a custom server that outputs something with an "]".  we want the first one anyways.
 				if (posBracket != -1) {
 					shortLine = line.substring(posBracket + 2);
 					shortLine = shortLine.trim();
@@ -182,7 +182,7 @@ public class MLG_Server {
 
 							try {
 								Thread.sleep(1000);
-							} catch (InterruptedException e) {
+							} catch (final InterruptedException e) {
 								e.printStackTrace();
 							}
 							count += 1;
@@ -207,7 +207,7 @@ public class MLG_Server {
 
 							try {
 								Thread.sleep(1000);
-							} catch (InterruptedException e) {
+							} catch (final InterruptedException e) {
 								e.printStackTrace();
 							}
 							count += 1;

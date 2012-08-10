@@ -1,4 +1,4 @@
-package corrodias.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import morlok8k.minecraft.landgenerator.Coordinates;
 
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
@@ -17,7 +16,7 @@ import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
 
-public class MLG_SpawnPoint {
+public class SpawnPoint {
 
 	/**
 	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.<br>
@@ -32,11 +31,11 @@ public class MLG_SpawnPoint {
 	 *             if there are any problems reading/writing the file
 	 * @author Corrodias
 	 */
-	protected static void setSpawn(File level, Coordinates xyz) throws IOException {
+	protected static void setSpawn(final File level, final Coordinates xyz) throws IOException {
 
 		try {
-			NBTInputStream input = new NBTInputStream(new FileInputStream(level));
-			CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
+			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
+			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
 			input.close();
 
 			//@formatter:off
@@ -69,35 +68,35 @@ public class MLG_SpawnPoint {
 			
 			//@formatter:on
 
-			Map<String, Tag> originalData =
+			final Map<String, Tag> originalData =
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
 			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
-			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
+			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
 
 			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
 			@SuppressWarnings("unused")
-			IntTag spawnX = (IntTag) newData.get("SpawnX"); // we never use these... Its only here for potential debugging.
+			final IntTag spawnX = (IntTag) newData.get("SpawnX"); // we never use these... Its only here for potential debugging.
 			@SuppressWarnings("unused")
-			IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppressed these warnings.
+			final IntTag spawnY = (IntTag) newData.get("SpawnY"); // but whatever... so I (Morlok8k) suppressed these warnings.
 			@SuppressWarnings("unused")
-			IntTag spawnZ = (IntTag) newData.get("SpawnZ"); // I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
+			final IntTag spawnZ = (IntTag) newData.get("SpawnZ"); // I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
 
 			newData.put("SpawnX", new IntTag("SpawnX", xyz.getX()));		// pulling the data out of the Coordinates,
 			newData.put("SpawnY", new IntTag("SpawnY", xyz.getY()));		// and putting it into our IntTag's
 			newData.put("SpawnZ", new IntTag("SpawnZ", xyz.getZ()));
 
 			// Again, we can't modify the data map in the old Tag, so we have to make a new one.
-			CompoundTag newDataTag = new CompoundTag("Data", newData);
-			Map<String, Tag> newTopLevelMap = new HashMap<String, Tag>(1);
+			final CompoundTag newDataTag = new CompoundTag("Data", newData);
+			final Map<String, Tag> newTopLevelMap = new HashMap<String, Tag>(1);
 			newTopLevelMap.put("Data", newDataTag);
-			CompoundTag newTopLevelTag = new CompoundTag("", newTopLevelMap);
+			final CompoundTag newTopLevelTag = new CompoundTag("", newTopLevelMap);
 
-			NBTOutputStream output = new NBTOutputStream(new FileOutputStream(level));
+			final NBTOutputStream output = new NBTOutputStream(new FileOutputStream(level));
 			output.writeTag(newTopLevelTag);
 			output.close();
-		} catch (ClassCastException ex) {
+		} catch (final ClassCastException ex) {
 			throw new IOException("Invalid level format.");
-		} catch (NullPointerException ex) {
+		} catch (final NullPointerException ex) {
 			throw new IOException("Invalid level format.");
 		}
 	}
@@ -109,33 +108,33 @@ public class MLG_SpawnPoint {
 	 * @throws IOException
 	 * @author Corrodias
 	 */
-	protected static Coordinates getSpawn(File level) throws IOException {
+	protected static Coordinates getSpawn(final File level) throws IOException {
 		try {
-			NBTInputStream input = new NBTInputStream(new FileInputStream(level));
-			CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
+			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
+			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
 			input.close();
 
-			Map<String, Tag> originalData =
+			final Map<String, Tag> originalData =
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
 			// This is our map of data. It is an unmodifiable map, for some
 			// reason, so we have to make a copy.
-			Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
+			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
 			// .get() a couple of values, just to make sure we're dealing with a
 			// valid level file, here. Good for debugging, too.
-			IntTag spawnX = (IntTag) newData.get("SpawnX");
-			IntTag spawnY = (IntTag) newData.get("SpawnY");
-			IntTag spawnZ = (IntTag) newData.get("SpawnZ");
+			final IntTag spawnX = (IntTag) newData.get("SpawnX");
+			final IntTag spawnY = (IntTag) newData.get("SpawnY");
+			final IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 
-			LongTag Seed = (LongTag) newData.get("RandomSeed");
+			final LongTag Seed = (LongTag) newData.get("RandomSeed");
 			Main.randomSeed = Seed.getValue();
 			Main.out("Seed: " + Main.randomSeed); // lets output the seed, cause why not?
 
-			Coordinates ret =
+			final Coordinates ret =
 					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
 			return ret;
-		} catch (ClassCastException ex) {
+		} catch (final ClassCastException ex) {
 			throw new IOException("Invalid level format.");
-		} catch (NullPointerException ex) {
+		} catch (final NullPointerException ex) {
 			throw new IOException("Invalid level format.");
 		}
 	}

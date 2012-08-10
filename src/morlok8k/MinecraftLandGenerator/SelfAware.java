@@ -1,19 +1,18 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_SelfAware {
+public class SelfAware {
 
 	public static String JVMinfo() {
 
 		String Return = "";
 
-		RuntimeMXBean RuntimemxBean = ManagementFactory.getRuntimeMXBean();
-		List<String> aList = RuntimemxBean.getInputArguments();
+		final RuntimeMXBean RuntimemxBean = ManagementFactory.getRuntimeMXBean();
+		final List<String> aList = RuntimemxBean.getInputArguments();
 
 		for (int i = 0; i < aList.size(); i++) {
 			Return = Return + (aList.get(i)) + " ";

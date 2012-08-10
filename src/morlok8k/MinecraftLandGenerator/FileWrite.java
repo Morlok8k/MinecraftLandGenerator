@@ -1,17 +1,16 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import corrodias.minecraft.landgenerator.Main;
 
 /**
  * http://www.roseindia.net/java/example/java/io/java-append-to-file.shtml <br>
  * Append To File - Java Tutorial
  */
-public class MLG_FileWrite {
+public class FileWrite {
 
 	public static final String newLine = Main.newLine;
 
@@ -19,16 +18,16 @@ public class MLG_FileWrite {
 	 * @param file
 	 * @param appendTxt
 	 */
-	public static void AppendTxtFile(String file, String appendTxt) {
+	public static void AppendTxtFile(final String file, final String appendTxt) {
 		try {
 			// Create file 
-			FileWriter fstream = new FileWriter(file, true);
-			BufferedWriter out = new BufferedWriter(fstream);
+			final FileWriter fstream = new FileWriter(file, true);
+			final BufferedWriter out = new BufferedWriter(fstream);
 			//String output = "Hello Java" + newLine;
 			out.write(appendTxt);
 			//Close the output stream
 			out.close();
-		} catch (Exception e) {//Catch exception if any
+		} catch (final Exception e) {//Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
@@ -37,7 +36,7 @@ public class MLG_FileWrite {
 	 * @param file
 	 * @param txt
 	 */
-	public static void writeTxtFile(String file, String txt) {
+	public static void writeTxtFile(final String file, final String txt) {
 		//TODO: element comment
 
 		/*
@@ -47,14 +46,14 @@ public class MLG_FileWrite {
 		 */
 
 		try {
-			File oFile = new File(file);
-			BufferedWriter outFile = new BufferedWriter(new FileWriter(oFile));
+			final File oFile = new File(file);
+			final BufferedWriter outFile = new BufferedWriter(new FileWriter(oFile));
 			outFile.write(txt);
 			outFile.newLine();
 			outFile.close();
 			Main.out(file + " file created.");
 			return;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Main.err("Could not create " + Main.MinecraftLandGeneratorConf + ".");
 			ex.printStackTrace();
 			return;
@@ -69,7 +68,7 @@ public class MLG_FileWrite {
 	 *            true: Uses Default values. false: uses existing values
 	 * @author Morlok8k
 	 */
-	public static void saveConf(boolean newConf) {
+	public static void saveConf(final boolean newConf) {
 
 		String jL = null;			//javaLine
 		String sP = null;			//serverPath

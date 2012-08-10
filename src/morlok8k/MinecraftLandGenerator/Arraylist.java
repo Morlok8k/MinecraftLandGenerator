@@ -1,20 +1,19 @@
 /**
  * 
  */
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.util.ArrayList;
 
-import corrodias.minecraft.landgenerator.Main;
 
 /**
  * @author morlok8k
  * 
  */
-public class MLG_ArrayList {
+public class Arraylist {
 
-	public static ArrayList<Coordinates> arrayListRemove(ArrayList<Coordinates> list,
-			ArrayList<Coordinates> remove) {
+	public static ArrayList<Coordinates> arrayListRemove(final ArrayList<Coordinates> list,
+			final ArrayList<Coordinates> remove) {
 
 		boolean changed = false;
 		changed = list.removeAll(remove);

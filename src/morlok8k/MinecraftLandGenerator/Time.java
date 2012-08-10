@@ -1,31 +1,30 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_Time {
+public class Time {
 
 	/**
 	 * waits ten seconds. outputs 10%, 20%, etc after each second.
 	 * 
 	 * @author Morlok8k
 	 */
-	public static void waitTenSec(boolean output) {
-	
+	public static void waitTenSec(final boolean output) {
+
 		if (Main.dontWait) { return; }			//Don't wait!
-	
+
 		if (output) {
 			Main.outP(Main.MLG);						//here we wait 10 sec.
 		}
-	
+
 		int count = 0;
 		while (count <= 100) {
 			if (output) {
 				Main.outP(count + "% ");
 			}
-	
+
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 			count += 10;
@@ -34,7 +33,7 @@ public class MLG_Time {
 			Main.outP(Main.newLine);
 		}
 		return;
-	
+
 	}
 
 	/**
@@ -45,11 +44,11 @@ public class MLG_Time {
 	 * @author Morlok8k
 	 * @return String of Readable Time
 	 */
-	public static String displayTime(long startTimeMillis, long endTimeMillis) {
-	
-		long millis = (endTimeMillis - startTimeMillis);
+	public static String displayTime(final long startTimeMillis, final long endTimeMillis) {
+
+		final long millis = (endTimeMillis - startTimeMillis);
 		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
-		return (MLG_Time.displayTime(millis));
+		return (Time.displayTime(millis));
 	}
 
 	/**
@@ -59,14 +58,14 @@ public class MLG_Time {
 	 * @author Morlok8k
 	 * @return String of Readable Time
 	 */
-	public static String displayTime(long timeMillis) {
-	
-		long seconds = timeMillis / 1000;
-		long minutes = seconds / 60;
-		long hours = minutes / 60;
-		long days = hours / 24;
-		long years = days / 365;
-	
+	public static String displayTime(final long timeMillis) {
+
+		final long seconds = timeMillis / 1000;
+		final long minutes = seconds / 60;
+		final long hours = minutes / 60;
+		final long days = hours / 24;
+		final long years = days / 365;
+
 		String took =
 				(years > 0 ? String.format("%d " + ((years) == 1 ? "Year, " : "Years, "), years)
 						: "")
@@ -79,23 +78,23 @@ public class MLG_Time {
 								: "")
 						+ String.format("%d " + ((seconds % 60) == 1 ? "Second" : "Seconds"),
 								seconds % 60);
-	
+
 		if (!(Main.verbose)) {
-			int commaFirst = took.indexOf(",");
-			int commaSecond = took.substring((commaFirst + 1), took.length()).indexOf(",");
+			final int commaFirst = took.indexOf(",");
+			final int commaSecond = took.substring((commaFirst + 1), took.length()).indexOf(",");
 			int end = (commaFirst + 1 + commaSecond);
-	
+
 			if (commaSecond == -1) {
 				end = commaFirst;
 			}
-	
+
 			if (commaFirst == -1) {
 				end = took.length();
 			}
-	
+
 			took = took.substring(0, end);
 		}
-	
+
 		took = took.trim();
 		return (took);
 	}

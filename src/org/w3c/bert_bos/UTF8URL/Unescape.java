@@ -30,8 +30,8 @@ public class Unescape {
 	 */
 
 	public static String unescape(final String s) {
-		StringBuffer sbuf = new StringBuffer();
-		int l = s.length();
+		final StringBuffer sbuf = new StringBuffer();
+		final int l = s.length();
 		int ch = -1;
 		int b, sumb = 0;
 		for (int i = 0, more = -1; i < l; i++) {
@@ -39,13 +39,13 @@ public class Unescape {
 			switch (ch = s.charAt(i)) {
 				case '%':
 					ch = s.charAt(++i);
-					int hb =
-							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
-									.toLowerCase((char) ch) - 'a') & 0xF;
+					final int hb =
+							(Character.isDigit((char) ch) ? ch - '0' : (10 + Character
+									.toLowerCase((char) ch)) - 'a') & 0xF;
 					ch = s.charAt(++i);
-					int lb =
-							(Character.isDigit((char) ch) ? ch - '0' : 10 + Character
-									.toLowerCase((char) ch) - 'a') & 0xF;
+					final int lb =
+							(Character.isDigit((char) ch) ? ch - '0' : (10 + Character
+									.toLowerCase((char) ch)) - 'a') & 0xF;
 					b = (hb << 4) | lb;
 					break;
 				case '+':
@@ -57,7 +57,9 @@ public class Unescape {
 			/* Decode byte b as UTF-8, sumb collects incomplete chars */
 			if ((b & 0xc0) == 0x80) {			// 10xxxxxx (continuation byte)
 				sumb = (sumb << 6) | (b & 0x3f);	// Add 6 bits to sumb
-				if (--more == 0) sbuf.append((char) sumb); // Add char to sbuf
+				if (--more == 0) {
+					sbuf.append((char) sumb); // Add char to sbuf
+				}
 			} else if ((b & 0x80) == 0x00) {		// 0xxxxxxx (yields 7 bits)
 				sbuf.append((char) b);			// Store in sbuf
 			} else if ((b & 0xe0) == 0xc0) {		// 110xxxxx (yields 5 bits)

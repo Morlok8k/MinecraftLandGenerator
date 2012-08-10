@@ -1,4 +1,4 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 /**
  * Coordinates are in the form of [X,Y,Z] or (X,Z)<br>
@@ -22,7 +22,7 @@ public class Coordinates {
 	 * @param y
 	 * @param z
 	 */
-	public Coordinates(int x, int y, int z) {
+	public Coordinates(final int x, final int y, final int z) {
 		super();
 		X = x;
 		Y = y;
@@ -61,7 +61,7 @@ public class Coordinates {
 	 * @param x
 	 *            the x to set
 	 */
-	public void setX(int x) {
+	public void setX(final int x) {
 		X = x;
 	}
 
@@ -69,7 +69,7 @@ public class Coordinates {
 	 * @param y
 	 *            the y to set
 	 */
-	public void setY(int y) {
+	public void setY(final int y) {
 		Y = y;
 	}
 
@@ -77,7 +77,7 @@ public class Coordinates {
 	 * @param z
 	 *            the z to set
 	 */
-	public void setZ(int z) {
+	public void setZ(final int z) {
 		Z = z;
 	}
 
@@ -143,7 +143,7 @@ public class Coordinates {
 			x = Integer.parseInt(sX);
 			y = Integer.parseInt(sY);
 			z = Integer.parseInt(sZ);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			return new Coordinates(0, 0, 0);
 		}
 
@@ -169,7 +169,7 @@ public class Coordinates {
 
 	}
 
-	public String toString(boolean Short) {
+	public String toString(final boolean Short) {
 		if (Short) {								// We are overloading toString with an additional option:
 			return ("(" + X + "," + Z + ")");		// Basically just an option to return just X and Z  (formatted differently as well: "(X,Z)")
 		}
@@ -188,9 +188,9 @@ public class Coordinates {
 
 		final int prime = 31;			// My hard coded prime number
 		int result = 1;					// The hard coded number I start with
-		result = prime * result + X;	// Add the X data
-		result = prime * result + Y;	// Add the Y data
-		result = prime * result + Z;	// Add the Z data
+		result = (prime * result) + X;	// Add the X data
+		result = (prime * result) + Y;	// Add the Y data
+		result = (prime * result) + Z;	// Add the Z data
 		return result;			//this result will consistently give the same result for the same data.
 		// [0,0,0] will always give 29791.  [1,2,3] will always give 30817.
 		//yes, If I was lazy, I could just do a "return 0;" and it would still be technically valid.
@@ -201,27 +201,27 @@ public class Coordinates {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		// I am overriding the inherited equals method.
 		// Because it doesn't know how to deal with my custom data.
 		// So instead of always failing, it actually works!
 		//		(by default it gets the memory addresses of each object.)
 
 		// An object must equal itself
-		if (this == obj) return true;
+		if (this == obj) { return true; }
 
 		// No object equals null
-		if (obj == null) return false;
-		if (this == null) return false;
+		if (obj == null) { return false; }
+		if (this == null) { return false; }
 
 		// Objects of different types are never equal
-		if (getClass() != obj.getClass()) return false;
+		if (getClass() != obj.getClass()) { return false; }
 
 		// Cast to an Coordinates, then compare the data
-		Coordinates c = (Coordinates) obj;
-		if (X != c.X) return false;
-		if (Y != c.Y) return false;
-		if (Z != c.Z) return false;
+		final Coordinates c = (Coordinates) obj;
+		if (X != c.X) { return false; }
+		if (Y != c.Y) { return false; }
+		if (Z != c.Z) { return false; }
 		return true;			// If none of the above returned something, they must be equal!
 	}
 }

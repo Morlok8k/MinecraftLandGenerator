@@ -1,15 +1,15 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
-public class MLG_StringArrayParse {
+public class StringArrayParse {
 
-	public static String[] Parse(String[] array, String ParseOut) {
+	public static String[] Parse(final String[] array, final String ParseOut) {
 
 		//There is probably a better way to do this.
 		//We input a String[] array, and a String.
 		//if the String matches one inside the array, it gets "deleted"
 		//(actually a new String[] without it is returned)
 
-		String[] workingArray = new String[array.length];		//workingArray is our working array.  we don't modify the original.
+		final String[] workingArray = new String[array.length];		//workingArray is our working array.  we don't modify the original.
 
 		boolean removed = false;
 
@@ -26,7 +26,7 @@ public class MLG_StringArrayParse {
 				ii++;
 			}
 
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			System.err.println("Something went wrong! (Parsing Error?)");
 			ex.fillInStackTrace();
 			return array;			//we got some error... return the original array, just in case.
@@ -34,7 +34,7 @@ public class MLG_StringArrayParse {
 
 		if (removed) {
 			// at this point, workingArray has null for its last string.  we need to remove it.
-			String[] returnArray = new String[workingArray.length - 1];
+			final String[] returnArray = new String[workingArray.length - 1];
 			for (int i = 0; i < returnArray.length; i++) {
 				returnArray[i] = workingArray[i];
 			}

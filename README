@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.6.3
+Minecraft Land Generator version 1.7.0
 
-Updated June 12, 2012
-(BuildID: 1339559312000)
+Updated August 10, 2012
+(BuildID: 1344593776000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to June 12, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to August 10, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -25,8 +25,85 @@ The "unescape" method/function is also not Public Domain.  Its License is the W3
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
 -----------------------------------------------
 
+Usage: java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
+
+Arguments:
+              x : X range to generate
+              z : Z range to generate
+     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)
+
+Switches:
+       -verbose : causes the application to output the server's messages to the console
+             -v : same as -verbose
+             -w : Ignore [WARNING] and [SEVERE] messages.
+           -alt : alternate server launch sequence
+             -a : same as -alt
+        -nowait : don't pause for anything
+             -n : same as -nowait
+            -i# : override the iteration spawn offset increment (default 380) (example: -i100)
+            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)
+            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)
+
+Other options:
+  java -jar MinecraftLandGenerator.jar -update
+        Checks for and downloads new versions of MLG online.
+
+  java -jar MinecraftLandGenerator.jar -printspawn
+  java -jar MinecraftLandGenerator.jar -ps
+        Outputs the current world's spawn point coordinates.
+
+  java -jar MinecraftLandGenerator.jar -conf
+  java -jar MinecraftLandGenerator.jar -conf download
+        Generates or downloads a MinecraftLandGenerator.conf file.
+
+  java -jar MinecraftLandGenerator.jar -readme readme.txt
+  java -jar MinecraftLandGenerator.jar -readme
+        Generates a readme file using supplied name or the default _MLG_Readme.txt
+
+  java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt
+        Downloads whatever file from the internet you give it.
+  java -jar MinecraftLandGenerator.jar -downloadlist list.txt
+        list.txt (or any other file) contains a URL on each line which will be downloaded.
+
+  java -jar MinecraftLandGenerator.jar -version
+  java -jar MinecraftLandGenerator.jar -help
+  java -jar MinecraftLandGenerator.jar /?
+        Prints this message.
+
+When launched with the -conf switch, this application creates a MinecraftLandGenerator.conf file that contains configuration options.
+If this file does not exist or does not contain all required properties, the application will not run.
+
+MinecraftLandGenerator.conf properties:
+           Java : The command line to use to launch the server
+     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)
+      Done_Text : The output from the server that tells us that we are done
+ Preparing_Text : The output from the server that tells us the percentage
+Preparing_Level : The output from the server that tells us the level it is working on
+        Level-0 : Name of Level 0: The Overworld
+        Level-1 : Name of Level 1: The Nether
+        Level-2 : Name of Level 2: The End
+        Level-3 : Name of Level 3: (Future Level)
+        Level-4 : Name of Level 4: (Future Level)
+        Level-5 : Name of Level 5: (Future Level)
+        Level-6 : Name of Level 6: (Future Level)
+        Level-7 : Name of Level 7: (Future Level)
+        Level-8 : Name of Level 8: (Future Level)
+        Level-9 : Name of Level 9: (Future Level)
+       WaitSave : Optional: Wait before saving.
+
+-----------------------------------------------
+
 Version History:
 Morlok8k:
+1.7.0
+- Major Code Optimization
+- Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!
+  (To do this, I rewrote the Main loop of the program, and add my own Coordinate object)
+- Added Resume Functionality
+- Updated Time Output yet again.
+- Made xx% output nicer by rewriting previous existing line.
+- Misc. Tweaks
+- Misc. Additions
 1.6.3
 - Minor Code Optimization
 - Finely got on the ball and added the JNBT source and everything (as an internal .zip) to be completely faithful to his license
@@ -150,72 +227,4 @@ Corrodias:
 Notes:
 Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
 However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
-
------------------------------------------------
-
-Usage: java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
-
-Arguments:
-              x : X range to generate
-              z : Z range to generate
-     serverpath : the path to the directory in which the server runs (takes precedence over the config file setting)
-
-Switches:
-       -verbose : causes the application to output the server's messages to the console
-             -v : same as -verbose
-             -w : Ignore [WARNING] and [SEVERE] messages.
-           -alt : alternate server launch sequence
-             -a : same as -alt
-        -nowait : don't pause for anything
-             -n : same as -nowait
-            -i# : override the iteration spawn offset increment (default 380) (example: -i100)
-            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)
-            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)
-
-Other options:
-  java -jar MinecraftLandGenerator.jar -update
-        Checks for and downloads new versions of MLG online.
-
-  java -jar MinecraftLandGenerator.jar -printspawn
-  java -jar MinecraftLandGenerator.jar -ps
-        Outputs the current world's spawn point coordinates.
-
-  java -jar MinecraftLandGenerator.jar -conf
-  java -jar MinecraftLandGenerator.jar -conf download
-        Generates or downloads a MinecraftLandGenerator.conf file.
-
-  java -jar MinecraftLandGenerator.jar -readme readme.txt
-  java -jar MinecraftLandGenerator.jar -readme
-        Generates a readme file using supplied name or the default _MLG_Readme.txt
-
-  java -jar MinecraftLandGenerator.jar -downloadfile http://example.com/file.txt
-        Downloads whatever file from the internet you give it.
-  java -jar MinecraftLandGenerator.jar -downloadlist list.txt
-        list.txt (or any other file) contains a URL on each line which will be downloaded.
-
-  java -jar MinecraftLandGenerator.jar -version
-  java -jar MinecraftLandGenerator.jar -help
-  java -jar MinecraftLandGenerator.jar /?
-        Prints this message.
-
-When launched with the -conf switch, this application creates a MinecraftLandGenerator.conf file that contains configuration options.
-If this file does not exist or does not contain all required properties, the application will not run.
-
-MinecraftLandGenerator.conf properties:
-           Java : The command line to use to launch the server
-     ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)
-      Done_Text : The output from the server that tells us that we are done
- Preparing_Text : The output from the server that tells us the percentage
-Preparing_Level : The output from the server that tells us the level it is working on
-        Level-0 : Name of Level 0: The Overworld
-        Level-1 : Name of Level 1: The Nether
-        Level-2 : Name of Level 2: The End
-        Level-3 : Name of Level 3: (Future Level)
-        Level-4 : Name of Level 4: (Future Level)
-        Level-5 : Name of Level 5: (Future Level)
-        Level-6 : Name of Level 6: (Future Level)
-        Level-7 : Name of Level 7: (Future Level)
-        Level-8 : Name of Level 8: (Future Level)
-        Level-9 : Name of Level 9: (Future Level)
-       WaitSave : Optional: Wait before saving.
 

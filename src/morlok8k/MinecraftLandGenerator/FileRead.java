@@ -1,4 +1,4 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,16 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_FileRead {
+public class FileRead {
 
-	public static ArrayList<Coordinates> readArrayListCoordLog(String file) {
+	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
 
-		ArrayList<Coordinates> Return = new ArrayList<Coordinates>();
+		final ArrayList<Coordinates> Return = new ArrayList<Coordinates>();
 
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(new File(file)));
+			final BufferedReader in = new BufferedReader(new FileReader(new File(file)));
 			String line = "";
 
 			while ((line = in.readLine()) != null) {
@@ -55,10 +54,10 @@ public class MLG_FileRead {
 			}
 			in.close();
 
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			Main.out("Could not find " + file + ".");
 			return Return;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Main.err("Could not read " + file + ".");
 			return Return;
 		}
@@ -74,8 +73,8 @@ public class MLG_FileRead {
 		//String errorMsg = "";
 
 		try {
-			File config = new File(Main.MinecraftLandGeneratorConf);
-			BufferedReader in = new BufferedReader(new FileReader(config));
+			final File config = new File(Main.MinecraftLandGeneratorConf);
+			final BufferedReader in = new BufferedReader(new FileReader(config));
 			String line = "";
 			String property = "";
 			String value = "";
@@ -175,12 +174,12 @@ public class MLG_FileRead {
 				Main.outD("      waitSave: " + Main.waitSave);
 				Main.outD("     webLaunch: " + Main.webLaunch);
 			}
-		} catch (FileNotFoundException ex) {
+		} catch (final FileNotFoundException ex) {
 			Main.out("Could not find "
 					+ Main.MinecraftLandGeneratorConf
 					+ ". It is recommended that you run the application with the -conf option to create it.");
 			return;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Main.err("Could not read " + Main.MinecraftLandGeneratorConf + ".");
 			return;
 		}

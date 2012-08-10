@@ -1,4 +1,4 @@
-package morlok8k.minecraft.landgenerator;
+package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -10,9 +10,8 @@ import java.net.URL;
 
 import org.w3c.bert_bos.UTF8URL.Unescape;
 
-import corrodias.minecraft.landgenerator.Main;
 
-public class MLG_DownloadFile {
+public class DownloadFile {
 
 	/**
 	 * 
@@ -29,7 +28,7 @@ public class MLG_DownloadFile {
 	 *            Displays output if true
 	 * @return Boolean: true if download was successful, false if download wasn't
 	 */
-	public static boolean downloadFile(String URL, boolean Output) {
+	public static boolean downloadFile(final String URL, final boolean Output) {
 
 		boolean success = true;
 
@@ -41,7 +40,7 @@ public class MLG_DownloadFile {
 			}
 		}
 
-		int size = 1024 * 4; // 1024 * n should be tested to get the optimum size (for download speed.)
+		final int size = 1024 * 4; // 1024 * n should be tested to get the optimum size (for download speed.)
 
 		if (fileName.equals("")) {
 			fileName = String.valueOf(System.currentTimeMillis());
@@ -54,8 +53,8 @@ public class MLG_DownloadFile {
 			Main.out("Saving as: " + fileName);
 		}
 
-		long differenceTime = System.currentTimeMillis();
-		Long[] timeTracking = new Long[] { differenceTime, differenceTime };
+		final long differenceTime = System.currentTimeMillis();
+		final Long[] timeTracking = new Long[] { differenceTime, differenceTime };
 		timeTracking[0] = System.currentTimeMillis();
 
 		if (Output) {
@@ -67,8 +66,8 @@ public class MLG_DownloadFile {
 			in = new BufferedInputStream(new URL(URL).openStream());
 			FileOutputStream fos;
 			fos = new FileOutputStream(fileName);
-			BufferedOutputStream bout = new BufferedOutputStream(fos, size);
-			byte[] data = new byte[size];
+			final BufferedOutputStream bout = new BufferedOutputStream(fos, size);
+			final byte[] data = new byte[size];
 			int x = 0;
 			int count = 0;
 			while ((x = in.read(data, 0, size)) >= 0) {
@@ -88,15 +87,15 @@ public class MLG_DownloadFile {
 			timeTracking[1] = System.currentTimeMillis();
 			//differenceTime = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				Main.out("Elapsed Time: " + MLG_Time.displayTime(timeTracking[0], timeTracking[1]));
+				Main.out("Elapsed Time: " + Time.displayTime(timeTracking[0], timeTracking[1]));
 			}
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			success = false;
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 			success = false;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			success = false;
 		}
