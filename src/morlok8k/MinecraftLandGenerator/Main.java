@@ -677,8 +677,9 @@ public class Main {
 								new Coordinates(currentX + xOffset, 64, currentZ + zOffset);
 						launchList.add(tempCoords);
 
-						//TODO: remove this before release:
-						System.out.println(tempCoords);
+						if (testing) {
+							System.out.println(tempCoords);
+						}
 					}
 
 					if (curZloops == 1) {
