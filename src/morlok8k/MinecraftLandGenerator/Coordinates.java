@@ -79,14 +79,38 @@ public class Coordinates {
 	 */
 	public void setZ(final int z) {
 		Z = z;
+=======
+	public void setX(int x) {
+		x = x;
 	}
 
-	public void clear() {
-		X = 0;
-		Y = 0;
-		Z = 0;
+	public void setY(int y) {
+		y = y;
 	}
 
+	public void setZ(int z) {
+		z = z;
+>>>>>>> 8979eb4... Fixed some pretty hairy code in Coordinates.java, THEREBY BREAKING THE:src/morlok8k/minecraft/landgenerator/Coordinates.java
+	}
+
+    /**
+     * Parses a Coordinates object from a String. Leading and trailing garbage is ignored (FIXME).
+     * @param s A short- or long-form coordinate string as described at the two toString() methods
+     * @throws IllegalArgumentException if s does not match a short or long form coordinate
+     */
+	public static Coordinates parseString(String s) {
+        Matcher shortForm = Pattern.compile("\\((\\d+),(\\d+)\\)").matcher(s);
+        if(shortForm.matches()){
+            return new Coordinates(Interger.parseInt(shortForm.group(1)), 64, Integer.parseInt(shortForm.group(2)));
+        }
+        Matcher normalForm = Pattern.compile("\\[(\\d+),(\\d+),(\\d+)\\]").matcher(s);
+        if(normalForm.matches()){
+            return new Coordinates(Interger.parseInt(shortForm.group(1)), Integer.parseInt(shortForm.group(2)), Integer.parseInt(shortForm.group(3)));
+        }
+        throw new InvalidArgumentException("Invalid coordinate format: "+s);
+	}
+
+<<<<<<< HEAD:src/morlok8k/MinecraftLandGenerator/Coordinates.java
 	public static Coordinates parseString(String StringOfCoords) {
 		//parse out string
 		StringOfCoords = StringOfCoords.trim();
