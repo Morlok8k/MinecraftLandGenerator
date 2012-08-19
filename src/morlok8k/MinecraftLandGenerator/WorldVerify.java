@@ -98,6 +98,8 @@ public class WorldVerify {
 				}
 			}
 
+			props.close();
+
 		} catch (final FileNotFoundException ex) {
 			Main.err("Could not open " + Main.serverPath + Main.fileSeparator + "server.properties");
 			return;

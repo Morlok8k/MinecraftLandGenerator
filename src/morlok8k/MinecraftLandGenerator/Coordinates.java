@@ -101,20 +101,23 @@ public class Coordinates {
 		int X = 0, Y = 0, Z = 0;
 		boolean matched = false;
 		Matcher shortForm = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)").matcher(stringOfCoords);
+		Matcher normalForm =
+				Pattern.compile("\\[(-?\\d+),(-?\\d+),(-?\\d+)\\]").matcher(stringOfCoords);
+
 		if (shortForm.matches()) {
 			X = Integer.parseInt(shortForm.group(1));
 			Y = 64;
 			Z = Integer.parseInt(shortForm.group(2));
 			matched = true;
 		}
-		Matcher normalForm =
-				Pattern.compile("\\[(-?\\d+),(-?\\d+),(-?\\d+)\\]").matcher(stringOfCoords);
+
 		if (normalForm.matches()) {
 			X = Integer.parseInt(normalForm.group(1));
 			Y = Integer.parseInt(normalForm.group(2));
 			Z = Integer.parseInt(normalForm.group(3));
 			matched = true;
 		}
+
 		if (!matched) {
 			System.err.println("Invalid coordinate format: " + stringOfCoords);
 			System.err.println();
