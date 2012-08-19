@@ -98,14 +98,28 @@ public class Coordinates {
 	 * @author jaseg
 	 */
 	public static Coordinates parseStringRegEx(String stringOfCoords) {
-		Matcher shortForm = Pattern.compile("\\((\\d+),(\\d+)\\)").matcher(stringOfCoords);
-		if (shortForm.matches()) { return new Coordinates(Integer.parseInt(shortForm.group(1)), 64,
-				Integer.parseInt(shortForm.group(2))); }
-		Matcher normalForm = Pattern.compile("\\[(\\d+),(\\d+),(\\d+)\\]").matcher(stringOfCoords);
-		if (normalForm.matches()) { return new Coordinates(Integer.parseInt(shortForm.group(1)),
-				Integer.parseInt(shortForm.group(2)), Integer.parseInt(shortForm.group(3))); }
-		Main.err("Invalid coordinate format: " + stringOfCoords);
-		return new Coordinates(0, 0, 0);
+		int X = 0, Y = 0, Z = 0;
+		boolean matched = false;
+		Matcher shortForm = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)").matcher(stringOfCoords);
+		if (shortForm.matches()) {
+			X = Integer.parseInt(shortForm.group(1));
+			Y = 64;
+			Z = Integer.parseInt(shortForm.group(2));
+			matched = true;
+		}
+		Matcher normalForm =
+				Pattern.compile("\\[(-?\\d+),(-?\\d+),(-?\\d+)\\]").matcher(stringOfCoords);
+		if (normalForm.matches()) {
+			X = Integer.parseInt(normalForm.group(1));
+			Y = Integer.parseInt(normalForm.group(2));
+			Z = Integer.parseInt(normalForm.group(3));
+			matched = true;
+		}
+		if (!matched) {
+			System.err.println("Invalid coordinate format: " + stringOfCoords);
+			System.err.println();
+		}
+		return new Coordinates(X, Y, Z);
 	}
 
 	/**
