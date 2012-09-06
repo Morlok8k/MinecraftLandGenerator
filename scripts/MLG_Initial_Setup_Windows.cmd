@@ -1,7 +1,10 @@
 @echo off
 SET BINDIR=%~dp0
 CD /D "%BINDIR%"
-echo Minecraft Land Generator - Initial Setup - Windows
+SET ScriptTitle=Minecraft Land Generator - Initial Setup - Windows
+title %ScriptTitle%
+cls
+echo %ScriptTitle%
 echo %BINDIR%
 
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -nowait -update
