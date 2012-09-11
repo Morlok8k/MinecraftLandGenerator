@@ -7,5 +7,5 @@ cls
 echo %ScriptTitle%
 echo %BINDIR%
 
-java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -printspawn
+java -jar MinecraftLandGenerator.jar -printspawn
 

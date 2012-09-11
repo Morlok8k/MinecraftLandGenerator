@@ -4,5 +4,5 @@ cd "$BINDIR"
 echo Minecraft Land Generator - Print Spawn - Linux
 echo $BINDIR
 
-java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -printspawn
+java -jar MinecraftLandGenerator.jar -printspawn
 

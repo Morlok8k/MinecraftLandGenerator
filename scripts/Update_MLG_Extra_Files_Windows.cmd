@@ -7,5 +7,5 @@ cls
 echo %ScriptTitle%
 echo %BINDIR%
 
-java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -downloadlist "MLG_Update_Files_Windows.txt"
+java -jar MinecraftLandGenerator.jar -downloadlist "MLG_Update_Files_Windows.txt"
 
