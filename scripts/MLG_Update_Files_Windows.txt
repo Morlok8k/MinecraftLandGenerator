@@ -7,4 +7,7 @@ https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_Server_Windows.cmd
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_Extra_Files_Windows.cmd
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Printspawn_Windows.cmd
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Linux.sh
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Windows.cmd
+
