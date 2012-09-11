@@ -456,9 +456,16 @@ public class Main {
 				return;
 			}
 
-			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
-			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+			boolean useChunks = false;
 
+			if (useChunks) {		// use Chunks or Regions
+				xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+				zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+			} else {
+				xRange = (int) (Math.ceil(((double) xRange) / ((double) 512))) * 512;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
+				zRange = (int) (Math.ceil(((double) zRange) / ((double) 512))) * 512;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
+
+			}
 			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
 					+ "MinecraftLandGenerator.log",
 					"# " + var.PROG_NAME + " " + var.VERSION + " - " + SelfAware.JVMinfo()
@@ -517,13 +524,11 @@ public class Main {
 			xLoops = ((double) xRange / (double) var.increment);		//How many loops do we need?
 			xLoops = Math.ceil(xLoops);								//round up to find out!
 			xRangeAdj = (int) (xLoops * var.increment);
-			xLoops = xLoops + 1;
 
 			// Z
 			zLoops = ((double) zRange / (double) var.increment);		//How many loops do we need?
 			zLoops = Math.ceil(zLoops);								//round up to find out!
 			zRangeAdj = (int) (zLoops * var.increment);
-			zLoops = zLoops + 1;
 
 			Out.out("Calculating Spawn Points...");
 
@@ -539,9 +544,9 @@ public class Main {
 			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += var.increment) {
 				curXloops++;
 				if (curXloops == 1) {
-					currentX = (((0 - xRange) / 2) + (var.increment / 2) + 16);
-				} else if (curXloops == xLoops) {
-					currentX = (xRange / 2) - (var.increment / 2);
+					currentX = (((0 - xRange) / 2) + (var.incrementFull / 2));  	// West Edge of map
+				} else if (curXloops == ((int) xLoops)) {
+					currentX = ((xRange / 2) - (var.incrementFull / 2));			// East Edge of map
 				}
 
 				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += var.increment) {
@@ -549,9 +554,9 @@ public class Main {
 
 					curZloops++;
 					if (curZloops == 1) {
-						currentZ = (((0 - zRange) / 2) + (var.increment / 2) + 16);
-					} else if (curZloops == zLoops) {
-						currentZ = (zRange / 2) - (var.increment / 2);
+						currentZ = (((0 - zRange) / 2) + (var.incrementFull / 2));	// North Edge of map
+					} else if (curZloops == ((int) zLoops)) {
+						currentZ = ((zRange / 2) - (var.incrementFull / 2));		// South Edge of map
 					}
 
 					{
@@ -690,5 +695,4 @@ public class Main {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	}
-
 }

@@ -115,7 +115,8 @@ public class var {
 	public static boolean dontWait = false;
 	public static boolean alternate = false;
 	public static int MinecraftServerChunkPlayerCache = 625;	//You see this number when you first launch the server in GUI mode, after the world is loaded, but before anyone has connected.
-	public static int increment = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16) - 20;			//private int increment = 380;
+	public static int incrementFull = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16);			// 400, the length of a fresh (no players have ever logged in) server map.
+	public static int increment = incrementFull - 16;		//public static int increment = 384;			// 384, what we use to iterate between sections of the map.  Allows for some overlap to prevent "stripes" 
 	public static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
 	public static long startTime = 0L;
 	public static Boolean recheckFlag = false;
