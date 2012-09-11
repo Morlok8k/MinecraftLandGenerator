@@ -107,10 +107,10 @@ public class FileWrite {
 			outFile.write(txt);
 			outFile.newLine();
 			outFile.close();
-			Main.out(file + " file created.");
+			Out.out(file + " file created.");
 			return;
 		} catch (final IOException ex) {
-			Main.err("Could not create " + var.MinecraftLandGeneratorConf + ".");
+			Out.err("Could not create " + var.MinecraftLandGeneratorConf + ".");
 			ex.printStackTrace();
 			return;
 		}

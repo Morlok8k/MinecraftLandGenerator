@@ -75,13 +75,13 @@ public class Time {
 		if (var.dontWait) { return; }			//Don't wait!
 
 		if (output) {
-			Main.outP(var.MLG);						//here we wait 10 sec.
+			Out.outP(var.MLG);						//here we wait 10 sec.
 		}
 
 		int count = 0;
 		while (count <= 100) {
 			if (output) {
-				Main.outP(count + "% ");
+				Out.outP(count + "% ");
 			}
 
 			try {
@@ -92,7 +92,7 @@ public class Time {
 			count += 10;
 		}
 		if (output) {
-			Main.outP(var.newLine);
+			Out.outP(var.newLine);
 		}
 		return;
 

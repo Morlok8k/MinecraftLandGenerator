@@ -19,7 +19,7 @@ public class WorldVerify {
 		// verify that we ended up with a good server path, either from the file or from an argument.
 		final File file = new File(var.serverPath);
 		if (!file.exists() || !file.isDirectory()) {
-			Main.err("The server directory is invalid: " + var.serverPath);
+			Out.err("The server directory is invalid: " + var.serverPath);
 			return;
 		}
 
@@ -71,7 +71,7 @@ public class WorldVerify {
 			props.close();
 
 		} catch (final FileNotFoundException ex) {
-			Main.err("Could not open " + var.serverPath + var.fileSeparator + "server.properties");
+			Out.err("Could not open " + var.serverPath + var.fileSeparator + "server.properties");
 			return;
 		} catch (final IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,7 +80,7 @@ public class WorldVerify {
 
 		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		if (!level.exists() || !level.isFile()) {
-			Main.err("The currently-configured world does not exist.");
+			Out.err("The currently-configured world does not exist.");
 			return;
 		}
 

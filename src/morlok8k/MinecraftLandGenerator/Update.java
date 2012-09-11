@@ -37,7 +37,7 @@ public class Update {
 		final boolean fileSuccess =
 				DownloadFile.downloadFile(var.github_MLG_BuildID_URL, var.testing);
 		if (fileSuccess) {
-			Main.out(var.buildIDFile + " file downloaded.");
+			Out.out(var.buildIDFile + " file downloaded.");
 			var.flag_downloadedBuildID = true;
 
 			if (downloadOnly) { return; }
@@ -45,7 +45,7 @@ public class Update {
 		}
 
 		if (downloadOnly) {
-			Main.err("Couldn't Download new " + var.buildIDFile);
+			Out.err("Couldn't Download new " + var.buildIDFile);
 			return;
 		}
 
@@ -56,7 +56,7 @@ public class Update {
 			try {
 				var.MLGFileName = getClassLoader(var.cls);
 			} catch (final Exception e) {
-				Main.out("Error: Finding file failed");
+				Out.out("Error: Finding file failed");
 				e.printStackTrace();
 			}
 			if (var.MLGFileName.equals(var.rsrcError)) { return; }
@@ -68,7 +68,7 @@ public class Update {
 				var.MLG_Current_Hash = MD5.fileMD5(var.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (final Exception e) {
-				Main.out("Error: MD5 from file failed");
+				Out.out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -78,7 +78,7 @@ public class Update {
 		try {
 			time = getCompileTimeStamp(var.cls);
 		} catch (final Exception e) {
-			Main.out("Error: TimeStamp from file failed");
+			Out.out("Error: TimeStamp from file failed");
 			e.printStackTrace();
 		}
 		// out(d.toString());
@@ -101,7 +101,7 @@ public class Update {
 				if (line.contains(var.MLG_Current_Hash)) {
 					notNew = true;
 					if (var.testing) {
-						Main.outD("NotNew");
+						Out.outD("NotNew");
 					}
 				}
 
@@ -123,7 +123,7 @@ public class Update {
 			fileRename.renameTo(new File(var.buildIDFile));
 
 		} catch (final FileNotFoundException ex) {
-			Main.out("\"" + var.buildIDFile + "\" file not Found.  Generating New \""
+			Out.out("\"" + var.buildIDFile + "\" file not Found.  Generating New \""
 					+ var.buildIDFile + "\" File");
 
 			FileWrite.writeTxtFile(var.buildIDFile,
@@ -131,7 +131,7 @@ public class Update {
 							+ var.VERSION + INFO);
 
 		} catch (final IOException ex) {
-			Main.err("Could not create \"" + var.buildIDFile + "\".");
+			Out.err("Could not create \"" + var.buildIDFile + "\".");
 			return;
 		}
 
@@ -162,9 +162,9 @@ public class Update {
 			file = 0;
 		}
 		if (filename.contains("rsrc:")) {
-			Main.err("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
-			Main.err("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
-			Main.err("(Your Libraries need to be extracted.)");
+			Out.err("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
+			Out.err("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
+			Out.err("(Your Libraries need to be extracted.)");
 			return var.rsrcError;
 		}
 		if (filename.contains(".jar")) {
@@ -217,7 +217,7 @@ public class Update {
 			try {
 				var.MLGFileName = getClassLoader(var.cls);
 			} catch (final Exception e) {
-				Main.out("Error: Finding file failed");
+				Out.out("Error: Finding file failed");
 				e.printStackTrace();
 			}
 			if (var.MLGFileName.equals(var.rsrcError)) { return; }
@@ -228,7 +228,7 @@ public class Update {
 						var.MLGFileName.length());
 
 		if (var.testing) {
-			Main.outD("Currently Running as file:" + var.MLGFileNameShort);
+			Out.outD("Currently Running as file:" + var.MLGFileNameShort);
 		}
 
 		if (var.MLG_Current_Hash == null) {
@@ -237,7 +237,7 @@ public class Update {
 				var.MLG_Current_Hash = MD5.fileMD5(var.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (final Exception e) {
-				Main.out("Error: MD5 from file failed");
+				Out.out("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -253,7 +253,7 @@ public class Update {
 				String line;
 
 				if (var.testing) {
-					Main.outD("TimeStamps in buildIDFile:");
+					Out.outD("TimeStamps in buildIDFile:");
 				}
 				while ((line = in.readLine()) != null) {
 
@@ -284,7 +284,7 @@ public class Update {
 					//timeStamps.add(line.substring(pos + 1, end));
 
 					if (var.testing) {
-						Main.outD(var.timeStamps.get(tsCount));
+						Out.outD(var.timeStamps.get(tsCount));
 					}
 
 					tsCount++;
@@ -304,38 +304,38 @@ public class Update {
 								final long tCalc = var.MLG_Last_Modified_Long - highestModTime;
 
 								if (var.testing) {
-									Main.outD("tCalc\tMLG_Last_Modified_Long\thighestModTime"
+									Out.outD("tCalc\tMLG_Last_Modified_Long\thighestModTime"
 											+ var.newLine + tCalc + "\t"
 											+ var.MLG_Last_Modified_Long + "\t" + highestModTime);
 								}
 
 								if (highestModTime == 0L) {
 
-									Main.err("Archive Intergrity Check Failed: .zip/.jar file Issue.");
-									Main.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+									Out.err("Archive Intergrity Check Failed: .zip/.jar file Issue.");
+									Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 
 								} else {
 									if (tCalc < -15000L) {
 
 										//time is newer?  (.zip file is newer than BuildID)
-										Main.err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
+										Out.err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
 												+ (tCalc / 1000) + "sec.");
-										Main.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+										Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 
 									if (tCalc < 15000L) {
 
 										//times are within 30 seconds (+/- 15 seconds) of each other.  (typically 1-2 seconds, but left room for real-world error)
 										if (var.testing | var.flag_downloadedBuildID) {
-											Main.out("Archive Intergrity Check Passed. Offset: "
+											Out.out("Archive Intergrity Check Passed. Offset: "
 													+ (tCalc / 1000) + "sec.");
 										}
 
 									} else {
 										//times dont match.  (.zip file is older than specified BuildID)
-										Main.err("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
+										Out.err("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
 												+ (tCalc / 1000) + "sec.");
-										Main.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+										Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 								}
 								//return;
@@ -354,9 +354,9 @@ public class Update {
 					return;
 				}
 			} catch (final Exception e) {
-				Main.err("Cant Read " + var.buildIDFile + "!");
-				Main.err(e.getLocalizedMessage());
-				Main.err("");
+				Out.err("Cant Read " + var.buildIDFile + "!");
+				Out.err(e.getLocalizedMessage());
+				Out.err("");
 				// e.printStackTrace();
 				buildID(false);
 				readBuildID();
@@ -391,13 +391,13 @@ public class Update {
 			//out(diff);
 
 			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-				Main.out("There is a NEW VERSION Of " + var.PROG_NAME + " available online!");
+				Out.out("There is a NEW VERSION Of " + var.PROG_NAME + " available online!");
 
 				try {
 					final File fileRename = new File(var.MLG_JarFile);
 					fileRename.renameTo(new File(var.MLG_JarFile + ".old"));
 				} catch (final Exception e1) {
-					Main.out("Rename attempt #1 failed!");
+					Out.out("Rename attempt #1 failed!");
 					e1.printStackTrace();
 
 					try {
@@ -406,7 +406,7 @@ public class Update {
 						final File fileDelete = new File(var.MLG_JarFile);
 						fileDelete.delete();
 					} catch (final Exception e2) {
-						Main.out("Rename attempt #2 failed!");
+						Out.out("Rename attempt #2 failed!");
 						e2.printStackTrace();
 						//renameFailed = true;
 						return;
@@ -417,7 +417,7 @@ public class Update {
 				final boolean fileSuccess =
 						DownloadFile.downloadFile(var.github_MLG_jar_URL, true);
 				if (fileSuccess) {
-					Main.out(var.MLG_JarFile + " downloaded.");
+					Out.out(var.MLG_JarFile + " downloaded.");
 					return;
 				}
 
@@ -455,7 +455,7 @@ public class Update {
 			final Enumeration<? extends ZipEntry> e = zipF.entries();
 
 			if (var.testing) {
-				Main.outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
+				Out.outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
 			}
 
 			while (e.hasMoreElements()) {
@@ -477,7 +477,7 @@ public class Update {
 					final Date modificationTime = new Date(modTime);
 					final String CRC = Long.toHexString(entry.getCrc());
 
-					Main.outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
+					Out.outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
 							+ modTime.toString());
 				}
 
@@ -488,7 +488,7 @@ public class Update {
 			return highestModTime;
 
 		} catch (final IOException ioe) {
-			Main.out("Error opening zip file" + ioe);
+			Out.out("Error opening zip file" + ioe);
 			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
 		}
 	}

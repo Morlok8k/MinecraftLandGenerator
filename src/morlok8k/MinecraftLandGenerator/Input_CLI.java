@@ -16,14 +16,14 @@ public class Input_CLI {
 
 		while (!(var.sc.hasNextInt())) {
 			var.sc.nextLine();
-			Main.outP(var.MLG + "Invalid Input. " + msg);
+			Out.outP(var.MLG + "Invalid Input. " + msg);
 		}
 
 		Return = var.sc.nextInt();
 
 		if (Return < 1000) {
-			Main.out("Input must be 1000 or larger.");
-			Main.outP(var.MLG + msg);
+			Out.out("Input must be 1000 or larger.");
+			Out.outP(var.MLG + msg);
 			Return = getInt(msg);
 		}
 

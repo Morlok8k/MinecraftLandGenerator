@@ -303,8 +303,8 @@ public class Readme_and_HelpInfo {
 		String returnString = null;
 
 		if (SysOut) {
-			Main.out(Str);
-			Main.out("");
+			Out.out(Str);
+			Out.out("");
 		} else {
 			returnString = Str;
 		}

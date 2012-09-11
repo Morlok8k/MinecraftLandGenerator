@@ -48,14 +48,14 @@ public class Main {
 		// java -enableassertions -jar MinecraftLandGenerator.jar
 		assert var.assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
 		if (var.assertsEnabled) {
-			outD("assertsEnabled: " + var.assertsEnabled);
+			Out.outD("assertsEnabled: " + var.assertsEnabled);
 			var.verbose = true;
-			outD("Verbose mode forced!");
+			Out.outD("Verbose mode forced!");
 			var.testing = true;
-			outD("Debug mode forced!");
+			Out.outD("Debug mode forced!");
 			var.dontWait = true;
-			outD("-nowait mode forced!");
-			outD("");
+			Out.outD("-nowait mode forced!");
+			Out.outD("");
 		}
 
 		boolean GUI = false;
@@ -73,7 +73,7 @@ public class Main {
 		if (!java.awt.GraphicsEnvironment.isHeadless() || (!NOGUI)) {
 			GUI = true;
 			if (var.testing) {
-				outD("GUI: This is a graphical enviroment.");
+				Out.outD("GUI: This is a graphical enviroment.");
 			}
 
 			//////
@@ -83,7 +83,7 @@ public class Main {
 		} else {
 			GUI = false;				// No GUI for us today...
 			if (var.testing) {
-				outD("GUI: Command Line Only!");
+				Out.outD("GUI: Command Line Only!");
 			}
 		}
 
@@ -106,61 +106,6 @@ public class Main {
 	}
 
 	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void out(final String str) {
-		System.out.println(var.MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
-	}
-
-	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void outD(final String str) {
-		System.out.println(var.MLG + "[DEBUG] " + str);
-	}
-
-	/**
-	 * Outputs a string to System.out without a newline.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void outP(final String str) {
-		System.out.print(str);
-	}
-
-	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	static void outS(final String str) {
-		System.out.println("[Server] " + str);
-	}
-
-	/**
-	 * Outputs a formatted string to System.err as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void err(final String str) {
-		System.err.println(var.MLGe + str);
-	}
-
-	/**
 	 * Start MinecraftLandGenerator (Command Line Interface)
 	 * 
 	 * @author Corrodias, Morlok8k
@@ -175,15 +120,15 @@ public class Main {
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		out(var.PROG_NAME + " version " + var.VERSION);
-		out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
+		Out.out(var.PROG_NAME + " version " + var.VERSION);
+		Out.out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
 		// thus different timezones wont display a different buildID
-		out("This version was last modified on "
+		Out.out("This version was last modified on "
 				+ var.dateFormat.format(var.MLG_Last_Modified_Date));
-		out("");
-		out("Uses a Minecraft server to generate square land of a specified size.");
-		out("");
-		out("");
+		Out.out("");
+		Out.out("Uses a Minecraft server to generate square land of a specified size.");
+		Out.out("");
+		Out.out("");
 
 		// =====================================================================
 		//                           INSTRUCTIONS
@@ -198,14 +143,14 @@ public class Main {
 		if (!(args.equals(newArgs))) {								//do the freshly parsed args match the original?
 			var.dontWait = true;											//if not, we dont wait for anything!
 			args = newArgs;												//use the freshly parsed args for everything else now...
-			out("Notice: Not waiting for anything...");
+			Out.out("Notice: Not waiting for anything...");
 		}
 
 		if (args.length == 0) {																//we didn't find a an X and Z size, so lets ask for one.
-			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			outP(var.MLG + "X:");
+			Out.out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
+			Out.outP(var.MLG + "X:");
 			xRange = Input_CLI.getInt("X:");
-			outP(var.MLG + "Z:");
+			Out.outP(var.MLG + "Z:");
 			zRange = Input_CLI.getInt("Z:");
 			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
 
@@ -231,7 +176,7 @@ public class Main {
 					final boolean fileSuccess =
 							DownloadFile.downloadFile(var.github_MLG_Conf_URL, var.testing);
 					if (fileSuccess) {
-						out(var.MinecraftLandGeneratorConf + " file downloaded.");
+						Out.out(var.MinecraftLandGeneratorConf + " file downloaded.");
 						return;
 					}
 				}
@@ -264,7 +209,7 @@ public class Main {
 			if (args.length == 2) {
 				DownloadFile.downloadFile(args[1], true);
 			} else {
-				out("No File to Download!");
+				Out.out("No File to Download!");
 				Time.waitTenSec(false);
 			}
 			return;
@@ -326,13 +271,13 @@ public class Main {
 					return;
 				}
 			} else {
-				out("No File with links!");
+				Out.out("No File with links!");
 				Time.waitTenSec(false);
 			}
 			return;
 
 		} else if (args.length == 1) {
-			out("For help, use java -jar " + var.MLGFileNameShort + " -help");
+			Out.out("For help, use java -jar " + var.MLGFileNameShort + " -help");
 			Time.waitTenSec(false);
 			return;
 		}
@@ -342,7 +287,7 @@ public class Main {
 		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
 
 		if ((var.serverPath == null) || (var.javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
-			err(var.MinecraftLandGeneratorConf
+			Out.err(var.MinecraftLandGeneratorConf
 					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
 
 			// return;
@@ -367,7 +312,7 @@ public class Main {
 		}
 
 		if (oldConf) {
-			err("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
+			Out.err("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
 
 			FileWrite.saveConf(false);		//old conf
 
@@ -383,16 +328,16 @@ public class Main {
 
 			if ((xRange < 1000) && (xRange != 0)) {
 				xRange = 1000;							//if less than 1000, (and not 0) set to 1000 (Calculations don't work well on very small maps)
-				err("X size too small - Changing X to 1000");
+				Out.err("X size too small - Changing X to 1000");
 			}
 			if ((zRange < 1000) && (zRange != 0)) {
 				zRange = 1000;
-				err("Z size too small - Changing Z to 1000");
+				Out.err("Z size too small - Changing Z to 1000");
 			}
 
 		} catch (final NumberFormatException ex) {
-			err("Invalid X or Z argument.");
-			err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
+			Out.err("Invalid X or Z argument.");
+			Out.err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			xRange = Input_CLI.getInt("X:");
 			zRange = Input_CLI.getInt("Z:");
 
@@ -408,39 +353,39 @@ public class Main {
 				final String nextSwitch = args[i + 2].toLowerCase();
 				if (nextSwitch.equals("-verbose") || nextSwitch.equals("-v")) {
 					var.verbose = true;
-					out("Notice: Verbose Mode");
+					Out.out("Notice: Verbose Mode");
 
 				} else if (nextSwitch.startsWith("-i")) {
 					var.increment = Integer.parseInt(args[i + 2].substring(2));
-					out("Notice: Non-Default Increment: " + var.increment);
+					Out.out("Notice: Non-Default Increment: " + var.increment);
 
 				} else if (nextSwitch.startsWith("-w")) {
 					var.ignoreWarnings = true;
-					out("Notice: Warnings from Server are Ignored");
+					Out.out("Notice: Warnings from Server are Ignored");
 
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
 					var.alternate = true;
-					out("Notice: Using Alternate Launching");
+					Out.out("Notice: Using Alternate Launching");
 
 				} else if (nextSwitch.startsWith("-x")) {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
-					out("Notice: X Offset: " + xOffset);
+					Out.out("Notice: X Offset: " + xOffset);
 
 				} else if (nextSwitch.startsWith("-y") || nextSwitch.startsWith("-z")) {		//NOTE: "-y" is just here for backwards compatibility
 					zOffset = Integer.valueOf(args[i + 2].substring(2));
-					out("Notice: Z Offset: " + zOffset);
+					Out.out("Notice: Z Offset: " + zOffset);
 					if (nextSwitch.startsWith("-y")) {
-						out("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
+						Out.out("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
 						Time.waitTenSec(false);
 					}
 
 				} else {
 					var.serverPath = args[i + 2];
-					out("Notice: Attempting to use Alternate Server:" + var.serverPath);
+					Out.out("Notice: Attempting to use Alternate Server:" + var.serverPath);
 				}
 			}
 		} catch (final NumberFormatException ex) {
-			err("Invalid switch value.");
+			Out.err("Invalid switch value.");
 			return;
 		}
 
@@ -455,8 +400,8 @@ public class Main {
 				//err("You most likely will want to restore the backup!");
 				//Time.waitTenSec(false);
 
-				err("There is a level_backup.dat file left over from a previous attempt that failed.");
-				out("Resuming...");
+				Out.err("There is a level_backup.dat file left over from a previous attempt that failed.");
+				Out.out("Resuming...");
 
 				//use resume data
 				final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
@@ -484,11 +429,11 @@ public class Main {
 		//                              PROCESSING
 		// =====================================================================
 
-		out("Processing world \"" + var.worldPath + "\", in " + var.increment
+		Out.out("Processing world \"" + var.worldPath + "\", in " + var.increment
 				+ " block increments, with: " + var.javaLine);
 		// out( MLG + "Processing \"" + worldName + "\"...");
 
-		out("");
+		Out.out("");
 
 		// prepare our two ProcessBuilders
 		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
@@ -497,7 +442,7 @@ public class Main {
 		var.minecraft.redirectErrorStream(true);
 
 		try {
-			out("Launching server once to make sure there is a world.");
+			Out.out("Launching server once to make sure there is a world.");
 
 			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
 
@@ -521,18 +466,18 @@ public class Main {
 							+ "# Started: " + var.dateFormat.format(generationStartTimeTracking)
 							+ var.newLine + "##Size: X" + xRange + "Z" + zRange + var.newLine);
 
-			out("");
+			Out.out("");
 
 			final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
 			final File backupLevel =
 					new File(var.worldPath + var.fileSeparator + "level_backup.dat");
 
-			out("Backing up level.dat to level_backup.dat.");
+			Out.out("Backing up level.dat to level_backup.dat.");
 			Misc.copyFile(serverLevel, backupLevel);
-			out("");
+			Out.out("");
 
 			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
-			out("Spawn point detected: [X,Y,Z] " + spawn);
+			Out.out("Spawn point detected: [X,Y,Z] " + spawn);
 
 			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
 					+ "MinecraftLandGenerator.log", "# Seed: " + var.randomSeed + var.newLine
@@ -551,11 +496,11 @@ public class Main {
 					overridden = true;
 				}
 				if (overridden) {
-					out("Centering land generation on [" + xOffset + ", " + zOffset
+					Out.out("Centering land generation on [" + xOffset + ", " + zOffset
 							+ "] due to switches.");
 				}
 			}
-			out("");
+			Out.out("");
 
 			double xLoops, zLoops;
 			int curXloops = 0;
@@ -580,7 +525,7 @@ public class Main {
 			zRangeAdj = (int) (zLoops * var.increment);
 			zLoops = zLoops + 1;
 
-			out("Calculating Spawn Points...");
+			Out.out("Calculating Spawn Points...");
 
 			int totalIterations = (int) (xLoops * zLoops);
 			int currentIteration = 0;
@@ -666,7 +611,7 @@ public class Main {
 								(percentDone.indexOf(".") == -1 ? percentDone.length()
 										: percentIndex));			//Trim output, unless whole number
 
-				out("Setting spawn to [X,Y,Z]: " + xyz + " (" + currentIteration + " of "
+				Out.out("Setting spawn to [X,Y,Z]: " + xyz + " (" + currentIteration + " of "
 						+ totalIterations + ") " + percentDone + "% Done"); // Time Remaining estimate
 
 				timeTracking = System.currentTimeMillis();
@@ -675,7 +620,7 @@ public class Main {
 				differenceTime =
 						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);		// Updated.  we now count all runs, instead of the last 4.
 				differenceTime *= 1 + (totalIterations - currentIteration);									// this should provide a more accurate result.
-				out("Estimated time remaining: " + Time.displayTime(differenceTime));						// I've noticed it gets pretty accurate after about 8 launches!
+				Out.out("Estimated time remaining: " + Time.displayTime(differenceTime));						// I've noticed it gets pretty accurate after about 8 launches!
 
 				// Set the spawn point
 				SpawnPoint.setSpawn(serverLevel, xyz);
@@ -684,7 +629,7 @@ public class Main {
 				boolean serverSuccess = false;
 
 				serverSuccess = Server.runMinecraft();
-				out("");
+				Out.out("");
 
 				//////// End server launch code
 
@@ -699,16 +644,16 @@ public class Main {
 			}
 
 			if (currentIteration == 0) {
-				out("Nothing to generate!");
+				Out.out("Nothing to generate!");
 			} else {
-				out("Finished generating chunks.");
+				Out.out("Finished generating chunks.");
 			}
 
 			Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
-			out("Restored original level.dat.");
+			Out.out("Restored original level.dat.");
 
-			out("Generation complete in: "
+			Out.out("Generation complete in: "
 					+ Time.displayTime(var.startTime, System.currentTimeMillis()));
 			Time.waitTenSec(false);
 
@@ -733,12 +678,12 @@ public class Main {
 				try {
 					java.awt.Desktop.getDesktop().browse(splashPage);
 				} catch (final IOException e) {
-					err("Error displaying webpage... " + e.getLocalizedMessage());
+					Out.err("Error displaying webpage... " + e.getLocalizedMessage());
 				}
 			} else {
-				out("Please Visit: http://adf.ly/520855/mlg");
-				out("Or: https://sites.google.com/site/minecraftlandgenerator/");
-				out("Thanks!");
+				Out.out("Please Visit: http://adf.ly/520855/mlg");
+				Out.out("Or: https://sites.google.com/site/minecraftlandgenerator/");
+				Out.out("Thanks!");
 			}
 
 		} catch (final IOException ex) {

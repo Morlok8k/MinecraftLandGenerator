@@ -50,10 +50,10 @@ public class Misc {
 		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		try {
 			final Coordinates spawn = SpawnPoint.getSpawn(level);
-			Main.out("The current spawn point is: [X,Y,Z] " + spawn);
+			Out.out("The current spawn point is: [X,Y,Z] " + spawn);
 			return true;
 		} catch (final IOException ex) {
-			Main.err("Error while reading " + level.getPath());
+			Out.err("Error while reading " + level.getPath());
 			return false;
 		}
 	}

@@ -48,8 +48,8 @@ public class DownloadFile {
 		fileName = Unescape.unescape(fileName);
 
 		if (Output) {
-			Main.out("Downloading: " + URL);
-			Main.out("Saving as: " + fileName);
+			Out.out("Downloading: " + URL);
+			Out.out("Saving as: " + fileName);
 		}
 
 		final long differenceTime = System.currentTimeMillis();
@@ -57,7 +57,7 @@ public class DownloadFile {
 		timeTracking[0] = System.currentTimeMillis();
 
 		if (Output) {
-			Main.outP(var.MLG + "*");
+			Out.outP(var.MLG + "*");
 		}
 
 		try {
@@ -73,20 +73,20 @@ public class DownloadFile {
 				bout.write(data, 0, x);
 				count = count + x;
 				if (Output) {
-					Main.outP("*");
+					Out.outP("*");
 				}
 			}
 			bout.close();
 			in.close();
 			if (Output) {
-				Main.outP(var.newLine);
-				Main.out(count + " byte(s) copied");
+				Out.outP(var.newLine);
+				Out.out(count + " byte(s) copied");
 			}
 
 			timeTracking[1] = System.currentTimeMillis();
 			//differenceTime = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				Main.out("Elapsed Time: " + Time.displayTime(timeTracking[0], timeTracking[1]));
+				Out.out("Elapsed Time: " + Time.displayTime(timeTracking[0], timeTracking[1]));
 			}
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class DownloadFile {
 			success = false;
 		}
 		if (Output) {
-			Main.out("Done");
+			Out.out("Done");
 		}
 		return success;
 	}

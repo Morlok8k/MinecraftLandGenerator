@@ -54,10 +54,10 @@ public class FileRead {
 			in.close();
 
 		} catch (final FileNotFoundException ex) {
-			Main.out("Could not find " + file + ".");
+			Out.out("Could not find " + file + ".");
 			return Return;
 		} catch (final IOException ex) {
-			Main.err("Could not read " + file + ".");
+			Out.err("Could not read " + file + ".");
 			return Return;
 		}
 
@@ -154,32 +154,32 @@ public class FileRead {
 			in.close();
 
 			if (var.testing) {
-				Main.outD("Test Output: Reading of Config File ");
-				Main.outD("    serverPath: " + var.serverPath);
-				Main.outD("      javaLine: " + var.javaLine);
-				Main.outD("      doneText: " + var.doneText);
-				Main.outD(" preparingText: " + var.preparingText);
-				Main.outD("preparingLevel: " + var.preparingLevel);
-				Main.outD("       level_0: " + var.level_0);
-				Main.outD("       level_1: " + var.level_1);
-				Main.outD("       level_2: " + var.level_2);
-				Main.outD("       level_3: " + var.level_3);
-				Main.outD("       level_4: " + var.level_4);
-				Main.outD("       level_5: " + var.level_5);
-				Main.outD("       level_6: " + var.level_6);
-				Main.outD("       level_7: " + var.level_7);
-				Main.outD("       level_8: " + var.level_8);
-				Main.outD("       level_9: " + var.level_9);
-				Main.outD("      waitSave: " + var.waitSave);
-				Main.outD("     webLaunch: " + var.webLaunch);
+				Out.outD("Test Output: Reading of Config File ");
+				Out.outD("    serverPath: " + var.serverPath);
+				Out.outD("      javaLine: " + var.javaLine);
+				Out.outD("      doneText: " + var.doneText);
+				Out.outD(" preparingText: " + var.preparingText);
+				Out.outD("preparingLevel: " + var.preparingLevel);
+				Out.outD("       level_0: " + var.level_0);
+				Out.outD("       level_1: " + var.level_1);
+				Out.outD("       level_2: " + var.level_2);
+				Out.outD("       level_3: " + var.level_3);
+				Out.outD("       level_4: " + var.level_4);
+				Out.outD("       level_5: " + var.level_5);
+				Out.outD("       level_6: " + var.level_6);
+				Out.outD("       level_7: " + var.level_7);
+				Out.outD("       level_8: " + var.level_8);
+				Out.outD("       level_9: " + var.level_9);
+				Out.outD("      waitSave: " + var.waitSave);
+				Out.outD("     webLaunch: " + var.webLaunch);
 			}
 		} catch (final FileNotFoundException ex) {
-			Main.out("Could not find "
+			Out.out("Could not find "
 					+ var.MinecraftLandGeneratorConf
 					+ ". It is recommended that you run the application with the -conf option to create it.");
 			return;
 		} catch (final IOException ex) {
-			Main.err("Could not read " + var.MinecraftLandGeneratorConf + ".");
+			Out.err("Could not read " + var.MinecraftLandGeneratorConf + ".");
 			return;
 		}
 	}
