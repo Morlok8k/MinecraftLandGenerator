@@ -20,8 +20,12 @@ public class SelfAware {
 		Return = Return.trim();
 
 		Return =
-				"Launch info: JVM: " + Return + " JAR: " + System.getProperty("sun.java.command")
-						+ " ARGS: ";
+				"Launch info: Java: " + System.getProperty("java.vm.name") + " "
+						+ System.getProperty("java.version") + " OS: "
+						+ System.getProperty("os.name") + " " + System.getProperty("os.version")
+						+ " " + System.getProperty("os.arch") + " "
+						+ System.getProperty("sun.desktop") + var.newLine + "# JVM: " + " JAR: "
+						+ System.getProperty("sun.java.command") + " ARGS: ";
 
 		for (int i = 0; i < var.originalArgs.length; i++) {
 			Return = Return + (var.originalArgs[i]) + " ";

@@ -16,7 +16,8 @@ public class Server {
 	 * @throws IOException
 	 * @author Corrodias
 	 */
-	protected static boolean runMinecraft(final boolean alternate) throws IOException {
+	protected static boolean runMinecraft() throws IOException {
+
 		if (var.verbose) {
 			Main.out("Starting server.");
 		}
@@ -28,7 +29,7 @@ public class Server {
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
 
-		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
+		if (var.alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
 			Main.out("Alternate Launch");
 			final Process process = var.minecraft.start();
 
@@ -131,35 +132,34 @@ public class Server {
 					}
 
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
-						Main.outP(var.MLG + var.worldName + ": " + var.level_0 + ":"
-								+ var.newLine);
+						Main.outP(var.MLG + var.worldName + ": " + var.level_0 + ":" + var.newLine);
 					} else if (line.contains("level 1")) { // "Preparing start region for level 1"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_1
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_1 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 2")) { // "Preparing start region for level 2"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_2
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_2 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 3")) { // "Preparing start region for level 3"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_3
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_3 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 4")) { // "Preparing start region for level 4"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_4
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_4 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 5")) { // "Preparing start region for level 5"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_5
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_5 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 6")) { // "Preparing start region for level 6"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_6
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_6 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 7")) { // "Preparing start region for level 7"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_7
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_7 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 8")) { // "Preparing start region for level 8"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_8
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_8 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 9")) { // "Preparing start region for level 9"
-						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_9
-								+ ":" + var.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_9 + ":"
+								+ var.newLine);
 					} else {
 						Main.outP(var.newLine + var.MLG + shortLine);
 					}

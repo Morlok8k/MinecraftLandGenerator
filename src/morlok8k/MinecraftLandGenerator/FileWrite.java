@@ -5,15 +5,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/**
- * http://www.roseindia.net/java/example/java/io/java-append-to-file.shtml <br>
- * Append To File - Java Tutorial
- */
 public class FileWrite {
 
-	public static final String newLine = var.newLine;
-
 	/**
+	 * http://www.roseindia.net/java/example/java/io/java-append-to-file.shtml <br>
+	 * Append To File - Java Tutorial
+	 * 
 	 * @param file
 	 * @param appendTxt
 	 */

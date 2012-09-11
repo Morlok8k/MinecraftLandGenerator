@@ -29,9 +29,6 @@ public class Coordinates {
 
 		int x = 0, y = 0, z = 0;
 
-		//TODO: add validity checks:
-		//TODO: add short version...  (Y = 64)
-
 		int start = 0, end = 0, firstComma = 0, secComma = 0;
 		String sX = "", sY = "", sZ = "";
 		boolean shortMode = false, notCoords = false;
@@ -43,7 +40,7 @@ public class Coordinates {
 			start = StringOfCoords.indexOf("(");
 			end = StringOfCoords.indexOf(")");
 
-			if ((start != -1) || (end != -1)) {
+			if ((start != -1) && (end != -1)) {
 				shortMode = true;
 			} else {
 				notCoords = true;
@@ -87,7 +84,7 @@ public class Coordinates {
 	}
 
 	/**
-	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored (FIXME).
+	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored.
 	 * 
 	 * @param stringOfCoords
 	 *            A short- or long-form coordinate string as described at the two toString() methods
@@ -96,6 +93,18 @@ public class Coordinates {
 	public static Coordinates parseStringRegEx(String stringOfCoords) {
 		int X = 0, Y = 0, Z = 0;
 		boolean matched = false;
+
+		int start = stringOfCoords.indexOf("["), end = stringOfCoords.indexOf("]");
+
+		if ((start == -1) || (end == -1)) {
+			start = stringOfCoords.indexOf("(");
+			end = stringOfCoords.indexOf(")");
+		}
+
+		if ((start != -1) && (end != -1)) {
+			stringOfCoords = stringOfCoords.substring(start, end + 1);		// Leading and trailing garbage is ignored
+		}
+
 		final Matcher shortForm =
 				Pattern.compile("\\((-?\\d+),(-?\\d+)\\)").matcher(stringOfCoords);
 		final Matcher normalForm =

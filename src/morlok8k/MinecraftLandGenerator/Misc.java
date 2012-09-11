@@ -42,8 +42,7 @@ public class Misc {
 	 * @return
 	 */
 	static boolean printSpawn() {
-		// ugh, sorry, this is an ugly hack, but it's a last-minute feature. this is a lot of duplicated code.
-		// - Fixed by Morlok8k
+		// ugh, sorry, this is an ugly hack
 
 		FileRead.readConf();
 		WorldVerify.verifyWorld();

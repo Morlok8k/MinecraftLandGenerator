@@ -20,20 +20,10 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-	private static int MinecraftServerChunkPlayerCache = 625;	//You see this number when you first launch the server in GUI mode, after the world is loaded, but before anyone has connected.
-	private static int increment = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16) - 20;			//private int increment = 380;
-
-	private int xRange = 0;
-	private int zRange = 0;
-	private Integer xOffset = null;
-
-	private Integer zOffset = null;
-
-	private boolean alternate = false;
-	private static Boolean recheckFlag = false;
-	private static long startTime = 0L;
-
-	private static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
+	public static int xRange = 0;
+	public static int zRange = 0;
+	public static Integer zOffset = null;
+	public static Integer xOffset = null;
 
 	//////////////////////////////////////////////////////////
 	// REMINDER: Because I always forget/mix up languages:	//
@@ -43,33 +33,22 @@ public class Main {
 	//////////////////////////////////////////////////////////
 
 	/**
-	 * Outputs a formatted string to System.err as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void err(final String str) {
-		System.err.println(var.MLGe + str);
-	}
-
-	/**
 	 * @param args
 	 *            the command line arguments
 	 */
 
 	public static void main(String[] args) {
-		startTime = System.currentTimeMillis();
+		var.startTime = System.currentTimeMillis();
 
-		var.originalArgs = args;
+		var.originalArgs = args;	// we may potentially remove some args later, but we keep a record of the original for the log file.
 
 		// This is really just here for debugging...
 		// I plan on adding more asserts later, but for now, this will do.
 		// to enable this, run:
 		// java -enableassertions -jar MinecraftLandGenerator.jar
-		assert assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
-		if (assertsEnabled) {
-			outD("assertsEnabled: " + assertsEnabled);
+		assert var.assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
+		if (var.assertsEnabled) {
+			outD("assertsEnabled: " + var.assertsEnabled);
 			var.verbose = true;
 			outD("Verbose mode forced!");
 			var.testing = true;
@@ -113,7 +92,7 @@ public class Main {
 
 			/*
 			try {
-				(new Main()).runGUI(args);
+				Main()).runGUI(args;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -121,7 +100,7 @@ public class Main {
 
 		} else {	//No GUI
 			// Finally, Lets Start MLG!
-			(new Main()).runCLI(args);				// this avoids "static" compiling issues.
+			Main.runCLI(args);
 		}
 
 	}
@@ -171,13 +150,24 @@ public class Main {
 	}
 
 	/**
+	 * Outputs a formatted string to System.err as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void err(final String str) {
+		System.err.println(var.MLGe + str);
+	}
+
+	/**
 	 * Start MinecraftLandGenerator (Command Line Interface)
 	 * 
 	 * @author Corrodias, Morlok8k
 	 * @param args
 	 * 
 	 */
-	private void runCLI(String[] args) {
+	private static void runCLI(String[] args) {
 
 		// Lets get the date, and our BuildID
 		var.date = new Date();
@@ -211,7 +201,7 @@ public class Main {
 			out("Notice: Not waiting for anything...");
 		}
 
-		if (args.length == 0) {																//we didnt find a an X and Z size, so lets ask for one.
+		if (args.length == 0) {																//we didn't find a an X and Z size, so lets ask for one.
 			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			outP(var.MLG + "X:");
 			xRange = Input_CLI.getInt("X:");
@@ -296,14 +286,14 @@ public class Main {
 					String line;
 					while ((line = in.readLine()) != null) {
 						if (line.contains("###RECHECK###")) {
-							recheckFlag = !recheckFlag;
+							var.recheckFlag = !var.recheckFlag;
 						} else {
 							DownloadFile.downloadFile(line, true);
 						}
 					}
 					in.close();
 
-					if (recheckFlag == true) {
+					if (var.recheckFlag == true) {				// the first line is always the location of this file.  the second is the recheck flag, if we want to. 
 						try {
 							recheckMD5 = MD5.fileMD5(config.toString());
 						} catch (final NoSuchAlgorithmException e) {
@@ -316,7 +306,7 @@ public class Main {
 							String line_recheck;
 							while ((line_recheck = in_recheck.readLine()) != null) {
 								if (line_recheck.contains("###RECHECK###")) {
-									recheckFlag = !recheckFlag;
+									var.recheckFlag = !var.recheckFlag;
 								} else {
 									DownloadFile.downloadFile(line_recheck, true);
 								}
@@ -410,7 +400,7 @@ public class Main {
 		}
 
 		var.verbose = false;			// Verifing that these vars are false
-		alternate = false;			// before changing them...
+		var.alternate = false;			// before changing them...
 
 		// This is embarrassing. Don't look.
 		try {
@@ -421,15 +411,15 @@ public class Main {
 					out("Notice: Verbose Mode");
 
 				} else if (nextSwitch.startsWith("-i")) {
-					increment = Integer.parseInt(args[i + 2].substring(2));
-					out("Notice: Non-Default Increment: " + increment);
+					var.increment = Integer.parseInt(args[i + 2].substring(2));
+					out("Notice: Non-Default Increment: " + var.increment);
 
 				} else if (nextSwitch.startsWith("-w")) {
 					var.ignoreWarnings = true;
 					out("Notice: Warnings from Server are Ignored");
 
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
-					alternate = true;
+					var.alternate = true;
 					out("Notice: Using Alternate Launching");
 
 				} else if (nextSwitch.startsWith("-x")) {
@@ -494,7 +484,7 @@ public class Main {
 		//                              PROCESSING
 		// =====================================================================
 
-		out("Processing world \"" + var.worldPath + "\", in " + increment
+		out("Processing world \"" + var.worldPath + "\", in " + var.increment
 				+ " block increments, with: " + var.javaLine);
 		// out( MLG + "Processing \"" + worldName + "\"...");
 
@@ -511,7 +501,7 @@ public class Main {
 
 			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
 
-			final boolean serverLaunch = Server.runMinecraft(alternate);
+			final boolean serverLaunch = Server.runMinecraft();
 
 			if (!(serverLaunch)) {
 				System.exit(1);				// we got a warning or severe error
@@ -579,15 +569,15 @@ public class Main {
 			// run mlg on remaining list of spawn points.
 
 			// X
-			xLoops = ((double) xRange / (double) increment);		//How many loops do we need?
+			xLoops = ((double) xRange / (double) var.increment);		//How many loops do we need?
 			xLoops = Math.ceil(xLoops);								//round up to find out!
-			xRangeAdj = (int) (xLoops * increment);
+			xRangeAdj = (int) (xLoops * var.increment);
 			xLoops = xLoops + 1;
 
 			// Z
-			zLoops = ((double) zRange / (double) increment);		//How many loops do we need?
+			zLoops = ((double) zRange / (double) var.increment);		//How many loops do we need?
 			zLoops = Math.ceil(zLoops);								//round up to find out!
-			zRangeAdj = (int) (zLoops * increment);
+			zRangeAdj = (int) (zLoops * var.increment);
 			zLoops = zLoops + 1;
 
 			out("Calculating Spawn Points...");
@@ -601,22 +591,22 @@ public class Main {
 
 			final ArrayList<Coordinates> launchList = new ArrayList<Coordinates>(totalIterations);
 
-			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += increment) {
+			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += var.increment) {
 				curXloops++;
 				if (curXloops == 1) {
-					currentX = (((0 - xRange) / 2) + (increment / 2) + 16);
+					currentX = (((0 - xRange) / 2) + (var.increment / 2) + 16);
 				} else if (curXloops == xLoops) {
-					currentX = (xRange / 2) - (increment / 2);
+					currentX = (xRange / 2) - (var.increment / 2);
 				}
 
-				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += increment) {
+				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += var.increment) {
 					currentIteration++;
 
 					curZloops++;
 					if (curZloops == 1) {
-						currentZ = (((0 - zRange) / 2) + (increment / 2) + 16);
+						currentZ = (((0 - zRange) / 2) + (var.increment / 2) + 16);
 					} else if (curZloops == zLoops) {
-						currentZ = (zRange / 2) - (increment / 2);
+						currentZ = (zRange / 2) - (var.increment / 2);
 					}
 
 					{
@@ -632,13 +622,14 @@ public class Main {
 
 					if (curZloops == 1) {
 						currentZ =
-								(int) ((Math.ceil((((0 - zRangeAdj) / 2) / increment))) * increment);
+								(int) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
 					}
 
 				}
 				curZloops = 0;
 				if (curXloops == 1) {
-					currentX = (int) ((Math.ceil((((0 - xRangeAdj) / 2) / increment))) * increment);
+					currentX =
+							(int) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
 				}
 			}
 
@@ -692,7 +683,7 @@ public class Main {
 				// Launch the server
 				boolean serverSuccess = false;
 
-				serverSuccess = Server.runMinecraft(alternate);
+				serverSuccess = Server.runMinecraft();
 				out("");
 
 				//////// End server launch code
@@ -718,7 +709,7 @@ public class Main {
 			out("Restored original level.dat.");
 
 			out("Generation complete in: "
-					+ Time.displayTime(startTime, System.currentTimeMillis()));
+					+ Time.displayTime(var.startTime, System.currentTimeMillis()));
 			Time.waitTenSec(false);
 
 			//TODO: add if's
