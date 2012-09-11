@@ -13,3 +13,6 @@ java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -nowait -conf
 java -Djava.awt.headless=true -jar MinecraftLandGenerator.jar -nowait 0 0 -w
 rm -rf world
 
+## Need to test the following on a mac:
+##read -s -n 1 -p "Press any key to continue . . ."
+##echo 
