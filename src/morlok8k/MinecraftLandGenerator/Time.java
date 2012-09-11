@@ -1,55 +1,6 @@
 package morlok8k.MinecraftLandGenerator;
 
-
 public class Time {
-
-	/**
-	 * waits ten seconds. outputs 10%, 20%, etc after each second.
-	 * 
-	 * @author Morlok8k
-	 */
-	public static void waitTenSec(final boolean output) {
-
-		if (Main.dontWait) { return; }			//Don't wait!
-
-		if (output) {
-			Main.outP(Main.MLG);						//here we wait 10 sec.
-		}
-
-		int count = 0;
-		while (count <= 100) {
-			if (output) {
-				Main.outP(count + "% ");
-			}
-
-			try {
-				Thread.sleep(1000);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-			count += 10;
-		}
-		if (output) {
-			Main.outP(Main.newLine);
-		}
-		return;
-
-	}
-
-	/**
-	 * Returns the time in a readable format between two points of time given in Millis.
-	 * 
-	 * @param startTimeMillis
-	 * @param endTimeMillis
-	 * @author Morlok8k
-	 * @return String of Readable Time
-	 */
-	public static String displayTime(final long startTimeMillis, final long endTimeMillis) {
-
-		final long millis = (endTimeMillis - startTimeMillis);
-		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
-		return (Time.displayTime(millis));
-	}
 
 	/**
 	 * Returns the time in a readable format given a time in Millis.
@@ -79,7 +30,7 @@ public class Time {
 						+ String.format("%d " + ((seconds % 60) == 1 ? "Second" : "Seconds"),
 								seconds % 60);
 
-		if (!(Main.verbose)) {
+		if (!(var.verbose)) {
 			final int commaFirst = took.indexOf(",");
 			final int commaSecond = took.substring((commaFirst + 1), took.length()).indexOf(",");
 			int end = (commaFirst + 1 + commaSecond);
@@ -97,6 +48,54 @@ public class Time {
 
 		took = took.trim();
 		return (took);
+	}
+
+	/**
+	 * Returns the time in a readable format between two points of time given in Millis.
+	 * 
+	 * @param startTimeMillis
+	 * @param endTimeMillis
+	 * @author Morlok8k
+	 * @return String of Readable Time
+	 */
+	public static String displayTime(final long startTimeMillis, final long endTimeMillis) {
+
+		final long millis = (endTimeMillis - startTimeMillis);
+		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
+		return (Time.displayTime(millis));
+	}
+
+	/**
+	 * waits ten seconds. outputs 10%, 20%, etc after each second.
+	 * 
+	 * @author Morlok8k
+	 */
+	public static void waitTenSec(final boolean output) {
+
+		if (var.dontWait) { return; }			//Don't wait!
+
+		if (output) {
+			Main.outP(var.MLG);						//here we wait 10 sec.
+		}
+
+		int count = 0;
+		while (count <= 100) {
+			if (output) {
+				Main.outP(count + "% ");
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+			count += 10;
+		}
+		if (output) {
+			Main.outP(var.newLine);
+		}
+		return;
+
 	}
 
 }

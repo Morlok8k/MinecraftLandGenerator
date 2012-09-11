@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 public class FileRead {
 
 	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
@@ -45,8 +44,8 @@ public class FileRead {
 						xx = line.indexOf('X');
 						zz = line.indexOf('Z');
 
-						Main.resumeX = Integer.parseInt(line.substring(xx + 1, zz));
-						Main.resumeZ = Integer.parseInt(line.substring(zz + 1));
+						var.resumeX = Integer.parseInt(line.substring(xx + 1, zz));
+						var.resumeZ = Integer.parseInt(line.substring(zz + 1));
 
 					}
 				}
@@ -73,7 +72,7 @@ public class FileRead {
 		//String errorMsg = "";
 
 		try {
-			final File config = new File(Main.MinecraftLandGeneratorConf);
+			final File config = new File(var.MinecraftLandGeneratorConf);
 			final BufferedReader in = new BufferedReader(new FileReader(config));
 			String line = "";
 			String property = "";
@@ -108,79 +107,79 @@ public class FileRead {
 					}
 
 					if (property.equals("serverpath")) {
-						Main.serverPath = value;
+						var.serverPath = value;
 					} else if (property.equals("java")) {
-						Main.javaLine = value;
+						var.javaLine = value;
 					} else if (property.equals("done_text")) {
-						Main.doneText = value;
+						var.doneText = value;
 					} else if (property.equals("preparing_text")) {
-						Main.preparingText = value;
+						var.preparingText = value;
 					} else if (property.equals("preparing_level")) {
-						Main.preparingLevel = value;
+						var.preparingLevel = value;
 					} else if (property.equals("level-0")) {
-						Main.level_0 = value;
+						var.level_0 = value;
 					} else if (property.equals("level-1")) {
-						Main.level_1 = value;
+						var.level_1 = value;
 					} else if (property.equals("level-2")) {
-						Main.level_2 = value;
+						var.level_2 = value;
 					} else if (property.equals("level-3")) {
-						Main.level_3 = value;
+						var.level_3 = value;
 					} else if (property.equals("level-4")) {
-						Main.level_4 = value;
+						var.level_4 = value;
 					} else if (property.equals("level-5")) {
-						Main.level_5 = value;
+						var.level_5 = value;
 					} else if (property.equals("level-6")) {
-						Main.level_6 = value;
+						var.level_6 = value;
 					} else if (property.equals("level-7")) {
-						Main.level_7 = value;
+						var.level_7 = value;
 					} else if (property.equals("level-8")) {
-						Main.level_8 = value;
+						var.level_8 = value;
 					} else if (property.equals("level-9")) {
-						Main.level_9 = value;
+						var.level_9 = value;
 					} else if (property.equals("waitsave")) {
 						if (value.toLowerCase().equals("true")) {
-							Main.waitSave = true;
+							var.waitSave = true;
 						} else {
-							Main.waitSave = false;
+							var.waitSave = false;
 						}
 					} else if (property.equals("weblaunch")) {
 						if (value.toLowerCase().equals("true")) {
-							Main.webLaunch = true;
+							var.webLaunch = true;
 						} else {
-							Main.webLaunch = false;
+							var.webLaunch = false;
 						}
 					}
 				}
 			}
 			in.close();
 
-			if (Main.testing) {
+			if (var.testing) {
 				Main.outD("Test Output: Reading of Config File ");
-				Main.outD("    serverPath: " + Main.serverPath);
-				Main.outD("      javaLine: " + Main.javaLine);
-				Main.outD("      doneText: " + Main.doneText);
-				Main.outD(" preparingText: " + Main.preparingText);
-				Main.outD("preparingLevel: " + Main.preparingLevel);
-				Main.outD("       level_0: " + Main.level_0);
-				Main.outD("       level_1: " + Main.level_1);
-				Main.outD("       level_2: " + Main.level_2);
-				Main.outD("       level_3: " + Main.level_3);
-				Main.outD("       level_4: " + Main.level_4);
-				Main.outD("       level_5: " + Main.level_5);
-				Main.outD("       level_6: " + Main.level_6);
-				Main.outD("       level_7: " + Main.level_7);
-				Main.outD("       level_8: " + Main.level_8);
-				Main.outD("       level_9: " + Main.level_9);
-				Main.outD("      waitSave: " + Main.waitSave);
-				Main.outD("     webLaunch: " + Main.webLaunch);
+				Main.outD("    serverPath: " + var.serverPath);
+				Main.outD("      javaLine: " + var.javaLine);
+				Main.outD("      doneText: " + var.doneText);
+				Main.outD(" preparingText: " + var.preparingText);
+				Main.outD("preparingLevel: " + var.preparingLevel);
+				Main.outD("       level_0: " + var.level_0);
+				Main.outD("       level_1: " + var.level_1);
+				Main.outD("       level_2: " + var.level_2);
+				Main.outD("       level_3: " + var.level_3);
+				Main.outD("       level_4: " + var.level_4);
+				Main.outD("       level_5: " + var.level_5);
+				Main.outD("       level_6: " + var.level_6);
+				Main.outD("       level_7: " + var.level_7);
+				Main.outD("       level_8: " + var.level_8);
+				Main.outD("       level_9: " + var.level_9);
+				Main.outD("      waitSave: " + var.waitSave);
+				Main.outD("     webLaunch: " + var.webLaunch);
 			}
 		} catch (final FileNotFoundException ex) {
 			Main.out("Could not find "
-					+ Main.MinecraftLandGeneratorConf
+					+ var.MinecraftLandGeneratorConf
 					+ ". It is recommended that you run the application with the -conf option to create it.");
 			return;
 		} catch (final IOException ex) {
-			Main.err("Could not read " + Main.MinecraftLandGeneratorConf + ".");
+			Main.err("Could not read " + var.MinecraftLandGeneratorConf + ".");
 			return;
 		}
 	}

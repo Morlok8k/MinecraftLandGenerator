@@ -17,20 +17,20 @@ public class Server {
 	 * @author Corrodias
 	 */
 	protected static boolean runMinecraft(final boolean alternate) throws IOException {
-		if (Main.verbose) {
+		if (var.verbose) {
 			Main.out("Starting server.");
 		}
 		boolean serverSuccess = true;
 		boolean warning = false;
 		boolean warningsWeCanIgnore = false;
-		final boolean ignoreWarningsOriginal = Main.ignoreWarnings;
+		final boolean ignoreWarningsOriginal = var.ignoreWarnings;
 
 		// monitor output and print to console where required.
 		// STOP the server when it's done.
 
 		if (alternate) { // Alternate - a replication (slightly stripped down) of MLG 1.3.0's code. simplest code possible.
 			Main.out("Alternate Launch");
-			final Process process = Main.minecraft.start();
+			final Process process = var.minecraft.start();
 
 			//byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 			final byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
@@ -45,7 +45,7 @@ public class Server {
 				line = line.trim();
 
 				System.out.println(line);
-				if (line.contains(Main.doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
+				if (line.contains(var.doneText)) { // EDITED By Morlok8k for Minecraft 1.3+ Beta
 					final OutputStream outputStream = process.getOutputStream();
 
 					Main.out("Stopping server...  (Please Wait...)");
@@ -57,13 +57,13 @@ public class Server {
 			// End while loop
 
 		} else { // start minecraft server normally!
-			final Process process = Main.minecraft.start();
-			if (Main.verbose) {
+			final Process process = var.minecraft.start();
+			if (var.verbose) {
 				Main.out("Started Server.");
 			}
 			final BufferedReader pOut =
 					new BufferedReader(new InputStreamReader(process.getInputStream()));
-			if (Main.verbose) {
+			if (var.verbose) {
 				Main.out("Accessing Server Output...");
 			}
 
@@ -95,11 +95,11 @@ public class Server {
 					shortLine = line;
 				}
 
-				if (Main.verbose) {
+				if (var.verbose) {
 					Main.outS(shortLine);
 					//} else if (line.toLowerCase().contains("saving")) {		//this was just clutter
 					//	Main.outS(shortLine);
-				} else if (line.contains(Main.preparingText) || line.contains("Converting...")) {
+				} else if (line.contains(var.preparingText) || line.contains("Converting...")) {
 					if (line.contains("Converting...")) {
 						convertedMapFormattingFlag = true;
 					}
@@ -113,71 +113,71 @@ public class Server {
 					outTmp = outTmp2;
 
 					if (prepTextFirst) {
-						Main.outP(Main.MLG + outTmp + "...");
+						Main.outP(var.MLG + outTmp + "...");
 						prepTextFirst = false;
 					} else {
 						//Main.outP(" " + outTmp + "...");
-						Main.outP("\r" + Main.MLG + outTmp + "...");		//here we use \r to go back to the previous line, and rewrite it
+						Main.outP("\r" + var.MLG + outTmp + "...");		//here we use \r to go back to the previous line, and rewrite it
 					}
 
 					//}
 
-				} else if (line.contains(Main.preparingLevel)) {
+				} else if (line.contains(var.preparingLevel)) {
 					prepTextFirst = true;
 
 					if (convertedMapFormattingFlag == true) {
-						Main.outP(Main.newLine);
+						Main.outP(var.newLine);
 						convertedMapFormattingFlag = false;
 					}
 
 					if (line.contains("level 0")) { // "Preparing start region for level 0"
-						Main.outP(Main.MLG + Main.worldName + ": " + Main.level_0 + ":"
-								+ Main.newLine);
+						Main.outP(var.MLG + var.worldName + ": " + var.level_0 + ":"
+								+ var.newLine);
 					} else if (line.contains("level 1")) { // "Preparing start region for level 1"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_1
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_1
+								+ ":" + var.newLine);
 					} else if (line.contains("level 2")) { // "Preparing start region for level 2"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_2
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_2
+								+ ":" + var.newLine);
 					} else if (line.contains("level 3")) { // "Preparing start region for level 3"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_3
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_3
+								+ ":" + var.newLine);
 					} else if (line.contains("level 4")) { // "Preparing start region for level 4"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_4
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_4
+								+ ":" + var.newLine);
 					} else if (line.contains("level 5")) { // "Preparing start region for level 5"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_5
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_5
+								+ ":" + var.newLine);
 					} else if (line.contains("level 6")) { // "Preparing start region for level 6"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_6
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_6
+								+ ":" + var.newLine);
 					} else if (line.contains("level 7")) { // "Preparing start region for level 7"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_7
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_7
+								+ ":" + var.newLine);
 					} else if (line.contains("level 8")) { // "Preparing start region for level 8"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_8
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_8
+								+ ":" + var.newLine);
 					} else if (line.contains("level 9")) { // "Preparing start region for level 9"
-						Main.outP(Main.newLine + Main.MLG + Main.worldName + ": " + Main.level_9
-								+ ":" + Main.newLine);
+						Main.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_9
+								+ ":" + var.newLine);
 					} else {
-						Main.outP(Main.newLine + Main.MLG + shortLine);
+						Main.outP(var.newLine + var.MLG + shortLine);
 					}
 				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
 					Main.outS(shortLine);
 
-					if (line.contains("server version") && Main.MC_Server_Version.isEmpty()) {
+					if (line.contains("server version") && var.MC_Server_Version.isEmpty()) {
 						// if server version, save string to variable, for use in arraylist save file.
-						Main.MC_Server_Version = shortLine;
+						var.MC_Server_Version = shortLine;
 					}
 
 				}
 
-				if (line.contains(Main.doneText)) { // now this is configurable!
+				if (line.contains(var.doneText)) { // now this is configurable!
 
-					Main.outP(Main.newLine);
+					Main.outP(var.newLine);
 					Main.outS(line.substring(line.lastIndexOf("]") + 2, line.indexOf("!")));
-					if (Main.waitSave) {
+					if (var.waitSave) {
 						Main.out("Waiting 30 seconds to save...");
 
 						int count = 1;
@@ -203,7 +203,7 @@ public class Server {
 					outputStream.flush();
 					// outputStream.close();
 
-					if (Main.waitSave) {
+					if (var.waitSave) {
 						Main.out("Waiting 10 seconds to save.");
 						int count = 1;
 						while (count <= 10) {
@@ -223,26 +223,26 @@ public class Server {
 				//Here we want to ignore the most common warning: "Can't keep up!"
 				if (line.contains("Can't keep up!")) {	//TODO: add to .conf
 					warningsWeCanIgnore = true;			//[WARNING] Can't keep up! Did the system time change, or is the server overloaded?
-					Main.ignoreWarnings = true;
+					var.ignoreWarnings = true;
 				} else if (line.contains("[WARNING] To start the server with more ram")) {
-					if (Main.verbose == false) { // If verbose is true, we already displayed it.
+					if (var.verbose == false) { // If verbose is true, we already displayed it.
 						Main.outS(line);
 					}
 					warningsWeCanIgnore = true;			//we can safely ignore this...
-					Main.ignoreWarnings = true;
+					var.ignoreWarnings = true;
 				} else if (line.contains("Error occurred during initialization of VM")
 						|| line.contains("Could not reserve enough space for object heap")) {
-					if (Main.verbose == false) { // If verbose is true, we already displayed it.
+					if (var.verbose == false) { // If verbose is true, we already displayed it.
 						Main.outP("[Java Error] " + line);
 					}
 					warning = true;
 				}
 
-				if (Main.ignoreWarnings == false) {
+				if (var.ignoreWarnings == false) {
 					if (line.contains("[WARNING]")) { // If we have a warning, stop...
 						Main.out("");
-						Main.out("Warning found: Stopping " + Main.PROG_NAME);
-						if (Main.verbose == false) { // If verbose is true, we already displayed it.
+						Main.out("Warning found: Stopping " + var.PROG_NAME);
+						if (var.verbose == false) { // If verbose is true, we already displayed it.
 							Main.outS(line);
 						}
 						Main.out("");
@@ -261,7 +261,7 @@ public class Server {
 					if (line.contains("[SEVERE]")) { // If we have a severe error, stop...
 						Main.out("");
 						Main.out("Severe error found: Stopping server.");
-						if (Main.verbose == false) { // If verbose is true, we already displayed it.
+						if (var.verbose == false) { // If verbose is true, we already displayed it.
 							Main.outS(line);
 						}
 						Main.out("");
@@ -281,7 +281,7 @@ public class Server {
 				}
 
 				if (warningsWeCanIgnore) {
-					Main.ignoreWarnings = ignoreWarningsOriginal;
+					var.ignoreWarnings = ignoreWarningsOriginal;
 				}
 			}
 

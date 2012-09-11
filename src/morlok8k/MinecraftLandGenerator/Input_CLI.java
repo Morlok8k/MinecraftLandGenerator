@@ -1,6 +1,5 @@
 package morlok8k.MinecraftLandGenerator;
 
-
 public class Input_CLI {
 
 	/**
@@ -15,16 +14,16 @@ public class Input_CLI {
 
 		int Return = 0;
 
-		while (!(Main.sc.hasNextInt())) {
-			Main.sc.nextLine();
-			Main.outP(Main.MLG + "Invalid Input. " + msg);
+		while (!(var.sc.hasNextInt())) {
+			var.sc.nextLine();
+			Main.outP(var.MLG + "Invalid Input. " + msg);
 		}
 
-		Return = Main.sc.nextInt();
+		Return = var.sc.nextInt();
 
 		if (Return < 1000) {
 			Main.out("Input must be 1000 or larger.");
-			Main.outP(Main.MLG + msg);
+			Main.outP(var.MLG + msg);
 			Return = getInt(msg);
 		}
 

@@ -16,115 +16,6 @@ public class Coordinates {
 	//		Minecraft starts failing around (+/-) 12,550,820 and ends at either (+/-) 30,000,000 or (+/-) 32,000,000 (depending on the version).
 	// See: http://www.minecraftwiki.net/wiki/Far_Lands for more info.
 
-	public int X = 0;
-	public int Y = 0;
-	public int Z = 0;
-
-	/**
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public Coordinates(final int x, final int y, final int z) {
-		super();
-		X = x;
-		Y = y;
-		Z = z;
-	}
-
-	/**
-	 * Someone created a new blank Coordinate! Lets set it to be [0,0,0].
-	 */
-	public Coordinates() {
-		clear();
-	}
-
-	/**
-	 * @return the x
-	 */
-	public int getX() {
-		return X;
-	}
-
-	/**
-	 * @return the y
-	 */
-	public int getY() {
-		return Y;
-	}
-
-	/**
-	 * @return the z
-	 */
-	public int getZ() {
-		return Z;
-	}
-
-	/**
-	 * @param x
-	 *            the x to set
-	 */
-	public void setX(final int x) {
-		X = x;
-	}
-
-	/**
-	 * @param y
-	 *            the y to set
-	 */
-	public void setY(final int y) {
-		Y = y;
-	}
-
-	/**
-	 * @param z
-	 *            the z to set
-	 */
-	public void setZ(final int z) {
-		Z = z;
-	}
-
-	public void clear() {
-		X = 0;
-		Y = 0;
-		Z = 0;
-	}
-
-	/**
-	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored (FIXME).
-	 * 
-	 * @param stringOfCoords
-	 *            A short- or long-form coordinate string as described at the two toString() methods
-	 * @author jaseg
-	 */
-	public static Coordinates parseStringRegEx(String stringOfCoords) {
-		int X = 0, Y = 0, Z = 0;
-		boolean matched = false;
-		Matcher shortForm = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)").matcher(stringOfCoords);
-		Matcher normalForm =
-				Pattern.compile("\\[(-?\\d+),(-?\\d+),(-?\\d+)\\]").matcher(stringOfCoords);
-
-		if (shortForm.matches()) {
-			X = Integer.parseInt(shortForm.group(1));
-			Y = 64;
-			Z = Integer.parseInt(shortForm.group(2));
-			matched = true;
-		}
-
-		if (normalForm.matches()) {
-			X = Integer.parseInt(normalForm.group(1));
-			Y = Integer.parseInt(normalForm.group(2));
-			Z = Integer.parseInt(normalForm.group(3));
-			matched = true;
-		}
-
-		if (!matched) {
-			System.err.println("Invalid coordinate format: " + stringOfCoords);
-			System.err.println();
-		}
-		return new Coordinates(X, Y, Z);
-	}
-
 	/**
 	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored (FIXME).
 	 * 
@@ -195,51 +86,71 @@ public class Coordinates {
 		return new Coordinates(x, y, z);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	// Java Language Specific Crap Below...  Stuff *gotta* be there so Java won't cry... //
-	///////////////////////////////////////////////////////////////////////////////////////
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored (FIXME).
+	 * 
+	 * @param stringOfCoords
+	 *            A short- or long-form coordinate string as described at the two toString() methods
+	 * @author jaseg
 	 */
-	@Override
-	public String toString() {
-		// I am overriding the inherited toString method.
-		// Because it doesn't know how to deal with my custom data.
-		// So instead of getting "blahblahblah.Coordinates@745f"
-		//		(the location of the class and the hexstring of the hashcode)
-		// I return "[X,Y,Z]" 
+	public static Coordinates parseStringRegEx(String stringOfCoords) {
+		int X = 0, Y = 0, Z = 0;
+		boolean matched = false;
+		final Matcher shortForm =
+				Pattern.compile("\\((-?\\d+),(-?\\d+)\\)").matcher(stringOfCoords);
+		final Matcher normalForm =
+				Pattern.compile("\\[(-?\\d+),(-?\\d+),(-?\\d+)\\]").matcher(stringOfCoords);
 
-		return ("[" + X + "," + Y + "," + Z + "]");
-
-	}
-
-	public String toString(final boolean Short) {
-		if (Short) {								// We are overloading toString with an additional option:
-			return ("(" + X + "," + Z + ")");		// Basically just an option to return just X and Z  (formatted differently as well: "(X,Z)")
+		if (shortForm.matches()) {
+			X = Integer.parseInt(shortForm.group(1));
+			Y = 64;
+			Z = Integer.parseInt(shortForm.group(2));
+			matched = true;
 		}
-		return toString();							// Idiot catch.  default to: "[X,Y,Z]"
 
+		if (normalForm.matches()) {
+			X = Integer.parseInt(normalForm.group(1));
+			Y = Integer.parseInt(normalForm.group(2));
+			Z = Integer.parseInt(normalForm.group(3));
+			matched = true;
+		}
+
+		if (!matched) {
+			System.err.println("Invalid coordinate format: " + stringOfCoords);
+			System.err.println();
+		}
+		return new Coordinates(X, Y, Z);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// I am overriding the inherited hashCode method.
-		// Because it doesn't know how to deal with my custom data.
-		// So instead of getting who knows what, we return valid data
+	public int X = 0;
 
-		final int prime = 31;			// My hard coded prime number
-		int result = 1;					// The hard coded number I start with
-		result = (prime * result) + X;	// Add the X data
-		result = (prime * result) + Y;	// Add the Y data
-		result = (prime * result) + Z;	// Add the Z data
-		return result;			//this result will consistently give the same result for the same data.
-		// [0,0,0] will always give 29791.  [1,2,3] will always give 30817.
-		//yes, If I was lazy, I could just do a "return 0;" and it would still be technically valid.
-		//but if I'm going override the method, I might as well do it right...
+	public int Y = 0;
+
+	public int Z = 0;
+
+	/**
+	 * Someone created a new blank Coordinate! Lets set it to be [0,0,0].
+	 */
+	public Coordinates() {
+		clear();
+	}
+
+	/**
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public Coordinates(final int x, final int y, final int z) {
+		super();
+		X = x;
+		Y = y;
+		Z = z;
+	}
+
+	public void clear() {
+		X = 0;
+		Y = 0;
+		Z = 0;
 	}
 
 	/* (non-Javadoc)
@@ -268,5 +179,97 @@ public class Coordinates {
 		if (Y != c.Y) { return false; }
 		if (Z != c.Z) { return false; }
 		return true;			// If none of the above returned something, they must be equal!
+	}
+
+	/**
+	 * @return the x
+	 */
+	public int getX() {
+		return X;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public int getY() {
+		return Y;
+	}
+
+	/**
+	 * @return the z
+	 */
+	public int getZ() {
+		return Z;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		// I am overriding the inherited hashCode method.
+		// Because it doesn't know how to deal with my custom data.
+		// So instead of getting who knows what, we return valid data
+
+		final int prime = 31;			// My hard coded prime number
+		int result = 1;					// The hard coded number I start with
+		result = (prime * result) + X;	// Add the X data
+		result = (prime * result) + Y;	// Add the Y data
+		result = (prime * result) + Z;	// Add the Z data
+		return result;			//this result will consistently give the same result for the same data.
+		// [0,0,0] will always give 29791.  [1,2,3] will always give 30817.
+		//yes, If I was lazy, I could just do a "return 0;" and it would still be technically valid.
+		//but if I'm going override the method, I might as well do it right...
+	}
+
+	/**
+	 * @param x
+	 *            the x to set
+	 */
+	public void setX(final int x) {
+		X = x;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	// Java Language Specific Crap Below...  Stuff *gotta* be there so Java won't cry... //
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @param y
+	 *            the y to set
+	 */
+	public void setY(final int y) {
+		Y = y;
+	}
+
+	/**
+	 * @param z
+	 *            the z to set
+	 */
+	public void setZ(final int z) {
+		Z = z;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		// I am overriding the inherited toString method.
+		// Because it doesn't know how to deal with my custom data.
+		// So instead of getting "blahblahblah.Coordinates@745f"
+		//		(the location of the class and the hexstring of the hashcode)
+		// I return "[X,Y,Z]" 
+
+		return ("[" + X + "," + Y + "," + Z + "]");
+
+	}
+
+	public String toString(final boolean Short) {
+		if (Short) {								// We are overloading toString with an additional option:
+			return ("(" + X + "," + Z + ")");		// Basically just an option to return just X and Z  (formatted differently as well: "(X,Z)")
+		}
+		return toString();							// Idiot catch.  default to: "[X,Y,Z]"
+
 	}
 }

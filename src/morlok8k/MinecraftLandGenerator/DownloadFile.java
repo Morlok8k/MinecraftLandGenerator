@@ -10,7 +10,6 @@ import java.net.URL;
 
 import org.w3c.bert_bos.UTF8URL.Unescape;
 
-
 public class DownloadFile {
 
 	/**
@@ -58,7 +57,7 @@ public class DownloadFile {
 		timeTracking[0] = System.currentTimeMillis();
 
 		if (Output) {
-			Main.outP(Main.MLG + "*");
+			Main.outP(var.MLG + "*");
 		}
 
 		try {
@@ -80,7 +79,7 @@ public class DownloadFile {
 			bout.close();
 			in.close();
 			if (Output) {
-				Main.outP(Main.newLine);
+				Main.outP(var.newLine);
 				Main.out(count + " byte(s) copied");
 			}
 

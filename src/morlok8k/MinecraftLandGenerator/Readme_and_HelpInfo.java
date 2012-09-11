@@ -1,12 +1,11 @@
 package morlok8k.MinecraftLandGenerator;
 
-
 public class Readme_and_HelpInfo {
 
-	static String newLine = Main.newLine;
-	static String MLGFileNameShort = Main.MLGFileNameShort;
-	static String MinecraftLandGeneratorConf = Main.MinecraftLandGeneratorConf;
-	static String defaultReadmeFile = Main.defaultReadmeFile;
+	static String newLine = var.newLine;
+	static String MLGFileNameShort = var.MLGFileNameShort;
+	static String MinecraftLandGeneratorConf = var.MinecraftLandGeneratorConf;
+	static String defaultReadmeFile = var.defaultReadmeFile;
 
 	/**
 	 * Saves a Readme file.
@@ -22,9 +21,9 @@ public class Readme_and_HelpInfo {
 		}
 
 		final String MLG_Last_Modified_MDY =
-				Main.dateFormat_MDY.format(Main.MLG_Last_Modified_Date);
-		final String PROG_NAME = Main.PROG_NAME;
-		final String VERSION = Main.VERSION;
+				var.dateFormat_MDY.format(var.MLG_Last_Modified_Date);
+		final String PROG_NAME = var.PROG_NAME;
+		final String VERSION = var.VERSION;
 
 		String showHelpSTR = "";
 		String ReadMeText = "";
@@ -34,7 +33,7 @@ public class Readme_and_HelpInfo {
 		ReadMeText = PROG_NAME + " version " + VERSION + newLine
 				+ newLine
 				+ "Updated " + MLG_Last_Modified_MDY + newLine
-				+ "(BuildID: " + Main.MLG_Last_Modified_Date.getTime() + ")" + newLine
+				+ "(BuildID: " + var.MLG_Last_Modified_Date.getTime() + ")" + newLine
 				+ newLine
 				+ "Original Code by Corrodias		November 2010" + newLine
 				+ "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + MLG_Last_Modified_MDY + "!)" + newLine
@@ -46,7 +45,7 @@ public class Readme_and_HelpInfo {
 				+ newLine
 				+ "-----------------------------------------------" + newLine
 				+ newLine
-				+ "This program lets you generate an area of land with your Minecraft Beta SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program." + newLine
+				+ "This program lets you generate an area of land with your Minecraft SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program." + newLine
 				+ "When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point." + newLine
 				+ "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + newLine
 				+ newLine
@@ -70,6 +69,14 @@ public class Readme_and_HelpInfo {
 				+ newLine 
 				+ "Version History:" + newLine
 				+ "Morlok8k:" + newLine
+				+ "1.7.1" + newLine
+				+ "- TODO: %done tweak" + newLine		//TODO
+				+ "- TODO: outliers issue / region fix" + newLine
+				+ "- TODO: 16/512 block selecting" + newLine
+				+ "- TODO: remember that the outside is 400, not 380!" + newLine
+				+ "- TODO: always calculate from orgin, just adjust outer box to match" + newLine
+				+ "- TODO: recaculate existing coords with new code" + newLine
+				+ "- TODO: change 380 to 384?" + newLine		//TODO  
 				+ "1.7.0" + newLine
 				+ "- Major Code Optimization" + newLine
 				+ "- Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!" + newLine
@@ -226,12 +233,12 @@ public class Readme_and_HelpInfo {
 		String Str = null;
 		String NewLine = newLine;
 		if (SysOut) {
-			NewLine = NewLine + Main.MLG;
+			NewLine = NewLine + var.MLG;
 		}
 
-		MLGFileNameShort = Main.MLGFileNameShort;
-		MinecraftLandGeneratorConf = Main.MinecraftLandGeneratorConf;
-		defaultReadmeFile = Main.defaultReadmeFile;
+		MLGFileNameShort = var.MLGFileNameShort;
+		MinecraftLandGeneratorConf = var.MinecraftLandGeneratorConf;
+		defaultReadmeFile = var.defaultReadmeFile;
 
 		//@formatter:off
 		Str =	"Usage: java -jar " + MLGFileNameShort + " x z [serverpath] [switches]" + NewLine

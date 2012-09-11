@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 import org.jnbt.CompoundTag;
 import org.jnbt.IntTag;
 import org.jnbt.LongTag;
@@ -17,6 +16,44 @@ import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
 
 public class SpawnPoint {
+
+	//TODO: update this
+	/**
+	 * @param level
+	 * @return
+	 * @throws IOException
+	 * @author Corrodias
+	 */
+	protected static Coordinates getSpawn(final File level) throws IOException {
+		try {
+			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
+			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
+			input.close();
+
+			final Map<String, Tag> originalData =
+					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
+			// This is our map of data. It is an unmodifiable map, for some
+			// reason, so we have to make a copy.
+			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
+			// .get() a couple of values, just to make sure we're dealing with a
+			// valid level file, here. Good for debugging, too.
+			final IntTag spawnX = (IntTag) newData.get("SpawnX");
+			final IntTag spawnY = (IntTag) newData.get("SpawnY");
+			final IntTag spawnZ = (IntTag) newData.get("SpawnZ");
+
+			final LongTag Seed = (LongTag) newData.get("RandomSeed");
+			var.randomSeed = Seed.getValue();
+			Main.out("Seed: " + var.randomSeed); // lets output the seed, cause why not?
+
+			final Coordinates ret =
+					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
+			return ret;
+		} catch (final ClassCastException ex) {
+			throw new IOException("Invalid level format.");
+		} catch (final NullPointerException ex) {
+			throw new IOException("Invalid level format.");
+		}
+	}
 
 	/**
 	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.<br>
@@ -94,44 +131,6 @@ public class SpawnPoint {
 			final NBTOutputStream output = new NBTOutputStream(new FileOutputStream(level));
 			output.writeTag(newTopLevelTag);
 			output.close();
-		} catch (final ClassCastException ex) {
-			throw new IOException("Invalid level format.");
-		} catch (final NullPointerException ex) {
-			throw new IOException("Invalid level format.");
-		}
-	}
-
-	//TODO: update this
-	/**
-	 * @param level
-	 * @return
-	 * @throws IOException
-	 * @author Corrodias
-	 */
-	protected static Coordinates getSpawn(final File level) throws IOException {
-		try {
-			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
-			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
-			input.close();
-
-			final Map<String, Tag> originalData =
-					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
-			// This is our map of data. It is an unmodifiable map, for some
-			// reason, so we have to make a copy.
-			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
-			// .get() a couple of values, just to make sure we're dealing with a
-			// valid level file, here. Good for debugging, too.
-			final IntTag spawnX = (IntTag) newData.get("SpawnX");
-			final IntTag spawnY = (IntTag) newData.get("SpawnY");
-			final IntTag spawnZ = (IntTag) newData.get("SpawnZ");
-
-			final LongTag Seed = (LongTag) newData.get("RandomSeed");
-			Main.randomSeed = Seed.getValue();
-			Main.out("Seed: " + Main.randomSeed); // lets output the seed, cause why not?
-
-			final Coordinates ret =
-					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
-			return ret;
 		} catch (final ClassCastException ex) {
 			throw new IOException("Invalid level format.");
 		} catch (final NullPointerException ex) {

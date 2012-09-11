@@ -17,16 +17,16 @@ public class WorldVerify {
 		//TODO: element comment
 
 		// verify that we ended up with a good server path, either from the file or from an argument.
-		final File file = new File(Main.serverPath);
+		final File file = new File(var.serverPath);
 		if (!file.exists() || !file.isDirectory()) {
-			Main.err("The server directory is invalid: " + Main.serverPath);
+			Main.err("The server directory is invalid: " + var.serverPath);
 			return;
 		}
 
 		try {
 			// read the name of the current world from the server.properties file
 			final BufferedReader props =
-					new BufferedReader(new FileReader(new File(Main.serverPath + Main.fileSeparator
+					new BufferedReader(new FileReader(new File(var.serverPath + var.fileSeparator
 							+ "server.properties")));
 			String line;
 			while ((line = props.readLine()) != null) {
@@ -61,38 +61,8 @@ public class WorldVerify {
 					}
 
 					if (property.equals("level-name")) {
-						Main.worldPath = Main.serverPath + Main.fileSeparator + value;
-						Main.worldName = value;
-					}
-					if (Main.useRCON) {
-						if (property.equals("enable-rcon")) {
-
-							if (value.contains("true")) {
-								Main.rcon_Enabled = true;
-								Main.out("RCON is set to be Enabled on the server.");
-							} else {
-								Main.rcon_Enabled = false;
-								Main.useRCON = false;
-								Main.err("RCON is not Enabled on the server.");
-							}
-						} else if (property.equals("rcon.password")) {
-							Main.rcon_Password = value;
-							if (Main.rcon_Password.isEmpty()) {
-								Main.useRCON = false;
-								Main.err("RCON Needs a password!.");
-							}
-							Main.out("RCON Password:" + Main.rcon_Password);
-						} else if (property.equals("rcon.port")) {
-							Main.rcon_Port = value;
-							Main.out("RCON Port:" + Main.rcon_Port);
-						} else if (property.equals("server-ip")) {
-							String IP = value;
-							if (IP.isEmpty()) {
-								IP = "0.0.0.0";
-							}
-							Main.rcon_IPaddress = IP;
-
-						}
+						var.worldPath = var.serverPath + var.fileSeparator + value;
+						var.worldName = value;
 					}
 
 				}
@@ -101,14 +71,14 @@ public class WorldVerify {
 			props.close();
 
 		} catch (final FileNotFoundException ex) {
-			Main.err("Could not open " + Main.serverPath + Main.fileSeparator + "server.properties");
+			Main.err("Could not open " + var.serverPath + var.fileSeparator + "server.properties");
 			return;
 		} catch (final IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 			return;
 		}
 
-		final File level = new File(Main.worldPath + Main.fileSeparator + "level.dat");
+		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		if (!level.exists() || !level.isFile()) {
 			Main.err("The currently-configured world does not exist.");
 			return;

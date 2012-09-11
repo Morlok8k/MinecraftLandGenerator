@@ -5,14 +5,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 /**
  * http://www.roseindia.net/java/example/java/io/java-append-to-file.shtml <br>
  * Append To File - Java Tutorial
  */
 public class FileWrite {
 
-	public static final String newLine = Main.newLine;
+	public static final String newLine = var.newLine;
 
 	/**
 	 * @param file
@@ -30,6 +29,66 @@ public class FileWrite {
 		} catch (final Exception e) {//Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Generates a Config File.
+	 * 
+	 * @param newConf
+	 *            true: Uses Default values. false: uses existing values
+	 * @author Morlok8k
+	 */
+	public static void saveConf(final boolean newConf) {
+
+		String jL = null;			//javaLine
+		String sP = null;			//serverPath
+
+		if (newConf) {
+			jL = var.defaultJavaLine;	// reads the default from a constant, makes it easier!
+			sP = ".";				// 
+		} else {
+			jL = var.javaLine;			// we read these values from an existing Conf File.
+			sP = var.serverPath;		//
+		}
+
+		String txt = null;
+		//@formatter:off
+		txt = "#" + var.PROG_NAME + " Configuration File:  Version: " + var.VERSION + var.newLine
+					+ "#Authors: " + var.AUTHORS + var.newLine
+					+ "#Auto-Generated: " + var.dateFormat.format(var.date) + var.newLine
+					+ var.newLine
+					+ "#Line to run server:" + var.newLine
+					+ "Java=" + jL // reads the default from a constant, makes it easier!
+					+ var.newLine 
+					+ var.newLine
+					+ "#Location of server.  use \".\" for the same folder as MLG" + var.newLine
+					+ "ServerPath=" + sP 
+					+ var.newLine 
+					+ var.newLine 
+					+ "#Strings read from the server" + var.newLine 
+					+ "Done_Text=[INFO] Done" + var.newLine
+					+ "Preparing_Text=[INFO] Preparing spawn area:" + var.newLine
+					+ "Preparing_Level=[INFO] Preparing start region for" + var.newLine
+					+ "Level-0=The Overworld" + var.newLine
+					+ "Level-1=The Nether" + var.newLine
+					+ "Level-2=The End" + var.newLine 
+					+ "Level-3=Level 3 (Future Level)" + var.newLine
+					+ "Level-4=Level 4 (Future Level)" + var.newLine 
+					+ "Level-5=Level 5 (Future Level)" + var.newLine 
+					+ "Level-6=Level 6 (Future Level)" + var.newLine
+					+ "Level-7=Level 7 (Future Level)" + var.newLine 
+					+ "Level-8=Level 8 (Future Level)" + var.newLine 
+					+ "Level-9=Level 9 (Future Level)" + var.newLine 
+					+ var.newLine
+					+ "#Optional: Wait a few seconds after saving." + var.newLine
+					+ "WaitSave=false" + var.newLine
+					+ "webLaunch=true";
+			//@formatter:on
+
+		writeTxtFile(var.MinecraftLandGeneratorConf, txt);
+
+		return;
+
 	}
 
 	/**
@@ -54,70 +113,10 @@ public class FileWrite {
 			Main.out(file + " file created.");
 			return;
 		} catch (final IOException ex) {
-			Main.err("Could not create " + Main.MinecraftLandGeneratorConf + ".");
+			Main.err("Could not create " + var.MinecraftLandGeneratorConf + ".");
 			ex.printStackTrace();
 			return;
 		}
-
-	}
-
-	/**
-	 * Generates a Config File.
-	 * 
-	 * @param newConf
-	 *            true: Uses Default values. false: uses existing values
-	 * @author Morlok8k
-	 */
-	public static void saveConf(final boolean newConf) {
-
-		String jL = null;			//javaLine
-		String sP = null;			//serverPath
-
-		if (newConf) {
-			jL = Main.defaultJavaLine;	// reads the default from a constant, makes it easier!
-			sP = ".";				// 
-		} else {
-			jL = Main.javaLine;			// we read these values from an existing Conf File.
-			sP = Main.serverPath;		//
-		}
-
-		String txt = null;
-		//@formatter:off
-		txt = "#" + Main.PROG_NAME + " Configuration File:  Version: " + Main.VERSION + Main.newLine
-					+ "#Authors: " + Main.AUTHORS + Main.newLine
-					+ "#Auto-Generated: " + Main.dateFormat.format(Main.date) + Main.newLine
-					+ Main.newLine
-					+ "#Line to run server:" + Main.newLine
-					+ "Java=" + jL // reads the default from a constant, makes it easier!
-					+ Main.newLine 
-					+ Main.newLine
-					+ "#Location of server.  use \".\" for the same folder as MLG" + Main.newLine
-					+ "ServerPath=" + sP 
-					+ Main.newLine 
-					+ Main.newLine 
-					+ "#Strings read from the server" + Main.newLine 
-					+ "Done_Text=[INFO] Done" + Main.newLine
-					+ "Preparing_Text=[INFO] Preparing spawn area:" + Main.newLine
-					+ "Preparing_Level=[INFO] Preparing start region for" + Main.newLine
-					+ "Level-0=The Overworld" + Main.newLine
-					+ "Level-1=The Nether" + Main.newLine
-					+ "Level-2=The End" + Main.newLine 
-					+ "Level-3=Level 3 (Future Level)" + Main.newLine
-					+ "Level-4=Level 4 (Future Level)" + Main.newLine 
-					+ "Level-5=Level 5 (Future Level)" + Main.newLine 
-					+ "Level-6=Level 6 (Future Level)" + Main.newLine
-					+ "Level-7=Level 7 (Future Level)" + Main.newLine 
-					+ "Level-8=Level 8 (Future Level)" + Main.newLine 
-					+ "Level-9=Level 9 (Future Level)" + Main.newLine 
-					+ Main.newLine
-					+ "#Optional: Wait a few seconds after saving." + Main.newLine
-					+ "WaitSave=false" + Main.newLine
-					+ "webLaunch=true";
-			//@formatter:on
-
-		writeTxtFile(Main.MinecraftLandGeneratorConf, txt);
-
-		return;
 
 	}
 

@@ -4,7 +4,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-
 public class SelfAware {
 
 	public static String JVMinfo() {
@@ -24,8 +23,8 @@ public class SelfAware {
 				"Launch info: JVM: " + Return + " JAR: " + System.getProperty("sun.java.command")
 						+ " ARGS: ";
 
-		for (int i = 0; i < Main.originalArgs.length; i++) {
-			Return = Return + (Main.originalArgs[i]) + " ";
+		for (int i = 0; i < var.originalArgs.length; i++) {
+			Return = Return + (var.originalArgs[i]) + " ";
 		}
 
 		Return = Return.trim();

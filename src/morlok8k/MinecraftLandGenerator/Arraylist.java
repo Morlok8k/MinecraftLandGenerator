@@ -5,7 +5,6 @@ package morlok8k.MinecraftLandGenerator;
 
 import java.util.ArrayList;
 
-
 /**
  * @author morlok8k
  * 
@@ -18,7 +17,7 @@ public class Arraylist {
 		boolean changed = false;
 		changed = list.removeAll(remove);
 
-		if (Main.verbose) {
+		if (var.verbose) {
 			System.out.println("ArrayList changed: " + changed);
 		}
 

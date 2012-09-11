@@ -7,13 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,118 +20,20 @@ import java.util.logging.Logger;
  */
 public class Main {
 
-	//
-	//
-	// Public Vars:
-	public static boolean testing = false;		// display more output when debugging
-
-	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
-	public static final String VERSION = "1.7.0";								// Version Number!
-	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
-
-	public static final String fileSeparator = System.getProperty("file.separator");
-	public static final String newLine = System.getProperty("line.separator");
-
-	public static String[] originalArgs = {};
-
-	public static String MLG = "[MLG] ";
-	public static String MLGe = "[MLG-ERROR] ";
-
-	public static DateFormat dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-	public static Date MLG_Last_Modified_Date = null;
-
-	public static String MLGFileNameShort = null;
-	public static Scanner sc = new Scanner(System.in);
-	public static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
-	public static final String defaultReadmeFile = "_MLG_Readme.txt";
-
-	public static String doneText = null;
-	public static String preparingText = null;
-	public static String preparingLevel = null;
-
-	public static String level_0 = null;			// the world
-	public static String level_1 = null;			// the nether
-	public static String level_2 = null;			// the end
-	public static String level_3 = null;			// future worlds
-	public static String level_4 = null;
-	public static String level_5 = null;
-	public static String level_6 = null;
-	public static String level_7 = null;
-	public static String level_8 = null;
-	public static String level_9 = null;
-
-	public static ProcessBuilder minecraft = null;
-	public static String javaLine = null;
-	public static final String defaultJavaLine =
-			"java -Djava.awt.headless=true -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en"
-					+ " -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui";
-
-	public static String serverPath = null;
-	public static String worldPath = null;
-	public static String worldName = null;
-
-	public static boolean verbose = false;
-
-	public static boolean dontWait = false;
-	public static boolean waitSave = false;
-	public static boolean ignoreWarnings = false;
-	public static Long randomSeed = (long) 0;
-
-	public static DateFormat dateFormat = new SimpleDateFormat(			// Lets get a nice Date format for display
-			"EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
-	public static Date date = null;										// date stuff
-	public static Long MLG_Last_Modified_Long = 0L;
-
-	public static final Class<?> cls = Main.class;
-	public static String MLGFileName = null;
-
-	public static final String rsrcError = "rsrcERROR";
-	public static String buildIDFile = "MLG-BuildID";
-	public static boolean isCompiledAsJar = false;
-	public static String MLG_Current_Hash = null;
-	public static int inf_loop_protect_BuildID = 0;
-	public static boolean flag_downloadedBuildID = false;
-
-	public static String MC_Server_Version = "";
-
-	public static ArrayList<String> timeStamps = new ArrayList<String>();
-
-	public static final String MLG_JarFile = "MinecraftLandGenerator.jar";
-
-	public static final String github_URL =
-			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";			// just removing some redundancy
-	public static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
-	public static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
-	public static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
-
-	public static int resumeX = 0;				//resume data, if needed.
-	public static int resumeZ = 0;
-
-	//
-	//
-	//Private Vars:
 	private static int MinecraftServerChunkPlayerCache = 625;	//You see this number when you first launch the server in GUI mode, after the world is loaded, but before anyone has connected.
 	private static int increment = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16) - 20;			//private int increment = 380;
 
 	private int xRange = 0;
 	private int zRange = 0;
 	private Integer xOffset = null;
+
 	private Integer zOffset = null;
 
 	private boolean alternate = false;
-
 	private static Boolean recheckFlag = false;
 	private static long startTime = 0L;
-	public static boolean webLaunch = true;				// Launch website after generation.
 
 	private static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
-
-	// RCON Stuff (not currently used yet...)
-	public static boolean useRCON = false;				//use RCON to communicate with server.  ***Experimental***
-	public static boolean rcon_Enabled = false;			//is server is set to use RCON?
-	public static String rcon_IPaddress = "0.0.0.0";		//default is 0.0.0.0
-	public static String rcon_Port = "25575";				//default is 25575, we are just initializing here.
-	public static String rcon_Password = "test";			//default is "", but a password must be entered.
 
 	//////////////////////////////////////////////////////////
 	// REMINDER: Because I always forget/mix up languages:	//
@@ -145,6 +43,17 @@ public class Main {
 	//////////////////////////////////////////////////////////
 
 	/**
+	 * Outputs a formatted string to System.err as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void err(final String str) {
+		System.err.println(var.MLGe + str);
+	}
+
+	/**
 	 * @param args
 	 *            the command line arguments
 	 */
@@ -152,7 +61,7 @@ public class Main {
 	public static void main(String[] args) {
 		startTime = System.currentTimeMillis();
 
-		originalArgs = args;
+		var.originalArgs = args;
 
 		// This is really just here for debugging...
 		// I plan on adding more asserts later, but for now, this will do.
@@ -161,11 +70,11 @@ public class Main {
 		assert assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
 		if (assertsEnabled) {
 			outD("assertsEnabled: " + assertsEnabled);
-			verbose = true;
+			var.verbose = true;
 			outD("Verbose mode forced!");
-			testing = true;
+			var.testing = true;
 			outD("Debug mode forced!");
-			dontWait = true;
+			var.dontWait = true;
 			outD("-nowait mode forced!");
 			outD("");
 		}
@@ -184,7 +93,7 @@ public class Main {
 		//GUI Choosing code...
 		if (!java.awt.GraphicsEnvironment.isHeadless() || (!NOGUI)) {
 			GUI = true;
-			if (testing) {
+			if (var.testing) {
 				outD("GUI: This is a graphical enviroment.");
 			}
 
@@ -194,7 +103,7 @@ public class Main {
 
 		} else {
 			GUI = false;				// No GUI for us today...
-			if (testing) {
+			if (var.testing) {
 				outD("GUI: Command Line Only!");
 			}
 		}
@@ -218,6 +127,50 @@ public class Main {
 	}
 
 	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void out(final String str) {
+		System.out.println(var.MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
+	}
+
+	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void outD(final String str) {
+		System.out.println(var.MLG + "[DEBUG] " + str);
+	}
+
+	/**
+	 * Outputs a string to System.out without a newline.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void outP(final String str) {
+		System.out.print(str);
+	}
+
+	/**
+	 * Outputs a formatted string to System.out as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	static void outS(final String str) {
+		System.out.println("[Server] " + str);
+	}
+
+	/**
 	 * Start MinecraftLandGenerator (Command Line Interface)
 	 * 
 	 * @author Corrodias, Morlok8k
@@ -227,15 +180,16 @@ public class Main {
 	private void runCLI(String[] args) {
 
 		// Lets get the date, and our BuildID
-		date = new Date();
+		var.date = new Date();
 		Update.readBuildID();
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		out(PROG_NAME + " version " + VERSION);
-		out("BuildID: (" + MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
+		out(var.PROG_NAME + " version " + var.VERSION);
+		out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
 		// thus different timezones wont display a different buildID
-		out("This version was last modified on " + dateFormat.format(MLG_Last_Modified_Date));
+		out("This version was last modified on "
+				+ var.dateFormat.format(var.MLG_Last_Modified_Date));
 		out("");
 		out("Uses a Minecraft server to generate square land of a specified size.");
 		out("");
@@ -252,16 +206,16 @@ public class Main {
 		newArgs = StringArrayParse.Parse(newArgs, "-n");		//parse out -n
 		newArgs = StringArrayParse.Parse(newArgs, "-nowait");	//parse out -nowait
 		if (!(args.equals(newArgs))) {								//do the freshly parsed args match the original?
-			dontWait = true;											//if not, we dont wait for anything!
+			var.dontWait = true;											//if not, we dont wait for anything!
 			args = newArgs;												//use the freshly parsed args for everything else now...
 			out("Notice: Not waiting for anything...");
 		}
 
 		if (args.length == 0) {																//we didnt find a an X and Z size, so lets ask for one.
 			out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			outP(MLG + "X:");
+			outP(var.MLG + "X:");
 			xRange = Input_CLI.getInt("X:");
-			outP(MLG + "Z:");
+			outP(var.MLG + "Z:");
 			zRange = Input_CLI.getInt("Z:");
 			args = new String[] { String.valueOf(xRange), String.valueOf(zRange) };
 
@@ -285,9 +239,9 @@ public class Main {
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("download")) {
 					final boolean fileSuccess =
-							DownloadFile.downloadFile(github_MLG_Conf_URL, testing);
+							DownloadFile.downloadFile(var.github_MLG_Conf_URL, var.testing);
 					if (fileSuccess) {
-						out(MinecraftLandGeneratorConf + " file downloaded.");
+						out(var.MinecraftLandGeneratorConf + " file downloaded.");
 						return;
 					}
 				}
@@ -388,7 +342,7 @@ public class Main {
 			return;
 
 		} else if (args.length == 1) {
-			out("For help, use java -jar " + MLGFileNameShort + " -help");
+			out("For help, use java -jar " + var.MLGFileNameShort + " -help");
 			Time.waitTenSec(false);
 			return;
 		}
@@ -397,33 +351,33 @@ public class Main {
 
 		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
 
-		if ((serverPath == null) || (javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
-			err(MinecraftLandGeneratorConf
+		if ((var.serverPath == null) || (var.javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
+			err(var.MinecraftLandGeneratorConf
 					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
 
 			// return;
 
 			// We no longer quit. We generate a new one with defaults.
 
-			javaLine = defaultJavaLine;
-			serverPath = ".";
+			var.javaLine = var.defaultJavaLine;
+			var.serverPath = ".";
 			oldConf = true;
 		}
 
-		if (doneText == null) {					// MLG 1.4.0
+		if (var.doneText == null) {					// MLG 1.4.0
 			oldConf = true;
-		} else if (preparingText == null) {	// MLG 1.4.0
+		} else if (var.preparingText == null) {	// MLG 1.4.0
 			oldConf = true;
-		} else if (preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
+		} else if (var.preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
 			oldConf = true;
-		} else if (level_1 == null) {			// MLG 1.4.5 / 1.5.0
+		} else if (var.level_1 == null) {			// MLG 1.4.5 / 1.5.0
 			oldConf = true;
-		} else if (level_0 == null) {			// MLG 1.5.1 / 1.6.0
+		} else if (var.level_0 == null) {			// MLG 1.5.1 / 1.6.0
 			oldConf = true;
 		}
 
 		if (oldConf) {
-			err("Old Version of " + MinecraftLandGeneratorConf + " found.  Updating...");
+			err("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
 
 			FileWrite.saveConf(false);		//old conf
 
@@ -455,7 +409,7 @@ public class Main {
 			//return;
 		}
 
-		verbose = false;			// Verifing that these vars are false
+		var.verbose = false;			// Verifing that these vars are false
 		alternate = false;			// before changing them...
 
 		// This is embarrassing. Don't look.
@@ -463,7 +417,7 @@ public class Main {
 			for (int i = 0; i < (args.length - 2); i++) {
 				final String nextSwitch = args[i + 2].toLowerCase();
 				if (nextSwitch.equals("-verbose") || nextSwitch.equals("-v")) {
-					verbose = true;
+					var.verbose = true;
 					out("Notice: Verbose Mode");
 
 				} else if (nextSwitch.startsWith("-i")) {
@@ -471,7 +425,7 @@ public class Main {
 					out("Notice: Non-Default Increment: " + increment);
 
 				} else if (nextSwitch.startsWith("-w")) {
-					ignoreWarnings = true;
+					var.ignoreWarnings = true;
 					out("Notice: Warnings from Server are Ignored");
 
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
@@ -482,15 +436,6 @@ public class Main {
 					xOffset = Integer.valueOf(args[i + 2].substring(2));
 					out("Notice: X Offset: " + xOffset);
 
-				} else if (nextSwitch.startsWith("-rcon")) {
-					if (testing) {
-						useRCON = true;
-						out("Notice: Attempting to use RCON to communicate with server...");
-					} else {
-						useRCON = false;
-						err("MLG Using RCON is not enabled yet.");
-					}
-
 				} else if (nextSwitch.startsWith("-y") || nextSwitch.startsWith("-z")) {		//NOTE: "-y" is just here for backwards compatibility
 					zOffset = Integer.valueOf(args[i + 2].substring(2));
 					out("Notice: Z Offset: " + zOffset);
@@ -500,8 +445,8 @@ public class Main {
 					}
 
 				} else {
-					serverPath = args[i + 2];
-					out("Notice: Attempting to use Alternate Server:" + serverPath);
+					var.serverPath = args[i + 2];
+					out("Notice: Attempting to use Alternate Server:" + var.serverPath);
 				}
 			}
 		} catch (final NumberFormatException ex) {
@@ -512,7 +457,8 @@ public class Main {
 		WorldVerify.verifyWorld();
 
 		{
-			final File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
+			final File backupLevel =
+					new File(var.worldPath + var.fileSeparator + "level_backup.dat");
 			if (backupLevel.exists()) {
 				//err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
 				//		+ " or restore the backup.");
@@ -523,7 +469,7 @@ public class Main {
 				out("Resuming...");
 
 				//use resume data
-				final File serverLevel = new File(worldPath + fileSeparator + "level.dat");
+				final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
 				try {
 					Misc.copyFile(backupLevel, serverLevel);
 				} catch (final IOException e) {
@@ -533,13 +479,13 @@ public class Main {
 
 				//return;
 
-				FileRead.readArrayListCoordLog(worldPath + fileSeparator
+				FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator
 						+ "MinecraftLandGenerator.log");		// we read the .log just for any resume data, if any.
 
 				System.gc();		//run the garbage collector - hopefully free up some memory!
 
-				xRange = resumeX;
-				zRange = resumeZ;
+				xRange = var.resumeX;
+				zRange = var.resumeZ;
 
 			}
 		}
@@ -548,17 +494,17 @@ public class Main {
 		//                              PROCESSING
 		// =====================================================================
 
-		out("Processing world \"" + worldPath + "\", in " + increment + " block increments, with: "
-				+ javaLine);
+		out("Processing world \"" + var.worldPath + "\", in " + increment
+				+ " block increments, with: " + var.javaLine);
 		// out( MLG + "Processing \"" + worldName + "\"...");
 
 		out("");
 
 		// prepare our two ProcessBuilders
 		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
-		minecraft = new ProcessBuilder(javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)		
-		minecraft.directory(new File(serverPath));
-		minecraft.redirectErrorStream(true);
+		var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)		
+		var.minecraft.directory(new File(var.serverPath));
+		var.minecraft.redirectErrorStream(true);
 
 		try {
 			out("Launching server once to make sure there is a world.");
@@ -578,17 +524,18 @@ public class Main {
 			xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
 			zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
 
-			FileWrite.AppendTxtFile(
-					worldPath + fileSeparator + "MinecraftLandGenerator.log",
-					"# " + PROG_NAME + " " + VERSION + " - " + SelfAware.JVMinfo() + newLine + "# "
-							+ MC_Server_Version + newLine + "# Started: "
-							+ dateFormat.format(generationStartTimeTracking) + newLine
-							+ "##Size: X" + xRange + "Z" + zRange + newLine);
+			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
+					+ "MinecraftLandGenerator.log",
+					"# " + var.PROG_NAME + " " + var.VERSION + " - " + SelfAware.JVMinfo()
+							+ var.newLine + "# " + var.MC_Server_Version + var.newLine
+							+ "# Started: " + var.dateFormat.format(generationStartTimeTracking)
+							+ var.newLine + "##Size: X" + xRange + "Z" + zRange + var.newLine);
 
 			out("");
 
-			final File serverLevel = new File(worldPath + fileSeparator + "level.dat");
-			final File backupLevel = new File(worldPath + fileSeparator + "level_backup.dat");
+			final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
+			final File backupLevel =
+					new File(var.worldPath + var.fileSeparator + "level_backup.dat");
 
 			out("Backing up level.dat to level_backup.dat.");
 			Misc.copyFile(serverLevel, backupLevel);
@@ -597,8 +544,9 @@ public class Main {
 			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
 			out("Spawn point detected: [X,Y,Z] " + spawn);
 
-			FileWrite.AppendTxtFile(worldPath + fileSeparator + "MinecraftLandGenerator.log",
-					"# Seed: " + randomSeed + newLine + "# Spawn: " + spawn.toString() + newLine);
+			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
+					+ "MinecraftLandGenerator.log", "# Seed: " + var.randomSeed + var.newLine
+					+ "# Spawn: " + spawn.toString() + var.newLine);
 
 			{
 				boolean overridden = false;
@@ -677,7 +625,7 @@ public class Main {
 								new Coordinates(currentX + xOffset, 64, currentZ + zOffset);
 						launchList.add(tempCoords);
 
-						if (testing) {
+						if (var.testing) {
 							System.out.println(tempCoords);
 						}
 					}
@@ -696,7 +644,7 @@ public class Main {
 
 			//get existing list, and remove this list from launchList
 			final ArrayList<Coordinates> removeList =
-					FileRead.readArrayListCoordLog(worldPath + fileSeparator
+					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator
 							+ "MinecraftLandGenerator.log");
 
 			if (!(removeList.isEmpty())) {
@@ -718,7 +666,7 @@ public class Main {
 				//////// Start server launch code
 
 				String percentDone =
-						Double.toString(((double) currentIteration / (double) totalIterations) * 100);
+						Double.toString((((double) currentIteration - 1) / totalIterations) * 100);
 				final int percentIndex =
 						((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
 								.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
@@ -751,8 +699,8 @@ public class Main {
 
 				if (serverSuccess) {
 					// Write the current Coordinates to log file!
-					FileWrite.AppendTxtFile(worldPath + fileSeparator
-							+ "MinecraftLandGenerator.log", xyz.toString() + newLine);
+					FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
+							+ "MinecraftLandGenerator.log", xyz.toString() + var.newLine);
 				} else {
 					System.exit(1);				// we got a warning or severe error
 				}
@@ -775,19 +723,19 @@ public class Main {
 
 			//TODO: add if's
 
-			if (webLaunch) {		//if webLaunch is already false, don't check for these things
+			if (var.webLaunch) {		//if webLaunch is already false, don't check for these things
 				if (java.awt.GraphicsEnvironment.isHeadless()) {
-					webLaunch = false;					//headless enviroment - cant bring up webpage!
+					var.webLaunch = false;					//headless enviroment - cant bring up webpage!
 				}
 				final File web1 = new File("web");
 				final File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage	
 				final File web3 = new File("web.txt.txt");
 				if (web2.exists() || (web1.exists() || web3.exists())) {  //check for "web.txt", if not found, check for "web", and if still not found, check for "web.txt.txt"
-					webLaunch = false;
+					var.webLaunch = false;
 				}
 			}
 
-			if (webLaunch && java.awt.Desktop.isDesktopSupported()) {
+			if (var.webLaunch && java.awt.Desktop.isDesktopSupported()) {
 				final URI splashPage =
 				//URI.create("https://sites.google.com/site/minecraftlandgenerator/home/mlg_splash");
 						URI.create("http://adf.ly/520855/splashbanner");
@@ -805,61 +753,6 @@ public class Main {
 		} catch (final IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
-	}
-
-	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void out(final String str) {
-		System.out.println(MLG + str);		// is there a better/easier way to do this?  I just wanted a lazier way to write "System.out.println(MLG + blah..."
-	}
-
-	/**
-	 * Outputs a formatted string to System.err as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void err(final String str) {
-		System.err.println(MLGe + str);
-	}
-
-	/**
-	 * Outputs a string to System.out without a newline.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void outP(final String str) {
-		System.out.print(str);
-	}
-
-	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	static void outS(final String str) {
-		System.out.println("[Server] " + str);
-	}
-
-	/**
-	 * Outputs a formatted string to System.out as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void outD(final String str) {
-		System.out.println(MLG + "[DEBUG] " + str);
 	}
 
 }
