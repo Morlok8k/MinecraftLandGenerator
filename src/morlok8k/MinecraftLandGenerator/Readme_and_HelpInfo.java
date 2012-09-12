@@ -22,7 +22,7 @@ public class Readme_and_HelpInfo {
 		String showHelpSTR = "";
 		String ReadMeText = "";
 		String VersionInfo = "";
-		String n = var.newLine;
+		final String n = var.newLine;
 
 		//@formatter:off
 		ReadMeText = PROG_NAME + " version " + VERSION + n

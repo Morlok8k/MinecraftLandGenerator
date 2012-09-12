@@ -295,8 +295,7 @@ public class Update {
 
 						if (pos != -1) {
 							if (line.substring(0, pos).equals(var.MLG_Current_Hash)) {
-								var.MLG_Last_Modified_Long =
-										new Long(line.substring(pos + 1, end));
+								var.MLG_Last_Modified_Long = new Long(line.substring(pos + 1, end));
 								var.MLG_Last_Modified_Date = new Date(var.MLG_Last_Modified_Long);
 
 								final Long highestModTime =
@@ -401,8 +400,7 @@ public class Update {
 					e1.printStackTrace();
 
 					try {
-						Misc.copyFile(new File(var.MLG_JarFile), new File(var.MLG_JarFile
-								+ ".old"));
+						Misc.copyFile(new File(var.MLG_JarFile), new File(var.MLG_JarFile + ".old"));
 						final File fileDelete = new File(var.MLG_JarFile);
 						fileDelete.delete();
 					} catch (final Exception e2) {
@@ -414,8 +412,7 @@ public class Update {
 
 				}
 
-				final boolean fileSuccess =
-						DownloadFile.downloadFile(var.github_MLG_jar_URL, true);
+				final boolean fileSuccess = DownloadFile.downloadFile(var.github_MLG_jar_URL, true);
 				if (fileSuccess) {
 					Out.out(var.MLG_JarFile + " downloaded.");
 					return;

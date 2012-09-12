@@ -3,6 +3,17 @@ package morlok8k.MinecraftLandGenerator;
 public class Out {
 
 	/**
+	 * Outputs a formatted string to System.err as a line.
+	 * 
+	 * @param str
+	 *            String to display and format
+	 * @author Morlok8k
+	 */
+	public static void err(final String str) {
+		System.err.println(var.MLGe + str);
+	}
+
+	/**
 	 * Outputs a formatted string to System.out as a line.
 	 * 
 	 * @param str
@@ -44,17 +55,6 @@ public class Out {
 	 */
 	static void outS(final String str) {
 		System.out.println("[Server] " + str);
-	}
-
-	/**
-	 * Outputs a formatted string to System.err as a line.
-	 * 
-	 * @param str
-	 *            String to display and format
-	 * @author Morlok8k
-	 */
-	public static void err(final String str) {
-		System.err.println(var.MLGe + str);
 	}
 
 }

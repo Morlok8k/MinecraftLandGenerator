@@ -457,7 +457,7 @@ public class Main {
 			}
 
 			//TODO: make this optional
-			boolean useChunks = false;
+			final boolean useChunks = false;
 
 			if (useChunks) {		// use Chunks or Regions
 				xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
