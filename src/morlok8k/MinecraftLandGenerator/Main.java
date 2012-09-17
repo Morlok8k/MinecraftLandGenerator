@@ -1,5 +1,6 @@
 package morlok8k.MinecraftLandGenerator;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
 
 /**
  * 
@@ -69,34 +72,38 @@ public class Main {
 			NOGUI = true;
 		}
 
-		//GUI Choosing code...
+		//MLG_GUI Choosing code...
 		if (!java.awt.GraphicsEnvironment.isHeadless() || (!NOGUI)) {
 			GUI = true;
 			if (var.testing) {
-				Out.outD("GUI: This is a graphical enviroment.");
+				Out.outD("MLG_GUI: This is a graphical enviroment.");
 			}
 
 			//////
-			GUI = false;				// forcing GUI to be false for now, because I don't have the GUI code ready yet!
+			GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
 			//////
 
 		} else {
 			GUI = false;				// No GUI for us today...
 			if (var.testing) {
-				Out.outD("GUI: Command Line Only!");
+				Out.outD("MLG_GUI: Command Line Only!");
 			}
 		}
 
 		if (GUI) {	//GUI
-			// Launch GUI
+			// Launch MLG_GUI
 
-			/*
-			try {
-				Main()).runGUI(args;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			 */
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						MLG_GUI frame = new MLG_GUI();
+						frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 
 		} else {	//No GUI
 			// Finally, Lets Start MLG!
