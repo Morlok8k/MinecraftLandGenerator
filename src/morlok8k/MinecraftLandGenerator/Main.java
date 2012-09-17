@@ -73,7 +73,7 @@ public class Main {
 		}
 
 		//MLG_GUI Choosing code...
-		if (!java.awt.GraphicsEnvironment.isHeadless() || (!NOGUI)) {
+		if ((!NOGUI) && (!java.awt.GraphicsEnvironment.isHeadless())) {
 			GUI = true;
 			if (var.testing) {
 				Out.outD("MLG_GUI: This is a graphical enviroment.");
