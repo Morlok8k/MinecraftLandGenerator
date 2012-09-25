@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Misc {
 
 	/**
@@ -57,5 +61,4 @@ public class Misc {
 			return false;
 		}
 	}
-
 }

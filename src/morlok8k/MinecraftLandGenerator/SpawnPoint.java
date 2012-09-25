@@ -15,6 +15,10 @@ import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class SpawnPoint {
 
 	//TODO: update this
@@ -76,34 +80,34 @@ public class SpawnPoint {
 			input.close();
 
 			//@formatter:off
-			
-			//Note: The Following Information is Old (from 2010), compared to the Data inside a current "level.dat".
-			//However, What we look at (SpawnX,Y,Z and RandomSeed) have not changed.
-			
-			/* <editor-fold defaultstate="collapsed" desc="structure">
-			* Structure:
-			*
-			*TAG_Compound("Data"): World data.
-			*	* TAG_Long("Time"): Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft day, making the day length 20 minutes. 0 appears to be sunrise, 12000 sunset and 24000 sunrise again.
-			*	* TAG_Long("LastPlayed"): Stores the Unix time stamp (in milliseconds) when the player saved the game.
-			*	* TAG_Compound("Player"): Player entity information. See Entity Format and Mob Entity Format for details. Has additional elements:
-			*		o TAG_List("Inventory"): Each TAG_Compound in this list defines an item the player is carrying, holding, or wearing as armor.
-			*			+ TAG_Compound: Inventory item data
-			*				# TAG_Short("id"): Item or Block ID.
-			* 				# TAG_Short("Damage"): The amount of wear each item has suffered. 0 means undamaged. When the Damage exceeds the item's durability, it breaks and disappears. Only tools and armor accumulate damage normally.
-			*				# TAG_Byte("Count"): Number of items stacked in this inventory slot. Any item can be stacked, including tools, armor, and vehicles. Range is 1-255. Values above 127 are not displayed in-game.
-			*				# TAG_Byte("Slot"): Indicates which inventory slot this item is in.
-			*		o TAG_Int("Score"): Current score, doesn't appear to be implemented yet. Always 0.
-			*	* TAG_Int("SpawnX"): X coordinate of the player's spawn position. Default is 0.
-			*	* TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.			
-			*	* TAG_Int("SpawnZ"): Z coordinate of the player's spawn position. Default is 0.
-			*	* TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
-			*	* TAG_Long("SizeOnDisk"): Estimated size of the entire world in bytes.
-			*	* TAG_Long("RandomSeed"): Random number providing the Random Seed for the terrain.
-			* </editor-fold>
-			*/
-			
-			//@formatter:on
+
+            //Note: The Following Information is Old (from 2010), compared to the Data inside a current "level.dat".
+            //However, What we look at (SpawnX,Y,Z and RandomSeed) have not changed.
+
+            /* <editor-fold defaultstate="collapsed" desc="structure">
+             * Structure:
+             *
+             *TAG_Compound("Data"): World data.
+             *	* TAG_Long("Time"): Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft day, making the day length 20 minutes. 0 appears to be sunrise, 12000 sunset and 24000 sunrise again.
+             *	* TAG_Long("LastPlayed"): Stores the Unix time stamp (in milliseconds) when the player saved the game.
+             *	* TAG_Compound("Player"): Player entity information. See Entity Format and Mob Entity Format for details. Has additional elements:
+             *		o TAG_List("Inventory"): Each TAG_Compound in this list defines an item the player is carrying, holding, or wearing as armor.
+             *			+ TAG_Compound: Inventory item data
+             *				# TAG_Short("id"): Item or Block ID.
+             * 				# TAG_Short("Damage"): The amount of wear each item has suffered. 0 means undamaged. When the Damage exceeds the item's durability, it breaks and disappears. Only tools and armor accumulate damage normally.
+             *				# TAG_Byte("Count"): Number of items stacked in this inventory slot. Any item can be stacked, including tools, armor, and vehicles. Range is 1-255. Values above 127 are not displayed in-game.
+             *				# TAG_Byte("Slot"): Indicates which inventory slot this item is in.
+             *		o TAG_Int("Score"): Current score, doesn't appear to be implemented yet. Always 0.
+             *	* TAG_Int("SpawnX"): X coordinate of the player's spawn position. Default is 0.
+             *	* TAG_Int("SpawnY"): Y coordinate of the player's spawn position. Default is 64.
+             *	* TAG_Int("SpawnZ"): Z coordinate of the player's spawn position. Default is 0.
+             *	* TAG_Byte("SnowCovered"): 1 enables, 0 disables, see Winter Mode
+             *	* TAG_Long("SizeOnDisk"): Estimated size of the entire world in bytes.
+             *	* TAG_Long("RandomSeed"): Random number providing the Random Seed for the terrain.
+             * </editor-fold>
+             */
+
+            //@formatter:on
 
 			final Map<String, Tag> originalData =
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
@@ -137,5 +141,4 @@ public class SpawnPoint {
 			throw new IOException("Invalid level format.");
 		}
 	}
-
 }

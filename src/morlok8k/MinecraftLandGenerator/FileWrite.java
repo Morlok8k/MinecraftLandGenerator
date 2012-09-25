@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class FileWrite {
 
 	/**
@@ -16,7 +20,7 @@ public class FileWrite {
 	 */
 	public static void AppendTxtFile(final String file, final String appendTxt) {
 		try {
-			// Create file 
+			// Create file
 			final FileWriter fstream = new FileWriter(file, true);
 			final BufferedWriter out = new BufferedWriter(fstream);
 			//String output = "Hello Java" + newLine;
@@ -42,7 +46,7 @@ public class FileWrite {
 
 		if (newConf) {
 			jL = var.defaultJavaLine;	// reads the default from a constant, makes it easier!
-			sP = ".";				// 
+			sP = ".";				//
 		} else {
 			jL = var.javaLine;			// we read these values from an existing Conf File.
 			sP = var.serverPath;		//
@@ -50,37 +54,37 @@ public class FileWrite {
 
 		String txt = null;
 		//@formatter:off
-		txt = "#" + var.PROG_NAME + " Configuration File:  Version: " + var.VERSION + var.newLine
-					+ "#Authors: " + var.AUTHORS + var.newLine
-					+ "#Auto-Generated: " + var.dateFormat.format(var.date) + var.newLine
-					+ var.newLine
-					+ "#Line to run server:" + var.newLine
-					+ "Java=" + jL // reads the default from a constant, makes it easier!
-					+ var.newLine 
-					+ var.newLine
-					+ "#Location of server.  use \".\" for the same folder as MLG" + var.newLine
-					+ "ServerPath=" + sP 
-					+ var.newLine 
-					+ var.newLine 
-					+ "#Strings read from the server" + var.newLine 
-					+ "Done_Text=[INFO] Done" + var.newLine
-					+ "Preparing_Text=[INFO] Preparing spawn area:" + var.newLine
-					+ "Preparing_Level=[INFO] Preparing start region for" + var.newLine
-					+ "Level-0=The Overworld" + var.newLine
-					+ "Level-1=The Nether" + var.newLine
-					+ "Level-2=The End" + var.newLine 
-					+ "Level-3=Level 3 (Future Level)" + var.newLine
-					+ "Level-4=Level 4 (Future Level)" + var.newLine 
-					+ "Level-5=Level 5 (Future Level)" + var.newLine 
-					+ "Level-6=Level 6 (Future Level)" + var.newLine
-					+ "Level-7=Level 7 (Future Level)" + var.newLine 
-					+ "Level-8=Level 8 (Future Level)" + var.newLine 
-					+ "Level-9=Level 9 (Future Level)" + var.newLine 
-					+ var.newLine
-					+ "#Optional: Wait a few seconds after saving." + var.newLine
-					+ "WaitSave=false" + var.newLine
-					+ "webLaunch=true";
-			//@formatter:on
+        txt = "#" + var.PROG_NAME + " Configuration File:  Version: " + var.VERSION + var.newLine
+                + "#Authors: " + var.AUTHORS + var.newLine
+                + "#Auto-Generated: " + var.dateFormat.format(var.date) + var.newLine
+                + var.newLine
+                + "#Line to run server:" + var.newLine
+                + "Java=" + jL // reads the default from a constant, makes it easier!
+                + var.newLine
+                + var.newLine
+                + "#Location of server.  use \".\" for the same folder as MLG" + var.newLine
+                + "ServerPath=" + sP
+                + var.newLine
+                + var.newLine
+                + "#Strings read from the server" + var.newLine
+                + "Done_Text=[INFO] Done" + var.newLine
+                + "Preparing_Text=[INFO] Preparing spawn area:" + var.newLine
+                + "Preparing_Level=[INFO] Preparing start region for" + var.newLine
+                + "Level-0=The Overworld" + var.newLine
+                + "Level-1=The Nether" + var.newLine
+                + "Level-2=The End" + var.newLine
+                + "Level-3=Level 3 (Future Level)" + var.newLine
+                + "Level-4=Level 4 (Future Level)" + var.newLine
+                + "Level-5=Level 5 (Future Level)" + var.newLine
+                + "Level-6=Level 6 (Future Level)" + var.newLine
+                + "Level-7=Level 7 (Future Level)" + var.newLine
+                + "Level-8=Level 8 (Future Level)" + var.newLine
+                + "Level-9=Level 9 (Future Level)" + var.newLine
+                + var.newLine
+                + "#Optional: Wait a few seconds after saving." + var.newLine
+                + "WaitSave=false" + var.newLine
+                + "webLaunch=true";
+        //@formatter:on
 
 		writeTxtFile(var.MinecraftLandGeneratorConf, txt);
 
@@ -116,5 +120,4 @@ public class FileWrite {
 		}
 
 	}
-
 }

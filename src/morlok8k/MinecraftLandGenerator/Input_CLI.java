@@ -1,5 +1,9 @@
 package morlok8k.MinecraftLandGenerator;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Input_CLI {
 
 	/**
@@ -30,5 +34,4 @@ public class Input_CLI {
 		return Return;
 
 	}
-
 }

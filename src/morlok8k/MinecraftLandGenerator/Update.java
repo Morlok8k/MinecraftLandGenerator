@@ -16,6 +16,10 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Update {
 
 	/**
@@ -29,6 +33,7 @@ public class Update {
 	 * <br>
 	 * This saves the hash and the timestamp (now known as the BuildID)
 	 * 
+	 * @param downloadOnly
 	 * @author Morlok8k
 	 */
 	public static void buildID(final boolean downloadOnly) {
@@ -140,6 +145,9 @@ public class Update {
 	/**
 	 * This gets the filename of a .jar (typically this one!)
 	 * 
+	 * @param classFile
+	 * @return
+	 * @throws IOException
 	 * @author Morlok8k
 	 */
 	public static String getClassLoader(final Class<?> classFile) throws IOException {
@@ -182,6 +190,9 @@ public class Update {
 	 * Thanks to Roedy Green at <br>
 	 * <a href="http://mindprod.com/jgloss/compiletimestamp.html">http://mindprod .com/jgloss/compiletimestamp.html</a>
 	 * 
+	 * @param classFile
+	 * @return
+	 * @throws IOException
 	 * @author Morlok8k
 	 */
 	public static Date getCompileTimeStamp(final Class<?> classFile) throws IOException {
@@ -374,7 +385,7 @@ public class Update {
 	 */
 	public static void updateMLG() {
 
-		buildID(true);		//get latest BuildID file.  
+		buildID(true);		//get latest BuildID file.
 		var.MLG_Last_Modified_Date = null;
 		readBuildID();
 
@@ -434,7 +445,7 @@ public class Update {
 	 * <a href="http://www.java-examples.com/get-crc-32-checksum-zip-entry-example">http://www.java-examples.com/get-crc-32-checksum-zip-entry-example</a>
 	 * 
 	 * @param zipFile
-	 * @param timeBuildID
+	 * @return
 	 * @author Morlok8k
 	 */
 	public static Long ZipGetModificationTime(final String zipFile) {
@@ -489,5 +500,4 @@ public class Update {
 			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
 		}
 	}
-
 }

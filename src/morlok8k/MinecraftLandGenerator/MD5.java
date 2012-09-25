@@ -9,6 +9,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class MD5 {
 
 	/**
@@ -17,6 +21,10 @@ public class MD5 {
 	 * Thanks to R.J. Lorimer at <br>
 	 * <a href="http://www.javalobby.org/java/forums/t84420.html">http://www. javalobby.org/java/forums/t84420.html</a>
 	 * 
+	 * @param fileName
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws FileNotFoundException
 	 * @author Morlok8k
 	 */
 	public static String fileMD5(final String fileName) throws NoSuchAlgorithmException,

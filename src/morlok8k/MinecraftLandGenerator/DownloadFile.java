@@ -10,6 +10,10 @@ import java.net.URL;
 
 import org.w3c.bert_bos.UTF8URL.Unescape;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class DownloadFile {
 
 	/**
@@ -103,5 +107,4 @@ public class DownloadFile {
 		}
 		return success;
 	}
-
 }

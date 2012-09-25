@@ -21,6 +21,7 @@ public class Coordinates {
 	 * 
 	 * @param StringOfCoords
 	 *            A short- or long-form coordinate string as described at the two toString() methods
+	 * @return
 	 * @author Morlok8k
 	 */
 	public static Coordinates parseString(String StringOfCoords) {
@@ -88,6 +89,7 @@ public class Coordinates {
 	 * 
 	 * @param stringOfCoords
 	 *            A short- or long-form coordinate string as described at the two toString() methods
+	 * @return
 	 * @author jaseg
 	 */
 	public static Coordinates parseStringRegEx(String stringOfCoords) {
@@ -131,10 +133,17 @@ public class Coordinates {
 		return new Coordinates(X, Y, Z);
 	}
 
+	/**
+     *
+     */
 	public int X = 0;
-
+	/**
+     *
+     */
 	public int Y = 0;
-
+	/**
+     *
+     */
 	public int Z = 0;
 
 	/**
@@ -156,6 +165,9 @@ public class Coordinates {
 		Z = z;
 	}
 
+	/**
+     *
+     */
 	public void clear() {
 		X = 0;
 		Y = 0;
@@ -242,7 +254,6 @@ public class Coordinates {
 	///////////////////////////////////////////////////////////////////////////////////////
 	// Java Language Specific Crap Below...  Stuff *gotta* be there so Java won't cry... //
 	///////////////////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * @param y
 	 *            the y to set
@@ -274,6 +285,11 @@ public class Coordinates {
 
 	}
 
+	/**
+	 * 
+	 * @param Short
+	 * @return
+	 */
 	public String toString(final boolean Short) {
 		if (Short) {								// We are overloading toString with an additional option:
 			return ("(" + X + "," + Z + ")");		// Basically just an option to return just X and Z  (formatted differently as well: "(X,Z)")

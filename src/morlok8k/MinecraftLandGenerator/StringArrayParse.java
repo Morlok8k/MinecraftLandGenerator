@@ -1,7 +1,17 @@
 package morlok8k.MinecraftLandGenerator;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class StringArrayParse {
 
+	/**
+	 * 
+	 * @param array
+	 * @param ParseOut
+	 * @return
+	 */
 	public static String[] Parse(final String[] array, final String ParseOut) {
 
 		//There is probably a better way to do this.
@@ -44,5 +54,4 @@ public class StringArrayParse {
 		return array;			//no changes have been done, return the original array
 
 	}
-
 }

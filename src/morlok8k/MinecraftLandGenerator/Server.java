@@ -5,14 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Server {
 
 	/**
 	 * Starts the process in the given ProcessBuilder, monitors its output for a "[INFO] Done!" message, and sends it a "stop\r\n" message. One message is printed to the console before launching and
 	 * one is printed to the console when the Done! message is detected. If "verbose" is true, the process's output will also be printed to the console.
 	 * 
-	 * @param minecraft
-	 * 
+	 * @return
 	 * @throws IOException
 	 * @author Corrodias
 	 */
@@ -298,5 +301,4 @@ public class Server {
 		// while loop has finished now.
 		return serverSuccess;
 	}
-
 }

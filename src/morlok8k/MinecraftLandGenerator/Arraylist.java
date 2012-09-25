@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package morlok8k.MinecraftLandGenerator;
 
@@ -11,6 +11,12 @@ import java.util.ArrayList;
  */
 public class Arraylist {
 
+	/**
+	 * 
+	 * @param list
+	 * @param remove
+	 * @return
+	 */
 	public static ArrayList<Coordinates> arrayListRemove(final ArrayList<Coordinates> list,
 			final ArrayList<Coordinates> remove) {
 
@@ -23,5 +29,4 @@ public class Arraylist {
 
 		return list;
 	}
-
 }

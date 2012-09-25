@@ -1,5 +1,9 @@
 package org.w3c.bert_bos.UTF8URL;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Unescape {
 
 	/* Morlok8k:
@@ -8,8 +12,8 @@ public class Unescape {
 	 * I had to look up many things in it to see how it works, and I still don't quite follow it.
 	 * (I have never worked with raw bytes in Java... Never needed to.)
 	 * But it works and it works very well.   I tip my hat at you Bert!
-	 * 
-	 * I just needed to say this somewhere, even though very few people will ever read this. 
+	 *
+	 * I just needed to say this somewhere, even though very few people will ever read this.
 	 */
 	/**
 	 * Created: 17 April 1997<br>
@@ -28,7 +32,6 @@ public class Unescape {
 	 * @return decoded string of URL
 	 * @author Bert Bos
 	 */
-
 	public static String unescape(final String s) {
 		final StringBuffer sbuf = new StringBuffer();
 		final int l = s.length();

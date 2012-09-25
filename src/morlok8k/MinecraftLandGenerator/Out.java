@@ -1,5 +1,9 @@
 package morlok8k.MinecraftLandGenerator;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Out {
 
 	/**
@@ -56,5 +60,4 @@ public class Out {
 	static void outS(final String str) {
 		System.out.println("[Server] " + str);
 	}
-
 }

@@ -8,10 +8,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class MLG_GUI extends JFrame {
 
 	private static final long serialVersionUID = -8791419906463664152L;		//auto generated
-	private JPanel contentPane;
+	private final JPanel contentPane;
 
 	/**
 	 * Create the frame.
@@ -24,9 +28,8 @@ public class MLG_GUI extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		JLabel lblHelloWorld = new JLabel("Hello World");
+		final JLabel lblHelloWorld = new JLabel("Hello World");
 		lblHelloWorld.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.add(lblHelloWorld, BorderLayout.CENTER);
 	}
-
 }

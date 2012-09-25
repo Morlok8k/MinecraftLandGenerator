@@ -4,8 +4,16 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class SelfAware {
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static String JVMinfo() {
 
 		String Return = "";
@@ -34,5 +42,4 @@ public class SelfAware {
 		Return = Return.trim();
 		return Return;
 	}
-
 }

@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class WorldVerify {
 
 	/**
-	 * 
-	 */
+     *
+     */
 	static void verifyWorld() {
 		//TODO: element comment
 
@@ -85,5 +89,4 @@ public class WorldVerify {
 		}
 
 	}
-
 }

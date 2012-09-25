@@ -1,5 +1,9 @@
 package morlok8k.MinecraftLandGenerator;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class Time {
 
 	/**
@@ -68,6 +72,7 @@ public class Time {
 	/**
 	 * waits ten seconds. outputs 10%, 20%, etc after each second.
 	 * 
+	 * @param output
 	 * @author Morlok8k
 	 */
 	public static void waitTenSec(final boolean output) {
@@ -97,5 +102,4 @@ public class Time {
 		return;
 
 	}
-
 }

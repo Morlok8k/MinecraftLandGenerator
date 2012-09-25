@@ -23,9 +23,21 @@ import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
  */
 public class Main {
 
+	/**
+     *
+     */
 	public static int xRange = 0;
+	/**
+     *
+     */
 	public static int zRange = 0;
+	/**
+     *
+     */
 	public static Integer zOffset = null;
+	/**
+     *
+     */
 	public static Integer xOffset = null;
 
 	//////////////////////////////////////////////////////////
@@ -34,12 +46,10 @@ public class Main {
 	// "final" means "constant"								//
 	// public/private shows/hides between classes			//
 	//////////////////////////////////////////////////////////
-
 	/**
 	 * @param args
 	 *            the command line arguments
 	 */
-
 	public static void main(String[] args) {
 		var.startTime = System.currentTimeMillis();
 
@@ -97,9 +107,9 @@ public class Main {
 				@Override
 				public void run() {
 					try {
-						MLG_GUI frame = new MLG_GUI();
+						final MLG_GUI frame = new MLG_GUI();
 						frame.setVisible(true);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -128,7 +138,7 @@ public class Main {
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
 		Out.out(var.PROG_NAME + " version " + var.VERSION);
-		Out.out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number. 
+		Out.out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number.
 		// thus different timezones wont display a different buildID
 		Out.out("This version was last modified on "
 				+ var.dateFormat.format(var.MLG_Last_Modified_Date));
@@ -245,7 +255,7 @@ public class Main {
 					}
 					in.close();
 
-					if (var.recheckFlag == true) {				// the first line is always the location of this file.  the second is the recheck flag, if we want to. 
+					if (var.recheckFlag == true) {				// the first line is always the location of this file.  the second is the recheck flag, if we want to.
 						try {
 							recheckMD5 = MD5.fileMD5(config.toString());
 						} catch (final NoSuchAlgorithmException e) {
@@ -444,7 +454,7 @@ public class Main {
 
 		// prepare our two ProcessBuilders
 		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
-		var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)		
+		var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)
 		var.minecraft.directory(new File(var.serverPath));
 		var.minecraft.redirectErrorStream(true);
 
@@ -683,7 +693,7 @@ public class Main {
 					var.webLaunch = false;					//headless enviroment - cant bring up webpage!
 				}
 				final File web1 = new File("web");
-				final File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage	
+				final File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage
 				final File web3 = new File("web.txt.txt");
 				if (web2.exists() || (web1.exists() || web3.exists())) {  //check for "web.txt", if not found, check for "web", and if still not found, check for "web.txt.txt"
 					var.webLaunch = false;

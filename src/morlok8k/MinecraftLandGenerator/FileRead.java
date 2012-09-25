@@ -7,8 +7,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author morlok8k
+ */
 public class FileRead {
 
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
 
 		final ArrayList<Coordinates> Return = new ArrayList<Coordinates>();
@@ -65,8 +74,8 @@ public class FileRead {
 	}
 
 	/**
-	 * 
-	 */
+     *
+     */
 	public static void readConf() {
 		//TODO: element comment
 		//String errorMsg = "";
@@ -183,5 +192,4 @@ public class FileRead {
 			return;
 		}
 	}
-
 }
