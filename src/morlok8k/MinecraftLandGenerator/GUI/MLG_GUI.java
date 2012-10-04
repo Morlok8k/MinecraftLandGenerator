@@ -36,6 +36,8 @@ import javax.swing.plaf.metal.OceanTheme;
  */
 public class MLG_GUI {
 
+	public boolean UsingGUI = true;
+
 	final Font arial = new Font("Arial", Font.PLAIN, 12);
 	final Font arialBold = new Font("Arial", Font.BOLD, 12);
 
@@ -637,8 +639,9 @@ public class MLG_GUI {
 
 	void UpdateMLG() {
 
-		// TODO: Update MLG...
+		// Update.updateMLG();
 
+		Exit();
 	}
 
 	void ImportCustomList() {
