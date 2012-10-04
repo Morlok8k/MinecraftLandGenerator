@@ -104,11 +104,13 @@ public class Main {
 			// Launch MLG_GUI
 
 			EventQueue.invokeLater(new Runnable() {
+
 				@Override
 				public void run() {
+
 					try {
-						final MLG_GUI frame = new MLG_GUI();
-						frame.setVisible(true);
+						final MLG_GUI window = new MLG_GUI();
+						window.frameMLG_GUI.setVisible(true);
 					} catch (final Exception e) {
 						e.printStackTrace();
 					}
