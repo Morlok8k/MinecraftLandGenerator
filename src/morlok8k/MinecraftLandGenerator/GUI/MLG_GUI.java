@@ -140,6 +140,7 @@ public class MLG_GUI {
 		frameMLG_GUI.setBounds(100, 100, 475, 400);
 		frameMLG_GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMLG_GUI.setVisible(true);
+		frameMLG_GUI.getContentPane().setLayout(new BorderLayout(0, 0));
 
 		// Menu Bar:
 		final JMenuBar menuBar = new JMenuBar();
@@ -180,9 +181,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				// TODO: add Import Custom List
-
-				// TODO: disable/enable size objects
+				ImportCustomList();
 
 			}
 		});
@@ -196,10 +195,8 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
 
-				// TODO: Make sure everything has finished...
+				Exit();
 
-				// Lets Exit!
-				System.exit(0);
 			}
 		});
 		mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
@@ -211,7 +208,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				// TODO
+				MapInfo();
 			}
 		});
 
@@ -222,7 +219,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				// TODO
+				AboutMLG();
 			}
 		});
 
@@ -234,7 +231,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				// TODO
+				UpdateMLG();
 			}
 		});
 
@@ -259,15 +256,14 @@ public class MLG_GUI {
 		mnHelp.add(hzlHelp1);
 		mnHelp.add(mntmUpdateMlg);
 
+		// NumberFormats
 		final NumberFormat nfSizeInt = NumberFormat.getIntegerInstance();
 		nfSizeInt.setParseIntegerOnly(true);
-
 		final NumberFormat nfCPInt = NumberFormat.getIntegerInstance();
 		nfCPInt.setParseIntegerOnly(true);
 
-		frameMLG_GUI.getContentPane().setLayout(new BorderLayout(0, 0));
-
-		// create Main Panels
+		// Create Main Panels, Interior Panels, and Objects...
+		// TODO: Refactor this clusterf*ck!
 		final JPanel mainWest = new JPanel(new BorderLayout());
 		final JPanel mainEast = new JPanel(new BorderLayout());
 		final JPanel mainSouth = new JPanel(new BorderLayout());
@@ -412,11 +408,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				txtSizeX.setEnabled(true);
-				txtSizeZ.setEnabled(true);
-				lblSizeX.setEnabled(true);
-				lblSizeZ.setEnabled(true);
-
+				SizeSetEnable(true);
 			}
 		});
 
@@ -433,10 +425,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				txtSizeX.setEnabled(false);
-				txtSizeZ.setEnabled(false);
-				lblSizeX.setEnabled(false);
-				lblSizeZ.setEnabled(false);
+				SizeSetEnable(false);
 			}
 		});
 		pnlSizeSquarify.add(rdbtnSizeSquarify, BorderLayout.CENTER);
@@ -526,9 +515,6 @@ public class MLG_GUI {
 		pnlOptions.add(pnlAlignment, BorderLayout.SOUTH);
 		pnlAlignment.setLayout(new BorderLayout(0, 0));
 
-		// JRadioButton rdbtnBlocks = new JRadioButton("Blocks");
-		// pnlAlignment.add(rdbtnBlocks, BorderLayout.WEST);
-
 		rdbtnAlignChunks = new JRadioButton("Chunks");
 		rdbtnAlignChunks.setSelected(true);
 		pnlAlignment.add(rdbtnAlignChunks, BorderLayout.WEST);
@@ -537,7 +523,7 @@ public class MLG_GUI {
 		pnlAlignment.add(rdbtnAlignRegions, BorderLayout.EAST);
 
 		final ButtonGroup bgAlignment = new ButtonGroup();
-		// bgAlignment.add(rdbtnBlocks);
+
 		bgAlignment.add(rdbtnAlignChunks);
 		bgAlignment.add(rdbtnAlignRegions);
 
@@ -573,8 +559,11 @@ public class MLG_GUI {
 		pgbTotPer = new JProgressBar();
 		pnlTotPrg.add(pgbTotPer, BorderLayout.CENTER);
 
+		// Frame size and location
 		frameMLG_GUI.pack();
 		frameMLG_GUI.setLocationRelativeTo(null);
+
+		// Finished creation of frame
 	}
 
 	void start_GUI() {
@@ -587,15 +576,8 @@ public class MLG_GUI {
 		mntmStop.setEnabled(true);
 		mntmStart.setEnabled(false);
 
-		txtSizeX.setEnabled(false);
-		txtSizeZ.setEnabled(false);
-		lblSizeX.setEnabled(false);
-		lblSizeZ.setEnabled(false);
-
-		txtCPX.setEnabled(false);
-		txtCPZ.setEnabled(false);
-		lblCPX.setEnabled(false);
-		lblCPZ.setEnabled(false);
+		SizeSetEnable(false);
+		CenterPointSetEnable(false);
 
 		rdbtnSizeSquarify.setEnabled(false);
 		rdbtnSizeCustomSize.setEnabled(false);
@@ -610,30 +592,18 @@ public class MLG_GUI {
 
 	void stop_GUI() {
 
-		// TODO: add additional start code
+		// TODO: add additional stop code
 
 		if (rdbtnSizeCustomSize.isSelected()) {
-			txtSizeX.setEnabled(true);
-			txtSizeZ.setEnabled(true);
-			lblSizeX.setEnabled(true);
-			lblSizeZ.setEnabled(true);
+			SizeSetEnable(true);
 		} else {
-			txtSizeX.setEnabled(false);
-			txtSizeZ.setEnabled(false);
-			lblSizeX.setEnabled(false);
-			lblSizeZ.setEnabled(false);
+			SizeSetEnable(false);
 		}
 
 		if (rdbtnCenterSpawnPoint.isSelected()) {
-			txtCPX.setEnabled(false);
-			txtCPZ.setEnabled(false);
-			lblCPX.setEnabled(false);
-			lblCPZ.setEnabled(false);
+			CenterPointSetEnable(false);
 		} else {
-			txtCPX.setEnabled(true);
-			txtCPZ.setEnabled(true);
-			lblCPX.setEnabled(true);
-			lblCPZ.setEnabled(true);
+			CenterPointSetEnable(true);
 		}
 
 		rdbtnSizeSquarify.setEnabled(true);
@@ -652,4 +622,58 @@ public class MLG_GUI {
 		btnStop.setEnabled(false);
 
 	}
+
+	void MapInfo() {
+
+		// TODO: Display Map Info
+
+	}
+
+	void AboutMLG() {
+
+		// TODO: Display MLG About box
+
+	}
+
+	void UpdateMLG() {
+
+		// TODO: Update MLG...
+
+	}
+
+	void ImportCustomList() {
+
+		// TODO: add Import Custom List
+
+		// TODO: disable/enable size objects
+
+	}
+
+	void Exit() {
+
+		// TODO: Make sure everything has finished...
+
+		// Lets Exit!
+		System.exit(0);
+
+	}
+
+	void SizeSetEnable(final boolean enabled) {
+
+		txtSizeX.setEnabled(enabled);
+		txtSizeZ.setEnabled(enabled);
+		lblSizeX.setEnabled(enabled);
+		lblSizeZ.setEnabled(enabled);
+
+	}
+
+	void CenterPointSetEnable(final boolean enabled) {
+
+		txtCPX.setEnabled(enabled);
+		txtCPZ.setEnabled(enabled);
+		lblCPX.setEnabled(enabled);
+		lblCPZ.setEnabled(enabled);
+
+	}
+
 }
