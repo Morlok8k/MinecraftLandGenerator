@@ -110,7 +110,7 @@ public class Main {
 
 					try {
 						final MLG_GUI window = new MLG_GUI();
-						window.frameMLG_GUI.setVisible(true);
+						window.frmMLG_GUI.setVisible(true);
 					} catch (final Exception e) {
 						e.printStackTrace();
 					}

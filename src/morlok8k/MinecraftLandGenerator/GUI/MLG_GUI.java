@@ -39,7 +39,7 @@ public class MLG_GUI {
 	final Font arial = new Font("Arial", Font.PLAIN, 12);
 	final Font arialBold = new Font("Arial", Font.BOLD, 12);
 
-	public JFrame frameMLG_GUI;
+	public JFrame frmMLG_GUI;
 
 	JButton btnStart;
 	JButton btnStop;
@@ -135,16 +135,16 @@ public class MLG_GUI {
 	private void initialize() {
 
 		// Frame:
-		frameMLG_GUI = new JFrame();
-		frameMLG_GUI.setResizable(false);
-		frameMLG_GUI.setBounds(100, 100, 475, 400);
-		frameMLG_GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frameMLG_GUI.setVisible(true);
-		frameMLG_GUI.getContentPane().setLayout(new BorderLayout(0, 0));
+		frmMLG_GUI = new JFrame();
+		frmMLG_GUI.setResizable(false);
+		frmMLG_GUI.setBounds(100, 100, 475, 400);
+		frmMLG_GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmMLG_GUI.setVisible(true);
+		frmMLG_GUI.getContentPane().setLayout(new BorderLayout(0, 0));
 
 		// Menu Bar:
 		final JMenuBar menuBar = new JMenuBar();
-		frameMLG_GUI.setJMenuBar(menuBar);
+		frmMLG_GUI.setJMenuBar(menuBar);
 
 		// Top Level Menus:
 		final JMenu mnFile = new JMenu("File");
@@ -354,9 +354,9 @@ public class MLG_GUI {
 
 		// add Main panels to Top-Level Panel
 
-		frameMLG_GUI.getContentPane().add(mainNorth, BorderLayout.NORTH);
-		frameMLG_GUI.getContentPane().add(mainWest, BorderLayout.WEST);
-		frameMLG_GUI.getContentPane().add(mainEast, BorderLayout.EAST);
+		frmMLG_GUI.getContentPane().add(mainNorth, BorderLayout.NORTH);
+		frmMLG_GUI.getContentPane().add(mainWest, BorderLayout.WEST);
+		frmMLG_GUI.getContentPane().add(mainEast, BorderLayout.EAST);
 
 		final JPanel pnlOptions = new JPanel();
 		mainEast.add(pnlOptions, BorderLayout.CENTER);
@@ -531,7 +531,7 @@ public class MLG_GUI {
 		bgSize.add(rdbtnSizeCustomSize);
 		bgSize.add(rdbtnSizeSquarify);
 
-		frameMLG_GUI.getContentPane().add(mainSouth, BorderLayout.SOUTH);
+		frmMLG_GUI.getContentPane().add(mainSouth, BorderLayout.SOUTH);
 
 		final JPanel pnlCurPrg = new JPanel();
 		mainSouth.add(pnlCurPrg, BorderLayout.NORTH);
@@ -560,8 +560,8 @@ public class MLG_GUI {
 		pnlTotPrg.add(pgbTotPer, BorderLayout.CENTER);
 
 		// Frame size and location
-		frameMLG_GUI.pack();
-		frameMLG_GUI.setLocationRelativeTo(null);
+		frmMLG_GUI.pack();
+		frmMLG_GUI.setLocationRelativeTo(null);
 
 		// Finished creation of frame
 	}
@@ -649,7 +649,7 @@ public class MLG_GUI {
 
 	}
 
-	void Exit() {
+	static void Exit() {
 
 		// TODO: Make sure everything has finished...
 
