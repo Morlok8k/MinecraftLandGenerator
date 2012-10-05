@@ -9,306 +9,381 @@ import java.util.Scanner;
 
 /**
  * 
+ * This holds all the major variables that different sections of MLG uses...
+ * 
  * @author morlok8k
  */
 public class var {
 
 	//
 	// Program Info:
+
 	/**
-     *
-     */
-	public static boolean testing = false;		// display more output when debugging
+	 * display more output when debugging
+	 */
+	public static boolean testing = false;
+
 	/**
-     *
-     */
+	 * display more output
+	 */
 	public static boolean verbose = false;
+
 	/**
-     *
-     */
-	public static final String PROG_NAME = "Minecraft Land Generator";		// Program Name
+	 * Program Name
+	 */
+	public static final String PROG_NAME = "Minecraft Land Generator";
+
 	/**
-     *
-     */
-	public static final String VERSION = "1.7.1 test 10";								// Version Number!
+	 * Version Number!
+	 */
+	public static final String VERSION = "1.7.1 test 15";
+
 	/**
-     *
-     */
-	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x";		// Authors
+	 * Authors
+	 */
+	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg";
+
 	//
 	// Operating System Info:
 	/**
-     *
-     */
+	 * "/" or "\" depending on system
+	 */
 	public static final String fileSeparator = System.getProperty("file.separator");
+
 	/**
-     *
-     */
+	 * CRLF ('\r\n') on Windows, LF ('\n') on Linux, etc...
+	 */
 	public static final String newLine = System.getProperty("line.separator");
+
 	//
 	// Commonly Used Strings:
 	/**
-     *
-     */
-	public static String MLG = "[MLG] ";
+	 * "[MLG] "
+	 */
+	public static final String MLG = "[MLG] ";
+
 	/**
-     *
-     */
-	public static String MLGe = "[MLG-ERROR] ";
+	 * "[MLG-ERROR] "
+	 */
+	public static final String MLGe = "[MLG-ERROR] ";
+
 	//
 	// Date & Build-ID stuff:
 	/**
-     *
-     */
-	public static DateFormat dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+	 * Style: "January 1, 1970"
+	 */
+	public static final DateFormat dateFormat_MDY = new SimpleDateFormat("MMMM d, yyyy",
+			Locale.ENGLISH);
 	/**
-     *
-     */
+	 * class files of .jar were last modified on...
+	 */
 	public static Date MLG_Last_Modified_Date = null;
+
 	/**
-     *
-     */
-	public static DateFormat dateFormat = new SimpleDateFormat( // Lets get a nice Date format for display
-			"EEEE, MMMM d, yyyy 'at' h:mm a zzzz", Locale.ENGLISH);
+	 * Lets get a nice Date format for display<br>
+	 * Style: "Sunday, September 16, 2012 at 5:12 PM, Pacific Daylight Time"
+	 */
+	public static final DateFormat dateFormat = new SimpleDateFormat(
+			"EEEE, MMMM d, yyyy 'at' h:mm a, zzzz", Locale.ENGLISH);
+
 	/**
-     *
-     */
-	public static Date date = null;										// date stuff
+	 * a date
+	 */
+	public static Date date = null;
+
 	/**
-     *
-     */
+	 * last modified date stored as a Long
+	 */
 	public static Long MLG_Last_Modified_Long = 0L;
+
 	/**
-     *
-     */
+	 * File: "MLG-BuildID"
+	 */
 	public static String buildIDFile = "MLG-BuildID";
+
 	//
 	// Filenames:
 	/**
-     *
-     */
+	 * "MinecraftLandGenerator.jar" by default. This actually tracks the current filename for the jar.
+	 */
 	public static String MLGFileNameShort = null;
+
 	/**
-     *
-     */
+	 * "MinecraftLandGenerator.conf"
+	 */
 	public static final String MinecraftLandGeneratorConf = "MinecraftLandGenerator.conf";
+
 	/**
-     *
-     */
+	 * "_MLG_Readme.txt"
+	 */
 	public static final String defaultReadmeFile = "_MLG_Readme.txt";
+
 	/**
-     *
-     */
+	 * "MinecraftLandGenerator.jar"
+	 */
 	public static final String MLG_JarFile = "MinecraftLandGenerator.jar";
+
 	/**
-     *
-     */
+	 * entire path of currently running .jar file
+	 */
 	public static String MLGFileName = null;
+
 	//
 	// Text Input
 	/**
-     *
-     */
+	 * Command line input scanner
+	 */
 	public static Scanner sc = new Scanner(System.in);
+
 	//
 	// MinecraftLandGenerator.conf Stuff:
 	/**
-     *
-     */
+	 * Server Output: "[INFO] Done"
+	 */
 	public static String doneText = null;
+
 	/**
-     *
-     */
+	 * Server Output: "[INFO] Preparing spawn area:"
+	 */
 	public static String preparingText = null;
+
 	/**
-     *
-     */
+	 * Server Output: "[INFO] Preparing start region for"
+	 */
 	public static String preparingLevel = null;
+
 	/**
-     *
-     */
-	public static String level_0 = null;			// the world
+	 * The Overworld
+	 */
+	public static String level_0 = null;
+
 	/**
-     *
-     */
-	public static String level_1 = null;			// the nether
+	 * The Nether
+	 */
+	public static String level_1 = null;
+
 	/**
-     *
-     */
-	public static String level_2 = null;			// the end
+	 * The End
+	 */
+	public static String level_2 = null;
+
 	/**
-     *
-     */
-	public static String level_3 = null;			// future worlds
+	 * Future World (Level 3)
+	 */
+	public static String level_3 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 4)
+	 */
 	public static String level_4 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 5)
+	 */
 	public static String level_5 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 6)
+	 */
 	public static String level_6 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 7)
+	 */
 	public static String level_7 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 8)
+	 */
 	public static String level_8 = null;
+
 	/**
-     *
-     */
+	 * Future World (Level 9)
+	 */
 	public static String level_9 = null;
+
 	/**
-     *
-     */
+	 * MLG's recommended default instead of "java -jar minecraft_server.jar"
+	 */
 	public static final String defaultJavaLine =
 			"java -Djava.awt.headless=true -Djline.terminal=jline.UnsupportedTerminal -Duser.language=en"
 					+ " -Xms1024m -Xmx1024m -Xincgc -jar minecraft_server.jar nogui";
+
 	/**
-     *
-     */
+	 * "." for current folder, else exact path.
+	 */
 	public static String serverPath = null;
+
 	/**
-     *
-     */
+	 * the folder the game save is in...
+	 */
 	public static String worldPath = null;
+
 	//
 	//Server Launching:
 	/**
-     *
-     */
+	 * the minecraft server
+	 */
 	public static ProcessBuilder minecraft = null;
+
 	/**
-     *
-     */
+	 * the info from "java=" in the conf file.
+	 */
 	public static String javaLine = null;
+
 	//
 	//Server Launching:
 	/**
-     *
-     */
+	 * the name of the world. usually "world", unless its been changed...
+	 */
 	public static String worldName = null;
+
 	/**
-     *
-     */
+	 * Beta 1.9 glitch workaround. (not needed unless using beta 1.9)
+	 */
 	public static boolean waitSave = false;
+
 	/**
-     *
-     */
+	 * Ignores Warnings from the server. Used for compatibility and special cases
+	 */
 	public static boolean ignoreWarnings = false;
+
 	/**
-     *
-     */
+	 * the worlds seed
+	 */
 	public static Long randomSeed = (long) 0;
+
 	//
 	// Update URLs:
 	/**
-     *
-     */
+	 * just removing some redundancy
+	 */
 	public static final String github_URL =
-			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";			// just removing some redundancy
+			"https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/bin/";
+
 	/**
-     *
-     */
+	 * URL to conf file
+	 */
 	public static final String github_MLG_Conf_URL = github_URL + MinecraftLandGeneratorConf;
+
 	/**
-     *
-     */
+	 * URL to BuildID
+	 */
 	public static final String github_MLG_BuildID_URL = github_URL + buildIDFile;
+
 	/**
-     *
-     */
+	 * URL to .jar file
+	 */
 	public static final String github_MLG_jar_URL = github_URL + MLG_JarFile;
+
 	//
 	// Update Stuff:
 	/**
-     *
-     */
+	 * The running Main.class
+	 */
 	public static final Class<?> cls = Main.class;
+
 	/**
-     *
-     */
+	 * For bad compiling...
+	 */
 	public static final String rsrcError = "rsrcERROR";
+
 	/**
-     *
-     */
+	 * is running code a .jar file?
+	 */
 	public static boolean isCompiledAsJar = false;
+
 	/**
-     *
-     */
+	 * current hash
+	 */
 	public static String MLG_Current_Hash = null;
+
 	/**
-     *
-     */
+	 * Just a test to make sure we don't get stuck in an infinite loop. should never happen, unless there is bad code.
+	 */
 	public static int inf_loop_protect_BuildID = 0;
+
 	/**
-     *
-     */
+	 * we downloaded a copy of the BuildID...
+	 */
 	public static boolean flag_downloadedBuildID = false;
+
 	/**
-     *
-     */
+	 * a list of timestamps
+	 */
 	public static ArrayList<String> timeStamps = new ArrayList<String>();
+
 	//
 	// Resume Data & Log Files
 	/**
-     *
-     */
-	public static int resumeX = 0;				//resume data, if needed.
+	 * resume data for X, if needed.
+	 */
+	public static int resumeX = 0;
+
 	/**
-     *
-     */
+	 * resume data for Z, if needed.
+	 */
 	public static int resumeZ = 0;
+
 	/**
-     *
-     */
+	 * a saved copy of the original args given
+	 */
 	public static String[] originalArgs = {};
+
 	/**
-     *
-     */
+	 * which version of the server? oh yeah!
+	 */
 	public static String MC_Server_Version = "";
+
 	//
 	// Misc:
 	/**
-     *
-     */
-	public static boolean webLaunch = true;				// Launch website after generation.
+	 * Launch website after generation.
+	 */
+	public static boolean webLaunch = true;
+
 	/**
-     *
-     */
+	 * for scripts, we don't wait. for human readability, we wait 10 seconds before exiting program
+	 */
 	public static boolean dontWait = false;
+
 	/**
-     *
-     */
+	 * alternate / compatibility mode
+	 */
 	public static boolean alternate = false;
+
 	/**
-     *
-     */
+	 * standard server creates 625 chunks in a square around spawn.
+	 */
 	public static int MinecraftServerChunkPlayerCache = 625;	//You see this number when you first launch the server in GUI mode, after the world is loaded, but before anyone has connected.
+
 	/**
-     *
-     */
+	 * these 625 chunks create a 400x400 block square
+	 */
 	public static int incrementFull = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16);			// 400, the length of a fresh (no players have ever logged in) server map.
+
 	/**
-     *
-     */
+	 * due to the edge chunks being not fully populated, we subtract a chunks worth...
+	 */
 	public static int increment = incrementFull - 16;		//public static int increment = 384;			// 384, what we use to iterate between sections of the map.  Allows for some overlap to prevent "stripes"
+
 	/**
-     *
-     */
-	public static boolean assertsEnabled = false;				//debugging use...  use java -ea -jar MinecraftlandGenerator.jar...
+	 * debugging use... use "java -ea -jar MinecraftlandGenerator.jar"
+	 */
+	public static boolean assertsEnabled = false;
+
 	/**
-     *
-     */
+	 * when the program started
+	 */
 	public static long startTime = 0L;
+
 	/**
-     *
-     */
+	 * recheck toggle!
+	 */
 	public static Boolean recheckFlag = false;
+
+	/**
+	 * output GUI stuff when using GUI mode, or dont.
+	 */
+	public static boolean UsingGUI = false;
 }

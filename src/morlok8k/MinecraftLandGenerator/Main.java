@@ -90,7 +90,7 @@ public class Main {
 			}
 
 			//////
-			GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
+			//GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
 			//////
 
 		} else {
@@ -119,6 +119,8 @@ public class Main {
 
 		} else {	//No GUI
 			// Finally, Lets Start MLG!
+
+			var.UsingGUI = false;
 			Main.runCLI(args);
 		}
 

@@ -30,13 +30,13 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
+import morlok8k.MinecraftLandGenerator.var;
+
 /**
  * 
  * @author morlok8k
  */
 public class MLG_GUI {
-
-	public boolean UsingGUI = true;
 
 	final Font arial = new Font("Arial", Font.PLAIN, 12);
 	final Font arialBold = new Font("Arial", Font.BOLD, 12);
@@ -84,6 +84,8 @@ public class MLG_GUI {
 	 * Create the application.
 	 */
 	public MLG_GUI() {
+
+		var.UsingGUI = true;
 
 		// Program-wide UI stuff here...
 		MetalLookAndFeel.setCurrentTheme(new OceanTheme());
@@ -637,7 +639,7 @@ public class MLG_GUI {
 
 	}
 
-	void UpdateMLG() {
+	static void UpdateMLG() {
 
 		// Update.updateMLG();
 
