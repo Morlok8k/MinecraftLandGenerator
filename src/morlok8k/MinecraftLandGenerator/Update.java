@@ -383,7 +383,7 @@ public class Update {
 	 * @author Morlok8k
 	 * 
 	 */
-	public static void updateMLG() {
+	public static boolean updateMLG() {
 
 		buildID(true);		//get latest BuildID file.
 		var.MLG_Last_Modified_Date = null;
@@ -393,12 +393,9 @@ public class Update {
 		String s;
 		int diff;
 
-		//boolean renameFailed = false;
-
 		while (e.hasNext()) {
 			s = e.next();
 			diff = var.MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
-			//out(diff);
 
 			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
 				Out.out("There is a NEW VERSION Of " + var.PROG_NAME + " available online!");
@@ -417,8 +414,8 @@ public class Update {
 					} catch (final Exception e2) {
 						Out.out("Rename attempt #2 failed!");
 						e2.printStackTrace();
-						//renameFailed = true;
-						return;
+
+						return false;
 					}
 
 				}
@@ -426,11 +423,12 @@ public class Update {
 				final boolean fileSuccess = DownloadFile.downloadFile(var.github_MLG_jar_URL, true);
 				if (fileSuccess) {
 					Out.out(var.MLG_JarFile + " downloaded.");
-					return;
+					return true;
 				}
 
 			}
 		}
+		return false;
 
 	}
 

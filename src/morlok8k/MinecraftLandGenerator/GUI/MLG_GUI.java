@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
+import morlok8k.MinecraftLandGenerator.Update;
 import morlok8k.MinecraftLandGenerator.var;
 
 /**
@@ -641,9 +642,15 @@ public class MLG_GUI {
 
 	static void UpdateMLG() {
 
-		// Update.updateMLG();
+		boolean update = Update.updateMLG();
 
-		Exit();
+		if (update) {
+			//TODO: add a popup saying we got a new version
+			Exit();
+		} else {
+			//TODO: popup: no new version / error
+		}
+
 	}
 
 	void ImportCustomList() {
