@@ -23,22 +23,17 @@ import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
  */
 public class Main {
 
-	/**
-     *
-     */
+	/** Range of X to generate */
 	public static int xRange = 0;
-	/**
-     *
-     */
+
+	/** Range of Z to generate */
 	public static int zRange = 0;
-	/**
-     *
-     */
-	public static Integer zOffset = null;
-	/**
-     *
-     */
+
+	/** X Offset (Either spawnpoint or specified) */
 	public static Integer xOffset = null;
+
+	/** Z Offset (Either spawnpoint or specified) */
+	public static Integer zOffset = null;
 
 	//////////////////////////////////////////////////////////
 	// REMINDER: Because I always forget/mix up languages:	//
@@ -46,6 +41,7 @@ public class Main {
 	// "final" means "constant"								//
 	// public/private shows/hides between classes			//
 	//////////////////////////////////////////////////////////
+
 	/**
 	 * @param args
 	 *            the command line arguments
@@ -477,21 +473,6 @@ public class Main {
 				return;
 			}
 
-			//TODO: make this optional
-			final boolean useChunks = false;
-
-			if (useChunks) {		// use Chunks or Regions
-				xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
-				zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
-				xOffset = (int) (Math.ceil(((double) xOffset) / ((double) 16))) * 16;
-				zOffset = (int) (Math.ceil(((double) zOffset) / ((double) 16))) * 16;
-			} else {
-				xRange = (int) (Math.ceil(((double) xRange) / ((double) 512))) * 512;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
-				zRange = (int) (Math.ceil(((double) zRange) / ((double) 512))) * 512;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
-				xOffset = (int) (Math.ceil(((double) xOffset) / ((double) 512))) * 512;
-				zOffset = (int) (Math.ceil(((double) zOffset) / ((double) 512))) * 512;
-			}
-
 			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
 					+ "MinecraftLandGenerator.log",
 					"# " + var.PROG_NAME + " " + var.VERSION + " - " + SelfAware.JVMinfo()
@@ -516,23 +497,38 @@ public class Main {
 					+ "MinecraftLandGenerator.log", "# Seed: " + var.randomSeed + var.newLine
 					+ "# Spawn: " + spawn.toString() + var.newLine);
 
-			{
-				boolean overridden = false;
-				if (xOffset == null) {
-					xOffset = spawn.getX();
-				} else {
-					overridden = true;
-				}
-				if (zOffset == null) {
-					zOffset = spawn.getZ();
-				} else {
-					overridden = true;
-				}
-				if (overridden) {
-					Out.out("Centering land generation on [" + xOffset + ", " + zOffset
-							+ "] due to switches.");
-				}
+			boolean overridden = false;
+			if (xOffset == null) {
+				xOffset = spawn.getX();
+			} else {
+				overridden = true;
 			}
+			if (zOffset == null) {
+				zOffset = spawn.getZ();
+			} else {
+				overridden = true;
+			}
+
+			//TODO: make this optional
+			final boolean useChunks = true;
+
+			if (useChunks) {		// use Chunks or Regions
+				xRange = (int) (Math.ceil(((double) xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+				zRange = (int) (Math.ceil(((double) zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+				xOffset = (int) (Math.ceil(((double) xOffset) / ((double) 16))) * 16;
+				zOffset = (int) (Math.ceil(((double) zOffset) / ((double) 16))) * 16;
+			} else {
+				xRange = (int) (Math.ceil(((double) xRange) / ((double) 512))) * 512;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
+				zRange = (int) (Math.ceil(((double) zRange) / ((double) 512))) * 512;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
+				xOffset = (int) (Math.ceil(((double) xOffset) / ((double) 512))) * 512;
+				zOffset = (int) (Math.ceil(((double) zOffset) / ((double) 512))) * 512;
+			}
+
+			if (overridden) {
+				Out.out("Centering land generation on [" + xOffset + ", " + zOffset
+						+ "] due to switches.");
+			}
+
 			Out.out("");
 
 			double xLoops, zLoops;

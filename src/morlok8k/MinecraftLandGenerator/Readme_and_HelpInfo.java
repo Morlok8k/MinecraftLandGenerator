@@ -70,13 +70,15 @@ public class Readme_and_HelpInfo {
                 + "Morlok8k:" + n
                 + "1.7.1" + n
                 + "- Major Code Refactoring" + n
-                + "- TODO: %done tweak" + n //TODO
-                + "- TODO: outliers issue / region fix" + n
-                + "- TODO: 16/512 block selecting" + n
-                + "- TODO: remember that the outside is 400, not 380!" + n
-                + "- TODO: always calculate from orgin, just adjust outer box to match" + n
-                + "- TODO: recaculate existing coords with new code" + n
-                + "- TODO: change 380 to 384?" + n //TODO
+                + "- Updated to JNBT 1.2"
+                + "- making code ready for a GUI"
+         //       + "- TODO: %done tweak" + n //TODO
+         //       + "- TODO: outliers issue / region fix" + n
+         //       + "- TODO: 16/512 block selecting" + n
+         //       + "- TODO: remember that the outside is 400, not 380!" + n
+         //       + "- TODO: always calculate from orgin, just adjust outer box to match" + n
+         //       + "- TODO: recaculate existing coords with new code" + n
+         //       + "- TODO: change 380 to 384?" + n //TODO
                 + "1.7.0" + n
                 + "- Major Code Optimization" + n
                 + "- Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!" + n
