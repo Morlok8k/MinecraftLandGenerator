@@ -4,7 +4,7 @@
 ## Morlok8k - Updated 6/12/2012
 
 ## add source files to .jar
-zip -r ./bin/MinecraftLandGenerator.jar ./src/ ./scripts/ ./lib/jnbt-1.1-src.zip
+zip -r ./bin/MinecraftLandGenerator.jar ./src/ ./scripts/ ./lib/
 
 ## make .jar executable
 cd ./bin/
