@@ -70,8 +70,8 @@ public class Readme_and_HelpInfo {
                 + "Morlok8k:" + n
                 + "1.7.1" + n
                 + "- Major Code Refactoring" + n
-                + "- Updated to JNBT 1.2"
-                + "- making code ready for a GUI"
+                + "- Updated to JNBT 1.2" + n
+                + "- making code ready for a GUI" + n
          //       + "- TODO: %done tweak" + n //TODO
          //       + "- TODO: outliers issue / region fix" + n
          //       + "- TODO: 16/512 block selecting" + n
