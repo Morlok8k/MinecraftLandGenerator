@@ -1,10 +1,10 @@
 Minecraft Land Generator version 1.7.1
 
-Updated October 23, 2012
-(BuildID: 1351044693000)
+Updated October 27, 2012
+(BuildID: 1351324293000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to October 23, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to October 27, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -97,7 +97,9 @@ Version History:
 Morlok8k:
 1.7.1
 - Major Code Refactoring
-- Updated to JNBT 1.2- making code ready for a GUI1.7.0
+- Updated to JNBT 1.2
+- making code ready for a GUI
+1.7.0
 - Major Code Optimization
 - Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!
   (To do this, I rewrote the Main loop of the program, and add my own Coordinate object)
