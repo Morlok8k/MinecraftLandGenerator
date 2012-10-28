@@ -49,7 +49,7 @@ public class Readme_and_HelpInfo {
                 + "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + n
                 + n
                 + "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + n
-                + "The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + n
+                + "The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + n
                 + "It is also available at: http://jnbt.sourceforge.net/" + n
                 + n
                 + "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C\u00A9 Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"

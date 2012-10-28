@@ -33,6 +33,9 @@ public class var {
 	/** Authors */
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg";
 
+	/** Website */
+	public static final String WEBSITE = "https://sites.google.com/site/minecraftlandgenerator/";
+
 	//
 	// Operating System Info:
 	/** "/" or "\" depending on system */
@@ -254,4 +257,22 @@ public class var {
 
 	/** output GUI stuff when using GUI mode, or dont. */
 	public static boolean UsingGUI = false;
+
+	/** Range of X to generate */
+	public static int xRange = 0;
+
+	/** Range of Z to generate */
+	public static int zRange = 0;
+
+	/** X Offset (Either spawnpoint or specified) */
+	public static Integer xOffset = null;
+
+	/** Z Offset (Either spawnpoint or specified) */
+	public static Integer zOffset = null;
+
+	/** args */
+	public static String[] args;
+
+	/** Chunks or Regions? */
+	public static boolean useChunks = true;
 }

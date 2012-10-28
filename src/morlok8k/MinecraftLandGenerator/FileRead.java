@@ -183,7 +183,7 @@ public class FileRead {
 				Out.outD("     webLaunch: " + var.webLaunch);
 			}
 		} catch (final FileNotFoundException ex) {
-			Out.out("Could not find "
+			Out.err("Could not find "
 					+ var.MinecraftLandGeneratorConf
 					+ ". It is recommended that you run the application with the -conf option to create it.");
 			return;

@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -30,6 +31,8 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
+import morlok8k.MinecraftLandGenerator.Out;
+import morlok8k.MinecraftLandGenerator.Startup;
 import morlok8k.MinecraftLandGenerator.Update;
 import morlok8k.MinecraftLandGenerator.var;
 
@@ -42,7 +45,7 @@ public class MLG_GUI {
 	final Font arial = new Font("Arial", Font.PLAIN, 12);
 	final Font arialBold = new Font("Arial", Font.BOLD, 12);
 
-	public JFrame frmMLG_GUI;
+	public static JFrame frmMLG_GUI;
 
 	JButton btnStart;
 	JButton btnStop;
@@ -139,8 +142,17 @@ public class MLG_GUI {
 	 */
 	private void initialize() {
 
+		// Basic Program Initialization
+		Startup.initialStart();
+		boolean quit = false;
+		quit = Startup.confFile();
+		if (quit) { return; }
+
+		//WorldVerify.verifyWorld();			//TODO: need to do this at a later point
+
 		// Frame:
 		frmMLG_GUI = new JFrame();
+		frmMLG_GUI.setTitle("Minecraft Land Generator - Loading...");
 		frmMLG_GUI.setResizable(false);
 		frmMLG_GUI.setBounds(100, 100, 475, 400);
 		frmMLG_GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -425,12 +437,15 @@ public class MLG_GUI {
 		pnlSizeSquarify.setLayout(new BorderLayout(0, 0));
 
 		rdbtnSizeSquarify = new JRadioButton("Squarify Existing Land");
+		rdbtnSizeSquarify.setToolTipText("Not Functional Yet...");
 		rdbtnSizeSquarify.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
 				SizeSetEnable(false);
+				CenterPointSetEnable(false);
+
 			}
 		});
 		pnlSizeSquarify.add(rdbtnSizeSquarify, BorderLayout.CENTER);
@@ -452,10 +467,8 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				txtCPX.setEnabled(false);
-				txtCPZ.setEnabled(false);
-				lblCPX.setEnabled(false);
-				lblCPZ.setEnabled(false);
+				CenterPointSetEnable(false);
+
 			}
 		});
 		rdbtnCenterSpawnPoint.setSelected(true);
@@ -467,10 +480,8 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 
-				txtCPX.setEnabled(true);
-				txtCPZ.setEnabled(true);
-				lblCPX.setEnabled(true);
-				lblCPZ.setEnabled(true);
+				CenterPointSetEnable(true);
+
 			}
 		});
 		pnlCPrb.add(rdbtnCenterOther, BorderLayout.EAST);
@@ -565,9 +576,11 @@ public class MLG_GUI {
 		pnlTotPrg.add(pgbTotPer, BorderLayout.CENTER);
 
 		// Frame size and location
+
+		frmMLG_GUI.validate();
 		frmMLG_GUI.pack();
 		frmMLG_GUI.setLocationRelativeTo(null);
-
+		frmMLG_GUI.setTitle("Minecraft Land Generator");
 		// Finished creation of frame
 	}
 
@@ -593,6 +606,44 @@ public class MLG_GUI {
 		rdbtnCenterSpawnPoint.setEnabled(false);
 		rdbtnCenterOther.setEnabled(false);
 
+		pgbCurPer.setIndeterminate(true);
+		pgbTotPer.setIndeterminate(true);
+
+		//TODO: add values from textboxes and radio buttons to the actual vars.
+
+		if (rdbtnAlignRegions.isSelected()) {
+			var.useChunks = false;
+		} else {
+			var.useChunks = true;
+		}
+
+		if (rdbtnSizeCustomSize.isSelected()) {
+			var.xRange = Integer.parseInt(txtSizeX.getText().trim());
+			var.zRange = Integer.parseInt(txtSizeZ.getText().trim());
+		} else {
+			var.xRange = 1000;		// Umm...  This code shouldn't run at this point in time...
+			var.zRange = 1000;
+
+			//TODO: add squarifying code here.
+
+		}
+
+		if (rdbtnCenterOther.isSelected()) {
+
+			var.xOffset = Integer.parseInt(txtCPX.getText().trim());
+			var.zOffset = Integer.parseInt(txtCPZ.getText().trim());
+
+		} else {
+
+			var.xOffset = 0;
+			var.zOffset = 0;
+			// TODO: get spawnpoint
+
+			txtCPX.setText(var.xOffset.toString());
+			txtCPZ.setText(var.zOffset.toString());
+
+		}
+
 	}
 
 	void stop_GUI() {
@@ -611,7 +662,7 @@ public class MLG_GUI {
 			CenterPointSetEnable(true);
 		}
 
-		rdbtnSizeSquarify.setEnabled(true);
+		//rdbtnSizeSquarify.setEnabled(true);
 		rdbtnSizeCustomSize.setEnabled(true);
 
 		rdbtnAlignRegions.setEnabled(true);
@@ -626,17 +677,33 @@ public class MLG_GUI {
 		btnStart.setEnabled(true);
 		btnStop.setEnabled(false);
 
+		pgbCurPer.setIndeterminate(false);
+		pgbTotPer.setIndeterminate(false);
+
 	}
 
-	void MapInfo() {
+	static void MapInfo() {
 
 		// TODO: Display Map Info
+		JOptionPane.showMessageDialog(frmMLG_GUI, "Seed:" + var.newLine + "SpawnPoint:");
 
 	}
 
-	void AboutMLG() {
+	static void AboutMLG() {
 
-		// TODO: Display MLG About box
+		final String n = var.newLine;
+		final String N = n + n;
+		final String message =
+				"This program uses the Minecraft Server to expand your Minecraft world." + N
+						+ var.WEBSITE + N + "Authors: " + var.AUTHORS + n
+						+ "Special Thanks to: Graham Edgecombe (aka ancient) for JNBT" + N
+						+ "BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")" + n
+						+ "This version was last modified on "
+						+ var.dateFormat.format(var.MLG_Last_Modified_Date);
+		final String title = var.PROG_NAME + " v" + var.VERSION;
+
+		//JOptionPane.showMessageDialog(frmMLG_GUI, message, title, JOptionPane.INFORMATION_MESSAGE);
+		Out.msg(message, title, JOptionPane.INFORMATION_MESSAGE);
 
 	}
 

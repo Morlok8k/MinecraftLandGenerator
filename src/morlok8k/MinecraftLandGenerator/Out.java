@@ -1,5 +1,9 @@
 package morlok8k.MinecraftLandGenerator;
 
+import javax.swing.JOptionPane;
+
+import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
+
 /**
  * 
  * @author morlok8k
@@ -59,5 +63,46 @@ public class Out {
 	 */
 	static void outS(final String str) {
 		System.out.println("[Server] " + str);
+	}
+
+	/**
+	 * Makes a dialog box, and outputs a formatted string to System.out as a line.
+	 * 
+	 * @param msg
+	 *            Message
+	 * @param title
+	 *            title
+	 * @param messageType
+	 *            JOptionPane messageType
+	 * 
+	 * @author Morlok8k
+	 */
+	public static void msg(final String msg, final String title, final int messageType) {
+		String msgType = "";
+
+		switch (messageType) {
+			case JOptionPane.ERROR_MESSAGE:
+				msgType = "Error Message";
+				break;
+			case JOptionPane.INFORMATION_MESSAGE:
+				msgType = "Information Message";
+				break;
+			case JOptionPane.WARNING_MESSAGE:
+				msgType = "Warning Message";
+				break;
+			case JOptionPane.QUESTION_MESSAGE:
+				msgType = "Question Message";
+				break;
+			case JOptionPane.PLAIN_MESSAGE:
+				msgType = "Message";
+				break;
+			default:
+				msgType = "Message";
+				break;
+		}
+
+		System.out.println("[" + msgType + "] Title: " + title + var.newLine + msg);
+		JOptionPane.showMessageDialog(MLG_GUI.frmMLG_GUI, msg, title, messageType);
+
 	}
 }
