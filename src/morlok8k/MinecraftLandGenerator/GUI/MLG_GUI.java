@@ -584,104 +584,6 @@ public class MLG_GUI {
 		// Finished creation of frame
 	}
 
-	void start_GUI() {
-
-		// TODO: add additional start code
-
-		btnStop.setEnabled(true);
-		btnStart.setEnabled(false);
-
-		mntmStop.setEnabled(true);
-		mntmStart.setEnabled(false);
-
-		SizeSetEnable(false);
-		CenterPointSetEnable(false);
-
-		rdbtnSizeSquarify.setEnabled(false);
-		rdbtnSizeCustomSize.setEnabled(false);
-
-		rdbtnAlignRegions.setEnabled(false);
-		rdbtnAlignChunks.setEnabled(false);
-
-		rdbtnCenterSpawnPoint.setEnabled(false);
-		rdbtnCenterOther.setEnabled(false);
-
-		pgbCurPer.setIndeterminate(true);
-		pgbTotPer.setIndeterminate(true);
-
-		//TODO: add values from textboxes and radio buttons to the actual vars.
-
-		if (rdbtnAlignRegions.isSelected()) {
-			var.useChunks = false;
-		} else {
-			var.useChunks = true;
-		}
-
-		if (rdbtnSizeCustomSize.isSelected()) {
-			var.xRange = Integer.parseInt(txtSizeX.getText().trim());
-			var.zRange = Integer.parseInt(txtSizeZ.getText().trim());
-		} else {
-			var.xRange = 1000;		// Umm...  This code shouldn't run at this point in time...
-			var.zRange = 1000;
-
-			//TODO: add squarifying code here.
-
-		}
-
-		if (rdbtnCenterOther.isSelected()) {
-
-			var.xOffset = Integer.parseInt(txtCPX.getText().trim());
-			var.zOffset = Integer.parseInt(txtCPZ.getText().trim());
-
-		} else {
-
-			var.xOffset = 0;
-			var.zOffset = 0;
-			// TODO: get spawnpoint
-
-			txtCPX.setText(var.xOffset.toString());
-			txtCPZ.setText(var.zOffset.toString());
-
-		}
-
-	}
-
-	void stop_GUI() {
-
-		// TODO: add additional stop code
-
-		if (rdbtnSizeCustomSize.isSelected()) {
-			SizeSetEnable(true);
-		} else {
-			SizeSetEnable(false);
-		}
-
-		if (rdbtnCenterSpawnPoint.isSelected()) {
-			CenterPointSetEnable(false);
-		} else {
-			CenterPointSetEnable(true);
-		}
-
-		//rdbtnSizeSquarify.setEnabled(true);
-		rdbtnSizeCustomSize.setEnabled(true);
-
-		rdbtnAlignRegions.setEnabled(true);
-		rdbtnAlignChunks.setEnabled(true);
-
-		rdbtnCenterSpawnPoint.setEnabled(true);
-		rdbtnCenterOther.setEnabled(true);
-
-		mntmStop.setEnabled(false);
-		mntmStart.setEnabled(true);
-
-		btnStart.setEnabled(true);
-		btnStop.setEnabled(false);
-
-		pgbCurPer.setIndeterminate(false);
-		pgbTotPer.setIndeterminate(false);
-
-	}
-
 	static void MapInfo() {
 
 		// TODO: Display Map Info
@@ -752,6 +654,104 @@ public class MLG_GUI {
 		txtCPZ.setEnabled(enabled);
 		lblCPX.setEnabled(enabled);
 		lblCPZ.setEnabled(enabled);
+
+	}
+
+	void stop_GUI() {
+
+		// TODO: add additional stop code
+
+		if (rdbtnSizeCustomSize.isSelected()) {
+			SizeSetEnable(true);
+		} else {
+			SizeSetEnable(false);
+		}
+
+		if (rdbtnCenterSpawnPoint.isSelected()) {
+			CenterPointSetEnable(false);
+		} else {
+			CenterPointSetEnable(true);
+		}
+
+		//rdbtnSizeSquarify.setEnabled(true);
+		rdbtnSizeCustomSize.setEnabled(true);
+
+		rdbtnAlignRegions.setEnabled(true);
+		rdbtnAlignChunks.setEnabled(true);
+
+		rdbtnCenterSpawnPoint.setEnabled(true);
+		rdbtnCenterOther.setEnabled(true);
+
+		mntmStop.setEnabled(false);
+		mntmStart.setEnabled(true);
+
+		btnStart.setEnabled(true);
+		btnStop.setEnabled(false);
+
+		pgbCurPer.setIndeterminate(false);
+		pgbTotPer.setIndeterminate(false);
+
+	}
+
+	void start_GUI() {
+
+		// TODO: add additional start code
+
+		btnStop.setEnabled(true);
+		btnStart.setEnabled(false);
+
+		mntmStop.setEnabled(true);
+		mntmStart.setEnabled(false);
+
+		SizeSetEnable(false);
+		CenterPointSetEnable(false);
+
+		rdbtnSizeSquarify.setEnabled(false);
+		rdbtnSizeCustomSize.setEnabled(false);
+
+		rdbtnAlignRegions.setEnabled(false);
+		rdbtnAlignChunks.setEnabled(false);
+
+		rdbtnCenterSpawnPoint.setEnabled(false);
+		rdbtnCenterOther.setEnabled(false);
+
+		pgbCurPer.setIndeterminate(true);
+		pgbTotPer.setIndeterminate(true);
+
+		//TODO: add values from textboxes and radio buttons to the actual vars.
+
+		if (rdbtnAlignRegions.isSelected()) {
+			var.useChunks = false;
+		} else {
+			var.useChunks = true;
+		}
+
+		if (rdbtnSizeCustomSize.isSelected()) {
+			var.xRange = Integer.parseInt(txtSizeX.getText().trim());
+			var.zRange = Integer.parseInt(txtSizeZ.getText().trim());
+		} else {
+			var.xRange = 1000;		// Umm...  This code shouldn't run at this point in time...
+			var.zRange = 1000;
+
+			//TODO: add squarifying code here.
+
+		}
+
+		if (rdbtnCenterOther.isSelected()) {
+
+			var.xOffset = Integer.parseInt(txtCPX.getText().trim());
+			var.zOffset = Integer.parseInt(txtCPZ.getText().trim());
+
+		} else {
+
+			var.xOffset = 0;
+			var.zOffset = 0;
+			// TODO: get spawnpoint
+
+			txtCPX.setText(var.xOffset.toString());
+			txtCPZ.setText(var.zOffset.toString());
+
+		}
 
 	}
 

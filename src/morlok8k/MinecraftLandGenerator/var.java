@@ -275,4 +275,8 @@ public class var {
 
 	/** Chunks or Regions? */
 	public static boolean useChunks = true;
+
+	/** Log File */
+	public static String logFile = "MinecraftLandGenerator.log";
+
 }

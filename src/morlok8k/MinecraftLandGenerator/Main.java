@@ -153,8 +153,7 @@ public class Main {
 
 				//return;
 
-				FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator
-						+ "MinecraftLandGenerator.log");		// we read the .log just for any resume data, if any.
+				FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);		// we read the .log just for any resume data, if any.
 
 				System.gc();		//run the garbage collector - hopefully free up some memory!
 
@@ -195,8 +194,7 @@ public class Main {
 				return;
 			}
 
-			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
-					+ "MinecraftLandGenerator.log",
+			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile,
 					"# " + var.PROG_NAME + " " + var.VERSION + " - " + SelfAware.JVMinfo()
 							+ var.newLine + "# " + var.MC_Server_Version + var.newLine
 							+ "# Started: " + var.dateFormat.format(generationStartTimeTracking)
@@ -216,9 +214,8 @@ public class Main {
 			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
 			Out.out("Spawn point detected: [X,Y,Z] " + spawn);
 
-			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
-					+ "MinecraftLandGenerator.log", "# Seed: " + var.randomSeed + var.newLine
-					+ "# Spawn: " + spawn.toString() + var.newLine);
+			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile, "# Seed: "
+					+ var.randomSeed + var.newLine + "# Spawn: " + spawn.toString() + var.newLine);
 
 			boolean overridden = false;
 			if (var.xOffset == null) {
@@ -329,8 +326,7 @@ public class Main {
 
 			//get existing list, and remove this list from launchList
 			final ArrayList<Coordinates> removeList =
-					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator
-							+ "MinecraftLandGenerator.log");
+					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);
 
 			if (!(removeList.isEmpty())) {
 				Arraylist.arrayListRemove(launchList, removeList);
@@ -384,8 +380,8 @@ public class Main {
 
 				if (serverSuccess) {
 					// Write the current Coordinates to log file!
-					FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
-							+ "MinecraftLandGenerator.log", xyz.toString() + var.newLine);
+					FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile,
+							xyz.toString() + var.newLine);
 				} else {
 					System.exit(1);				// we got a warning or severe error
 				}
