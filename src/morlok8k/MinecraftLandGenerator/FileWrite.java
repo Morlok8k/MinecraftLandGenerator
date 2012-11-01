@@ -67,9 +67,9 @@ public class FileWrite {
                 + var.newLine
                 + var.newLine
                 + "#Strings read from the server" + var.newLine
-                + "Done_Text=[INFO] Done" + var.newLine
-                + "Preparing_Text=[INFO] Preparing spawn area:" + var.newLine
-                + "Preparing_Level=[INFO] Preparing start region for" + var.newLine
+                + "Done_Text=Done" + var.newLine
+                + "Preparing_Text=Preparing spawn area:" + var.newLine
+                + "Preparing_Level=Preparing start region for" + var.newLine
                 + "Level-0=The Overworld" + var.newLine
                 + "Level-1=The Nether" + var.newLine
                 + "Level-2=The End" + var.newLine
