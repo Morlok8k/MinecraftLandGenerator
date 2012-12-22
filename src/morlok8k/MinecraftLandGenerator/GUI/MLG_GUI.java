@@ -302,7 +302,7 @@ public class MLG_GUI {
 		btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 
-			@SuppressWarnings("unused")
+			//@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(final ActionEvent e) {
 				new Thread(new Runnable() {
@@ -622,7 +622,7 @@ public class MLG_GUI {
 
 	static void UpdateMLG() {
 
-		boolean update = Update.updateMLG();
+		final boolean update = Update.updateMLG();
 
 		if (update) {
 			//TODO: add a popup saying we got a new version
@@ -677,7 +677,7 @@ public class MLG_GUI {
 		Time.waitTenSec(true);
 
 		while (var.runningServerGUI) {
-			;
+			//;
 		}
 
 		// TODO: add additional stop code
