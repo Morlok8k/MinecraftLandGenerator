@@ -6,6 +6,7 @@ https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Run_Server
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_Server_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_Extra_Files_Mac.command
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/Update_MLG_Extra_Files_All-OS_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Printspawn_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Linux.sh
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Mac.command
