@@ -27,12 +27,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
 import morlok8k.MinecraftLandGenerator.Out;
 import morlok8k.MinecraftLandGenerator.Startup;
+import morlok8k.MinecraftLandGenerator.Time;
 import morlok8k.MinecraftLandGenerator.Update;
 import morlok8k.MinecraftLandGenerator.var;
 
@@ -47,42 +49,42 @@ public class MLG_GUI {
 
 	public static JFrame frmMLG_GUI;
 
-	JButton btnStart;
-	JButton btnStop;
+	static JButton btnStart;
+	static JButton btnStop;
 
-	JFormattedTextField txtSizeX;
-	JFormattedTextField txtSizeZ;
+	static JFormattedTextField txtSizeX;
+	static JFormattedTextField txtSizeZ;
 
-	JFormattedTextField txtCPX;
-	JFormattedTextField txtCPZ;
+	static JFormattedTextField txtCPX;
+	static JFormattedTextField txtCPZ;
 
-	JProgressBar pgbTotPer;
-	JProgressBar pgbCurPer;
+	static JProgressBar pgbTotPer;
+	static JProgressBar pgbCurPer;
 
-	JLabel lblTotPer;
-	JLabel lblCurPer;
+	static JLabel lblTotPer;
+	static JLabel lblCurPer;
 
-	JRadioButton rdbtnSizeSquarify;
-	JRadioButton rdbtnSizeCustomSize;
+	static JRadioButton rdbtnSizeSquarify;
+	static JRadioButton rdbtnSizeCustomSize;
 
-	JRadioButton rdbtnAlignRegions;
-	JRadioButton rdbtnAlignChunks;
+	static JRadioButton rdbtnAlignRegions;
+	static JRadioButton rdbtnAlignChunks;
 
-	JRadioButton rdbtnCenterSpawnPoint;
-	JRadioButton rdbtnCenterOther;
+	static JRadioButton rdbtnCenterSpawnPoint;
+	static JRadioButton rdbtnCenterOther;
 
-	JLabel lblTimeRem;
-	JLabel lblCurLoc;
-	JLabel lblCurStatus;
+	static JLabel lblTimeRem;
+	static JLabel lblCurLoc;
+	static JLabel lblCurStatus;
 
-	JLabel lblSizeZ;
-	JLabel lblSizeX;
+	static JLabel lblSizeZ;
+	static JLabel lblSizeX;
 
-	JLabel lblCPX;
-	JLabel lblCPZ;
-	JMenuItem mntmStart;
-	JMenuItem mntmStop;
-	JCheckBoxMenuItem chckbxmntmImportCustomList;
+	static JLabel lblCPX;
+	static JLabel lblCPZ;
+	static JMenuItem mntmStart;
+	static JMenuItem mntmStop;
+	static JCheckBoxMenuItem chckbxmntmImportCustomList;
 
 	/**
 	 * Create the application.
@@ -175,7 +177,7 @@ public class MLG_GUI {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
 
-				start_GUI();
+				Start.start_GUI();
 			}
 		});
 
@@ -300,11 +302,20 @@ public class MLG_GUI {
 		btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 
+			@SuppressWarnings("unused")
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-
-				start_GUI();
-
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								new Start().run();
+							}
+						});
+					}
+				}).start(); // start the thread
 			}
 		});
 		btnStop = new JButton("Stop");
@@ -639,7 +650,7 @@ public class MLG_GUI {
 
 	}
 
-	void SizeSetEnable(final boolean enabled) {
+	static void SizeSetEnable(final boolean enabled) {
 
 		txtSizeX.setEnabled(enabled);
 		txtSizeZ.setEnabled(enabled);
@@ -648,7 +659,7 @@ public class MLG_GUI {
 
 	}
 
-	void CenterPointSetEnable(final boolean enabled) {
+	static void CenterPointSetEnable(final boolean enabled) {
 
 		txtCPX.setEnabled(enabled);
 		txtCPZ.setEnabled(enabled);
@@ -657,7 +668,17 @@ public class MLG_GUI {
 
 	}
 
-	void stop_GUI() {
+	static void stop_GUI() {
+
+		btnStop.setEnabled(false);
+
+		var.stoppingServerGUI = true;
+
+		Time.waitTenSec(true);
+
+		while (var.runningServerGUI) {
+			;
+		}
 
 		// TODO: add additional stop code
 
@@ -690,68 +711,6 @@ public class MLG_GUI {
 
 		pgbCurPer.setIndeterminate(false);
 		pgbTotPer.setIndeterminate(false);
-
-	}
-
-	void start_GUI() {
-
-		// TODO: add additional start code
-
-		btnStop.setEnabled(true);
-		btnStart.setEnabled(false);
-
-		mntmStop.setEnabled(true);
-		mntmStart.setEnabled(false);
-
-		SizeSetEnable(false);
-		CenterPointSetEnable(false);
-
-		rdbtnSizeSquarify.setEnabled(false);
-		rdbtnSizeCustomSize.setEnabled(false);
-
-		rdbtnAlignRegions.setEnabled(false);
-		rdbtnAlignChunks.setEnabled(false);
-
-		rdbtnCenterSpawnPoint.setEnabled(false);
-		rdbtnCenterOther.setEnabled(false);
-
-		pgbCurPer.setIndeterminate(true);
-		pgbTotPer.setIndeterminate(true);
-
-		//TODO: add values from textboxes and radio buttons to the actual vars.
-
-		if (rdbtnAlignRegions.isSelected()) {
-			var.useChunks = false;
-		} else {
-			var.useChunks = true;
-		}
-
-		if (rdbtnSizeCustomSize.isSelected()) {
-			var.xRange = Integer.parseInt(txtSizeX.getText().trim());
-			var.zRange = Integer.parseInt(txtSizeZ.getText().trim());
-		} else {
-			var.xRange = 1000;		// Umm...  This code shouldn't run at this point in time...
-			var.zRange = 1000;
-
-			//TODO: add squarifying code here.
-
-		}
-
-		if (rdbtnCenterOther.isSelected()) {
-
-			var.xOffset = Integer.parseInt(txtCPX.getText().trim());
-			var.zOffset = Integer.parseInt(txtCPZ.getText().trim());
-
-		} else {
-
-			var.xOffset = 0;
-			var.zOffset = 0;
-			// TODO: get spawnpoint
-
-			txtCPX.setText(var.xOffset.toString());
-			txtCPZ.setText(var.zOffset.toString());
-
-		}
 
 	}
 
