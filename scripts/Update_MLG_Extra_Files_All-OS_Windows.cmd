@@ -1,7 +1,7 @@
 @echo off
 SET BINDIR=%~dp0
 CD /D "%BINDIR%"
-SET ScriptTitle=Minecraft Land Generator - Update Extra MLG Files (All OS) - Windows
+SET ScriptTitle=Minecraft Land Generator - Update Extra MLG Files All OS - Windows
 title %ScriptTitle%
 cls
 echo %ScriptTitle%
