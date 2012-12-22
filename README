@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.7.1
+Minecraft Land Generator version 1.7.2
 
-Updated October 27, 2012
-(BuildID: 1351324293000)
+Updated December 22, 2012
+(BuildID: 1356164868000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to October 27, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to December 22, 2012!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -18,7 +18,7 @@ When a Minecraft server is launched, it automatically generates chunks within a 
 The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
 
 This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
-The JNLP library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
+The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
 It is also available at: http://jnbt.sourceforge.net/
 
 The "unescape" method/function is also not Public Domain.  Its License is the W3C© Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
@@ -95,6 +95,10 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
+1.7.2
+- Fixed "1152 bug"
+- Updated to JNBT 1.3
+- adjusted archive integrity check to account for timezone-related bugs...
 1.7.1
 - Major Code Refactoring
 - Updated to JNBT 1.2
