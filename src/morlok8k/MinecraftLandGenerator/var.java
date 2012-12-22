@@ -279,4 +279,10 @@ public class var {
 	/** Log File */
 	public static String logFile = "MinecraftLandGenerator.log";
 
+	/** has GUI-mode's Start button been pushed? */
+	public static boolean runningServerGUI = false;
+
+	/** has GUI-mode's Stop button been pushed? */
+	public static boolean stoppingServerGUI = false;
+
 }

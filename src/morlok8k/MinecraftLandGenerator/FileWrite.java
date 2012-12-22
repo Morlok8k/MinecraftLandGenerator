@@ -23,7 +23,7 @@ public class FileWrite {
 			// Create file
 			final FileWriter fstream = new FileWriter(file, true);
 			final BufferedWriter out = new BufferedWriter(fstream);
-			//String output = "Hello Java" + newLine;
+
 			out.write(appendTxt);
 			//Close the output stream
 			out.close();
@@ -70,8 +70,8 @@ public class FileWrite {
                 + "Done_Text=Done" + var.newLine
                 + "Preparing_Text=Preparing spawn area:" + var.newLine
                 + "Preparing_Level=Preparing start region for" + var.newLine
-                + "Level-0=The Overworld" + var.newLine
-                + "Level-1=The Nether" + var.newLine
+                + "Level-0=Overworld" + var.newLine
+                + "Level-1=Nether" + var.newLine
                 + "Level-2=The End" + var.newLine
                 + "Level-3=Level 3 (Future Level)" + var.newLine
                 + "Level-4=Level 4 (Future Level)" + var.newLine

@@ -73,7 +73,7 @@ public class Main {
 			}
 
 			//////
-			//GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
+			GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
 			//////
 
 		} else {
@@ -273,6 +273,8 @@ public class Main {
 
 			Out.out("Calculating Spawn Points...");
 
+			// Perfect Squares Code:
+
 			int totalIterations = (int) (xLoops * zLoops);
 			int currentIteration = 0;
 
@@ -284,20 +286,26 @@ public class Main {
 
 			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += var.increment) {
 				curXloops++;
+				boolean eastEdgeReached = false;
+
 				if (curXloops == 1) {
 					currentX = (((0 - var.xRange) / 2) + (var.incrementFull / 2));  	// West Edge of map
+
 				} else if (currentX >= ((xRangeAdj / 2) - (var.increment / 2))) {
 					currentX = ((var.xRange / 2) - (var.incrementFull / 2));			// East Edge of map
+					eastEdgeReached = true;
 				}
 
 				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += var.increment) {
 					currentIteration++;
 
 					curZloops++;
+					boolean southEdgeReached = false;
 					if (curZloops == 1) {
 						currentZ = (((0 - var.zRange) / 2) + (var.incrementFull / 2));	// North Edge of map
 					} else if (currentZ >= ((zRangeAdj / 2) - (var.increment / 2))) {
 						currentZ = ((var.zRange / 2) - (var.incrementFull / 2));		// South Edge of map
+						southEdgeReached = true;
 					}
 
 					{
@@ -311,17 +319,24 @@ public class Main {
 						}
 					}
 
-					if (curZloops == 1) {
+					if (curZloops == 1) {			// We are at the North edge.  We have special code for the North edge, so we need to change currentZ to be normal again.
 						currentZ =
 								(int) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
+					}
+					if (southEdgeReached) {
+						currentZ = zRangeAdj;		// We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
 					}
 
 				}
 				curZloops = 0;
-				if (curXloops == 1) {
+				if (curXloops == 1) {			// We are at the West edge.  We have special code for the West edge, so we need to change currentX to be normal again.
 					currentX =
 							(int) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
 				}
+				if (eastEdgeReached) {
+					currentX = xRangeAdj;		// We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
+				}
+
 			}
 
 			//get existing list, and remove this list from launchList

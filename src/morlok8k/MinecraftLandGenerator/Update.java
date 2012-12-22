@@ -325,7 +325,7 @@ public class Update {
 									Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 
 								} else {
-									if (tCalc < -15000L) {
+									if (tCalc < -43200000L) {
 
 										//time is newer?  (.zip file is newer than BuildID)
 										Out.err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
@@ -333,9 +333,9 @@ public class Update {
 										Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 
-									if (tCalc < 15000L) {
+									if (tCalc < 43200000L) {
 
-										//times are within 30 seconds (+/- 15 seconds) of each other.  (typically 1-2 seconds, but left room for real-world error)
+										//times are within 24 hours (+/- 12 hours) of each other.  (typically 1-2 seconds, but left room for real-world error - due to timezone bugs with some operating systems)
 										if (var.testing | var.flag_downloadedBuildID) {
 											Out.out("Archive Intergrity Check Passed. Offset: "
 													+ (tCalc / 1000) + "sec.");
