@@ -164,7 +164,7 @@ public class Server {
 						Out.outP(var.newLine + var.MLG + var.worldName + ": " + var.level_9 + ":"
 								+ var.newLine);
 					} else {
-						Out.outP(var.newLine + var.MLG + shortLine);
+						Out.outP(var.newLine + var.MLG + shortLine + var.newLine);
 					}
 				} else if (line.contains("server version") || line.contains("Converting map!")) {	//TODO: add to .conf
 					Out.outS(shortLine);
