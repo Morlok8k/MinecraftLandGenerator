@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.7.2
+Minecraft Land Generator version 1.7.3
 
-Updated December 22, 2012
-(BuildID: 1356164868000)
+Updated February 7, 2013
+(BuildID: 1360298939000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to December 22, 2012!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to February 7, 2013!)
 Additional Code by pr0f1x		October 2011
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
@@ -95,6 +95,8 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
+1.7.2
+- Fixed a minor display bug (specifically when using Server Generation Fix Mod)
 1.7.2
 - Fixed "1152 bug"
 - Updated to JNBT 1.3

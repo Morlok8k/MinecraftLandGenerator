@@ -73,6 +73,8 @@ public class Readme_and_HelpInfo {
                 //       + "- TODO: recaculate existing coords with new code" + n
                 //       + "- TODO: change 380 to 384?" + n //TODO
                 + "1.7.2" + n
+                + "- Fixed a minor display bug (specifically when using Server Generation Fix Mod)" + n
+                + "1.7.2" + n
                 + "- Fixed \"1152 bug\"" + n
                 + "- Updated to JNBT 1.3" + n
                 + "- adjusted archive integrity check to account for timezone-related bugs..." + n        
