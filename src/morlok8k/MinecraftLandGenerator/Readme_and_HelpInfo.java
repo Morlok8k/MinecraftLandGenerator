@@ -37,9 +37,10 @@ public class Readme_and_HelpInfo {
                 + "Original Code by Corrodias		November 2010" + n
                 + "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + MLG_Last_Modified_MDY + "!)" + n
                 + "Additional Code by pr0f1x		October 2011" + n
+                + "Additional Code/Idea by jaseg    August 2012" + n
                 + n
                 + "Website: https://sites.google.com/site/minecraftlandgenerator/" + n
-                + "Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/" + n
+                + "Forum: http://www.minecraftforum.net/topic/187737-" + n
                 + "Source: https://github.com/Morlok8k/MinecraftLandGenerator" + n
                 + n
                 + "-----------------------------------------------" + n
@@ -50,7 +51,7 @@ public class Readme_and_HelpInfo {
                 + n
                 + "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + n
                 + "The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + n
-                + "It is also available at: http://jnbt.sourceforge.net/" + n
+                + "It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)" + n
                 + n
                 + "The \"unescape\" method/function is also not Public Domain.  Its License is the W3C\u00A9 Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231"
                 + n
@@ -72,8 +73,9 @@ public class Readme_and_HelpInfo {
                 //       + "- TODO: 16/512 block selecting" + n
                 //       + "- TODO: recaculate existing coords with new code" + n
                 //       + "- TODO: change 380 to 384?" + n //TODO
-                + "1.7.2" + n
+                + "1.7.3" + n
                 + "- Fixed a minor display bug (specifically when using Server Generation Fix Mod)" + n
+                + "- Updated Readme text a bit." +n
                 + "1.7.2" + n
                 + "- Fixed \"1152 bug\"" + n
                 + "- Updated to JNBT 1.3" + n
@@ -218,6 +220,7 @@ public class Readme_and_HelpInfo {
                 + "Notes:" + n
                 + "Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time." + n
                 + "However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated."
+                + "The \"Server Generation Fix Mod\" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-"
                 + "I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level." + n;
         //@formatter:on
 

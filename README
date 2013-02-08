@@ -1,14 +1,15 @@
 Minecraft Land Generator version 1.7.3
 
 Updated February 7, 2013
-(BuildID: 1360298939000)
+(BuildID: 1360299846000)
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to February 7, 2013!)
 Additional Code by pr0f1x		October 2011
+Additional Code/Idea by jaseg    August 2012
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
-Forum: http://www.minecraftforum.net/topic/187737-minecraft-land-generator/
+Forum: http://www.minecraftforum.net/topic/187737-
 Source: https://github.com/Morlok8k/MinecraftLandGenerator
 
 -----------------------------------------------
@@ -19,7 +20,7 @@ The program makes a backup of level.dat as level_backup.dat before editing, and 
 
 This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
 The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
-It is also available at: http://jnbt.sourceforge.net/
+It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)
 
 The "unescape" method/function is also not Public Domain.  Its License is the W3C© Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
@@ -95,8 +96,9 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
-1.7.2
+1.7.3
 - Fixed a minor display bug (specifically when using Server Generation Fix Mod)
+- Updated Readme text a bit.
 1.7.2
 - Fixed "1152 bug"
 - Updated to JNBT 1.3
@@ -236,5 +238,5 @@ Corrodias:
 
 Notes:
 Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
-However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
+However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.The "Server Generation Fix Mod" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
 
