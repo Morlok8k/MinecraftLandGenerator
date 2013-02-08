@@ -219,8 +219,9 @@ public class Readme_and_HelpInfo {
                 + n
                 + "Notes:" + n
                 + "Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time." + n
-                + "However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated."
-                + "The \"Server Generation Fix Mod\" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-"
+                + "However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated." + n
+                + "The \"Server Generation Fix Mod\" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-" + n
+                + n
                 + "I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level." + n;
         //@formatter:on
 

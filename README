@@ -1,7 +1,7 @@
 Minecraft Land Generator version 1.7.3
 
 Updated February 7, 2013
-(BuildID: 1360299846000)
+(BuildID: 1360304117000)
 
 Original Code by Corrodias		November 2010
 Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to February 7, 2013!)
@@ -238,5 +238,8 @@ Corrodias:
 
 Notes:
 Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
-However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.The "Server Generation Fix Mod" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
+However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.
+The "Server Generation Fix Mod" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-
+
+I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
 
