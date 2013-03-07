@@ -1,3 +1,8 @@
+/* 
+ * The Computer Programmer's Lament:
+ * Program complexity grows until it exceeds the capability of the programmer who must maintain it.
+ */
+
 package morlok8k.MinecraftLandGenerator;
 
 import java.awt.EventQueue;
