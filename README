@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.7.3
+Minecraft Land Generator version 1.7.4
 
-Updated February 7, 2013
-(BuildID: 1360304117000)
+Updated July 8, 2013
+(BuildID: 1373344097000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to February 7, 2013!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to July 8, 2013!)
 Additional Code by pr0f1x		October 2011
 Additional Code/Idea by jaseg    August 2012
 
@@ -18,7 +18,11 @@ This program lets you generate an area of land with your Minecraft SMP server (a
 When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point.
 The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
 
-This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
+This program is free, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
+
+Copyright © 2010
+This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+
 The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
 It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)
 
@@ -96,6 +100,8 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
+1.7.4
+- Released Minecraft land Generator under the WTFPL.  (With the permission of Corrodias)
 1.7.3
 - Fixed a minor display bug (specifically when using Server Generation Fix Mod)
 - Updated Readme text a bit.
