@@ -1,3 +1,22 @@
+/*
+#######################################################################
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
+#                    Version 2, December 2004                         #
+#                                                                     #
+# Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>                    #
+#                                                                     #
+# Everyone is permitted to copy and distribute verbatim or modified   #
+# copies of this license document, and changing it is allowed as long #
+# as the name is changed.                                             #
+#                                                                     #
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
+#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION   #
+#                                                                     #
+#  0. You just DO WHAT THE FUCK YOU WANT TO.                          #
+#                                                                     #
+#######################################################################
+*/
+
 package morlok8k.MinecraftLandGenerator;
 
 import java.text.DateFormat;
@@ -28,7 +47,7 @@ public class var {
 	public static final String PROG_NAME = "Minecraft Land Generator";
 
 	/** Version Number! */
-	public static final String VERSION = "1.7.3";
+	public static final String VERSION = "1.7.4";
 
 	/** Authors */
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg";

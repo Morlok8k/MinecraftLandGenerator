@@ -1,3 +1,22 @@
+/*
+#######################################################################
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
+#                    Version 2, December 2004                         #
+#                                                                     #
+# Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>                    #
+#                                                                     #
+# Everyone is permitted to copy and distribute verbatim or modified   #
+# copies of this license document, and changing it is allowed as long #
+# as the name is changed.                                             #
+#                                                                     #
+#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
+#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION   #
+#                                                                     #
+#  0. You just DO WHAT THE FUCK YOU WANT TO.                          #
+#                                                                     #
+#######################################################################
+*/
+
 package morlok8k.MinecraftLandGenerator;
 
 /**
@@ -49,7 +68,11 @@ public class Readme_and_HelpInfo {
                 + "When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point." + n
                 + "The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually." + n
                 + n
-                + "This program is public domain, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + n
+                + "This program is free, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)" + n
+                + n
+                + "Copyright \u00A9 2010" + n
+                + "This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See http://www.wtfpl.net/ for more details." + n
+                + n
                 + "The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT." + n
                 + "It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)" + n
                 + n
@@ -73,6 +96,8 @@ public class Readme_and_HelpInfo {
                 //       + "- TODO: 16/512 block selecting" + n
                 //       + "- TODO: recaculate existing coords with new code" + n
                 //       + "- TODO: change 380 to 384?" + n //TODO
+                + "1.7.4" + n
+                + "- Released Minecraft land Generator under the WTFPL.  (With the permission of Corrodias)" +n
                 + "1.7.3" + n
                 + "- Fixed a minor display bug (specifically when using Server Generation Fix Mod)" + n
                 + "- Updated Readme text a bit." +n
