@@ -1,10 +1,10 @@
-Minecraft Land Generator version 1.7.4
+Minecraft Land Generator version 1.7.5
 
-Updated July 8, 2013
-(BuildID: 1373344097000)
+Updated October 10, 2013
+(BuildID: 1381398906000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to July 8, 2013!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to October 10, 2013!)
 Additional Code by pr0f1x		October 2011
 Additional Code/Idea by jaseg    August 2012
 
@@ -100,6 +100,9 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
+1.7.5
+- Added "save-all" to alternate mode 
+- Added fix for new style of java error messages
 1.7.4
 - Released Minecraft land Generator under the WTFPL.  (With the permission of Corrodias)
 1.7.3

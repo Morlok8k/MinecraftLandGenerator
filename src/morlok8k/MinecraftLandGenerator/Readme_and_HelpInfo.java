@@ -96,6 +96,9 @@ public class Readme_and_HelpInfo {
                 //       + "- TODO: 16/512 block selecting" + n
                 //       + "- TODO: recaculate existing coords with new code" + n
                 //       + "- TODO: change 380 to 384?" + n //TODO
+                + "1.7.5" + n
+                + "- Added \"save-all\" to alternate mode " +n
+                + "- Added fix for new style of java error messages" +n
                 + "1.7.4" + n
                 + "- Released Minecraft land Generator under the WTFPL.  (With the permission of Corrodias)" +n
                 + "1.7.3" + n

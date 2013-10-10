@@ -1,21 +1,9 @@
 /*
-#######################################################################
-#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
-#                    Version 2, December 2004                         #
-#                                                                     #
-# Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>                    #
-#                                                                     #
-# Everyone is permitted to copy and distribute verbatim or modified   #
-# copies of this license document, and changing it is allowed as long #
-# as the name is changed.                                             #
-#                                                                     #
-#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
-#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION   #
-#                                                                     #
-#  0. You just DO WHAT THE FUCK YOU WANT TO.                          #
-#                                                                     #
-#######################################################################
-*/
+ * ####################################################################### # DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE # # Version 2, December 2004 # # # # Copyright (C) 2004 Sam Hocevar
+ * <sam@hocevar.net> # # # # Everyone is permitted to copy and distribute verbatim or modified # # copies of this license document, and changing it is allowed as long # # as the name is changed. # # #
+ * # DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE # # TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION # # # # 0. You just DO WHAT THE FUCK YOU WANT TO. # # #
+ * #######################################################################
+ */
 
 package morlok8k.MinecraftLandGenerator;
 
@@ -36,8 +24,9 @@ public class Server {
 	 * 
 	 * @return
 	 * @throws IOException
-	 * @author Corrodias
+	 * @author Corrodias, Morlok8k
 	 */
+
 	protected static boolean runMinecraft() throws IOException {
 
 		if (var.verbose) {
@@ -55,7 +44,7 @@ public class Server {
 			Out.out("Alternate Launch");
 			final Process process = var.minecraft.start();
 
-			//byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
+			final byte[] saveAll = { 's', 'a', 'v', 'e', '-', 'a', 'l', 'l', '\r', '\n' };
 			final byte[] stop = { 's', 't', 'o', 'p', '\r', '\n' };
 
 			// monitor output and print to console where required.
@@ -72,6 +61,8 @@ public class Server {
 					final OutputStream outputStream = process.getOutputStream();
 
 					Out.out("Stopping server...  (Please Wait...)");
+					outputStream.write(saveAll);
+					outputStream.flush();
 					outputStream.write(stop);
 					outputStream.flush();
 
@@ -112,8 +103,16 @@ public class Server {
 
 				final int posBracket = line.indexOf("]");			//changed from .lastIndexOf to .indexOf, in case we have a custom server that outputs something with an "]".  we want the first one anyways.
 				if (posBracket != -1) {
-					shortLine = line.substring(posBracket + 2);
-					shortLine = shortLine.trim();
+					if ((posBracket + 2) >= line.length()) {
+						shortLine = line;							//On error messages with 1.7 based servers, there is a "]" at the end of the line.  caused a crash here.
+					} else {
+						shortLine = line.substring(posBracket + 2);
+					}
+
+					if (shortLine != null) {
+						shortLine = shortLine.trim();				// new version of Eclipse was giving a warning that it could be null here - it can't, since "shortLine" is based on "line" which is never null at this point.
+					}												// added this check to remove warning, as i didn't want to suppress all null warnings for runMinecraft
+
 				} else {
 					shortLine = line;
 				}
