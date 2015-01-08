@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
-
 /**
  * 
  * @author Corrodias, Morlok8k, pr0f1x
@@ -44,7 +43,7 @@ public class Main {
 
 	//////////////////////////////////////////////////////////
 	// REMINDER: Because I always forget/mix up languages:	//
-	// "static" in java means "global" to this class		//
+	// "static" in java means that there will only ever be ONE of it created, shared by all the instances of that class.//
 	// "final" means "constant"								//
 	// public/private shows/hides between classes			//
 	//////////////////////////////////////////////////////////
@@ -143,49 +142,15 @@ public class Main {
 	 * 
 	 */
 	private static void runCLI() {
+		final File backupLevel;
+		final File serverLevel;
 
 		// Basic Program Initialization
 		Startup.initialStart();
-		boolean quit = false;
-		quit = Startup.programArguments();
-		if (quit) { return; }
-		quit = Startup.confFile();
-		if (quit) { return; }
+		if (Startup.programArguments()) { return; }
+		if (Startup.confFile()) { return; }
+		if (Setup.doSetup()) { return; }  // Checks for server.properties, checks for world, creates world if needed, checks old data}
 
-		WorldVerify.verifyWorld();
-
-		{
-			final File backupLevel =
-					new File(var.worldPath + var.fileSeparator + "level_backup.dat");
-			if (backupLevel.exists()) {
-				//err("There is a level_backup.dat file left over from a previous attempt that failed. You should go determine whether to keep the current level.dat"
-				//		+ " or restore the backup.");
-				//err("You most likely will want to restore the backup!");
-				//Time.waitTenSec(false);
-
-				Out.err("There is a level_backup.dat file left over from a previous attempt that failed.");
-				Out.out("Resuming...");
-
-				//use resume data
-				final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
-				try {
-					Misc.copyFile(backupLevel, serverLevel);
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-				backupLevel.delete();
-
-				//return;
-
-				FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);		// we read the .log just for any resume data, if any.
-
-				System.gc();		//run the garbage collector - hopefully free up some memory!
-
-				var.xRange = var.resumeX;
-				var.zRange = var.resumeZ;
-
-			}
-		}
 
 		// =====================================================================
 		//                              PROCESSING
@@ -197,22 +162,8 @@ public class Main {
 
 		Out.out("");
 
-		// prepare our two ProcessBuilders
-		// minecraft = new ProcessBuilder(javaLine, "-Xms1024m", "-Xmx1024m", "-jar", jarFile, "nogui");
-		var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)
-		var.minecraft.directory(new File(var.serverPath));
-		var.minecraft.redirectErrorStream(true);
-
 		try {
-			Out.out("Launching server once to make sure there is a world.");
-
-			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations.
-
-			final boolean serverLaunch = Server.runMinecraft();
-
-			if (!(serverLaunch)) {
-				System.exit(1);				// we got a warning or severe error
-			}
+			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calcrror
 
 			if ((var.xRange == 0) & (var.zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
 				return;
@@ -227,9 +178,8 @@ public class Main {
 
 			Out.out("");
 
-			final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
-			final File backupLevel =
-					new File(var.worldPath + var.fileSeparator + "level_backup.dat");
+			serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
+			backupLevel = new File(var.worldPath + var.fileSeparator + "level_backup.dat");
 
 			Out.out("Backing up level.dat to level_backup.dat.");
 			Misc.copyFile(serverLevel, backupLevel);
