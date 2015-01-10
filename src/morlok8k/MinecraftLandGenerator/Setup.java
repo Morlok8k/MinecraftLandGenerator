@@ -21,12 +21,8 @@ package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -38,12 +34,11 @@ import java.util.logging.Logger;
 public class Setup {
 
     static boolean doSetup() {
-        // Declare your stuff at the beginning, yo.
         final File serverPathFile;
         final BufferedReader serverPropertiesFile;
         final File levelDat;
         final File backupLevel;
-        String line = null;
+        String line;
 
 
 //---------- Verify server path
@@ -73,19 +68,18 @@ public class Setup {
             line = serverPropertiesFile.readLine();
         }
         catch (IOException e) {
+            return true;
         }
 
         while (line != null) {
             if (line.contains("level-name")) { // Yep, that line contains it
-                if (line.contains("#")) { // There is a comment somewhere on the line
-                    if (line.indexOf('#') > line.indexOf("level-name")) { // The comment isn't before level-name
-                        if (!(line.indexOf('#') > line.indexOf('='))) { // In case only the name is commented out
-                            var.worldName = line.substring(line.indexOf('=') + 1, line.indexOf('#')); // Read world name until start of comment
+                if (line.contains("#") && line.indexOf('=') < line.indexOf('#')) {
+                        // Apparently, "#slf dghdsf #gdcfggh" is a perfectly valid world name.
+                        // In the other cases, the line is commented or invalid.
+                            var.worldName = line.substring(line.indexOf('=') + 1);
                             var.worldPath = var.serverPath + var.fileSeparator + var.worldName;
-                        }
-                    }
                 } else { // There is no comment on the line
-                    var.worldName = line.substring(line.indexOf('=') + 1, line.length());
+                    var.worldName = line.substring(line.indexOf('=') + 1);
                     var.worldPath = var.serverPath + var.fileSeparator + var.worldName;
                 }
             }
@@ -93,6 +87,7 @@ public class Setup {
                 line = serverPropertiesFile.readLine();
             }
             catch (IOException e) {
+                return true;
             }
 
         }
@@ -150,7 +145,9 @@ public class Setup {
                     System.exit(1);                // we got a warning or severe error
                 }
             }
-            catch (IOException e){}
+            catch (IOException e){
+                return true;
+            }
             Out.err("World created! Starting world generation...");
         }
         return false;
