@@ -68,8 +68,7 @@ public class Misc {
 		// ugh, sorry, this is an ugly hack
 
 		FileRead.readConf();
-		WorldVerify.verifyWorld();
-
+		Setup.doSetup();
 		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		try {
 			final Coordinates spawn = SpawnPoint.getSpawn(level);
