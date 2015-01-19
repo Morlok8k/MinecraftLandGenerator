@@ -147,10 +147,19 @@ public class Main {
 
 		// Basic Program Initialization
 		Startup.initialStart();
-		if (Startup.programArguments()) { return; }
-		if (Startup.confFile()) { return; }
+		if (Startup.programArguments()) {
+			Out.err("Error in program arguments.");
+			return;
+		}
+		if (Startup.confFile()) {
+			Out.err("Error in conf file.");
+			return;
+		}
 		try {
-			if (Setup.doSetup()) { return; }
+			if (Setup.doSetup()) {
+				Out.err("Error in setup.");
+				return;
+			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -167,7 +176,13 @@ public class Main {
 		Out.out("");
 
 		try {
-			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calcrror
+			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations
+
+			final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
+
+			if (!(serverLaunch)) {
+				System.exit(1);				// we got a warning or severe error
+			}
 
 			if ((var.xRange == 0) & (var.zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
 				return;
