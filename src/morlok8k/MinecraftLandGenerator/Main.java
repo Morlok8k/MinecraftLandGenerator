@@ -1,25 +1,12 @@
 /*
-#######################################################################
-#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
-#                    Version 2, December 2004                         #
-#                                                                     #
-# Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>                    #
-#                                                                     #
-# Everyone is permitted to copy and distribute verbatim or modified   #
-# copies of this license document, and changing it is allowed as long #
-# as the name is changed.                                             #
-#                                                                     #
-#            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE              #
-#   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION   #
-#                                                                     #
-#  0. You just DO WHAT THE FUCK YOU WANT TO.                          #
-#                                                                     #
-#######################################################################
-*/
+ * ####################################################################### # DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE # # Version 2, December 2004 # # # # Copyright (C) 2004 Sam Hocevar
+ * <sam@hocevar.net> # # # # Everyone is permitted to copy and distribute verbatim or modified # # copies of this license document, and changing it is allowed as long # # as the name is changed. # # #
+ * # DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE # # TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION # # # # 0. You just DO WHAT THE FUCK YOU WANT TO. # # #
+ * #######################################################################
+ */
 
-/* 
- * The Computer Programmer's Lament:
- * Program complexity grows until it exceeds the capability of the programmer who must maintain it.
+/*
+ * The Computer Programmer's Lament: Program complexity grows until it exceeds the capability of the programmer who must maintain it.
  */
 
 package morlok8k.MinecraftLandGenerator;
@@ -34,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
+
 /**
  * 
  * @author Corrodias, Morlok8k, pr0f1x
@@ -149,8 +137,12 @@ public class Main {
 		Startup.initialStart();
 		if (Startup.programArguments()) { return; }
 		if (Startup.confFile()) { return; }
-		if (Setup.doSetup()) { return; }  // Checks for server.properties, checks for world, creates world if needed, checks old data}
-
+		try {
+			if (Setup.doSetup()) { return; }
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}  // Checks for server.properties, checks for world, creates world if needed, checks old data}
 
 		// =====================================================================
 		//                              PROCESSING
