@@ -1,12 +1,13 @@
-Minecraft Land Generator version 1.7.5
+Minecraft Land Generator version 1.7.6
 
-Updated October 10, 2013
-(BuildID: 1381398906000)
+Updated January 19, 2015
+(BuildID: 1421666774000)
 
 Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to October 10, 2013!)
+Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to January 19, 2015!)
 Additional Code by pr0f1x		October 2011
 Additional Code/Idea by jaseg    August 2012
+Additional Code by Gallion       January 2015
 
 Website: https://sites.google.com/site/minecraftlandgenerator/
 Forum: http://www.minecraftforum.net/topic/187737-
@@ -100,6 +101,9 @@ Preparing_Level : The output from the server that tells us the level it is worki
 
 Version History:
 Morlok8k:
+1.7.6
+- Gallion: fixed null world name (minor bug) 
+- Morlok8k: fixed elua bug
 1.7.5
 - Added "save-all" to alternate mode 
 - Added fix for new style of java error messages
