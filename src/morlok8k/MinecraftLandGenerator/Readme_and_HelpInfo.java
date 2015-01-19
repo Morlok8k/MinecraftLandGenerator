@@ -57,6 +57,7 @@ public class Readme_and_HelpInfo {
                 + "Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to " + MLG_Last_Modified_MDY + "!)" + n
                 + "Additional Code by pr0f1x		October 2011" + n
                 + "Additional Code/Idea by jaseg    August 2012" + n
+                + "Additional Code by Gallion       January 2015" + n
                 + n
                 + "Website: https://sites.google.com/site/minecraftlandgenerator/" + n
                 + "Forum: http://www.minecraftforum.net/topic/187737-" + n
@@ -96,6 +97,9 @@ public class Readme_and_HelpInfo {
                 //       + "- TODO: 16/512 block selecting" + n
                 //       + "- TODO: recaculate existing coords with new code" + n
                 //       + "- TODO: change 380 to 384?" + n //TODO
+                + "1.7.6" + n
+                + "- Gallion: fixed null world name (minor bug) " +n
+                + "- Morlok8k: fixed elua bug" +n
                 + "1.7.5" + n
                 + "- Added \"save-all\" to alternate mode " +n
                 + "- Added fix for new style of java error messages" +n

@@ -47,10 +47,10 @@ public class var {
 	public static final String PROG_NAME = "Minecraft Land Generator";
 
 	/** Version Number! */
-	public static final String VERSION = "1.7.5";
+	public static final String VERSION = "1.7.6";
 
 	/** Authors */
-	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg";
+	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg, Gallion";
 
 	/** Website */
 	public static final String WEBSITE = "https://sites.google.com/site/minecraftlandgenerator/";
