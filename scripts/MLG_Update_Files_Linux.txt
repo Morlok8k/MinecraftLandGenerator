@@ -12,3 +12,4 @@ https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initia
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Mac.command
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/MLG_Initial_Setup_Windows.cmd
 https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/eula.txt
+https://raw.github.com/Morlok8k/MinecraftLandGenerator/master/scripts/server.properties
