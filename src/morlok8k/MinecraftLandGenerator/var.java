@@ -227,7 +227,7 @@ public class var {
 	public static boolean flag_downloadedBuildID = false;
 
 	/** a list of timestamps */
-	public static ArrayList<String> timeStamps = new ArrayList<String>();
+	public static ArrayList<String> timeStamps = new ArrayList<>();
 
 	//
 	// Resume Data & Log Files

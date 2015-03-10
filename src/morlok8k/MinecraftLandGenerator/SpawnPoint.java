@@ -57,7 +57,7 @@ public class SpawnPoint {
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
 			// This is our map of data. It is an unmodifiable map, for some
 			// reason, so we have to make a copy.
-			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
+			final Map<String, Tag> newData = new LinkedHashMap<>(originalData);
 			// .get() a couple of values, just to make sure we're dealing with a
 			// valid level file, here. Good for debugging, too.
 			final IntTag spawnX = (IntTag) newData.get("SpawnX");
@@ -131,7 +131,7 @@ public class SpawnPoint {
 			final Map<String, Tag> originalData =
 					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
 			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
-			final Map<String, Tag> newData = new LinkedHashMap<String, Tag>(originalData);
+			final Map<String, Tag> newData = new LinkedHashMap<>(originalData);
 
 			// .get() a couple of values, just to make sure we're dealing with a valid level file, here. Good for debugging, too.
 			@SuppressWarnings("unused")
@@ -147,7 +147,7 @@ public class SpawnPoint {
 
 			// Again, we can't modify the data map in the old Tag, so we have to make a new one.
 			final CompoundTag newDataTag = new CompoundTag("Data", newData);
-			final Map<String, Tag> newTopLevelMap = new HashMap<String, Tag>(1);
+			final Map<String, Tag> newTopLevelMap = new HashMap<>(1);
 			newTopLevelMap.put("Data", newDataTag);
 			final CompoundTag newTopLevelTag = new CompoundTag("", newTopLevelMap);
 

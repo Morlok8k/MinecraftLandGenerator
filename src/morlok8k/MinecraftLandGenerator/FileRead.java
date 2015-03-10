@@ -39,7 +39,7 @@ public class FileRead {
 	 */
 	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
 
-		final ArrayList<Coordinates> Return = new ArrayList<Coordinates>();
+		final ArrayList<Coordinates> Return = new ArrayList<>();
 
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(new File(file)));
