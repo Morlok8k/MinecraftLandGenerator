@@ -178,8 +178,8 @@ public class Main {
 		try {
 			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations
 
-			//final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
-			final boolean serverLaunch = true;
+			final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
+			//final boolean serverLaunch = true;	//testing only
 			if (!(serverLaunch)) {
 				System.exit(1);				// we got a warning or severe error
 			}
@@ -408,7 +408,7 @@ public class Main {
 						final Coordinates tempCoords =
 								new Coordinates((int) currentX + var.xOffset, 64, (int) currentZ
 										+ var.zOffset);
-						//launchList.add(tempCoords);
+						launchList.add(tempCoords);
 
 						// Write the current Coordinates to log file!
 						//FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
@@ -461,7 +461,7 @@ public class Main {
 			System.gc();		//run the garbage collector - hopefully free up some memory!
 
 			currentIteration = 0;
-			//totalIterations = launchList.size();
+			totalIterations = launchList.size();
 			Coordinates xyz = null;
 			final Iterator<Coordinates> coordArrayIterator = launchList.iterator();
 			while (coordArrayIterator.hasNext()) {
