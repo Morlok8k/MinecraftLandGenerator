@@ -178,8 +178,8 @@ public class Main {
 		try {
 			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations
 
-			final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
-
+			//final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
+			final boolean serverLaunch = true;
 			if (!(serverLaunch)) {
 				System.exit(1);				// we got a warning or severe error
 			}
@@ -222,30 +222,73 @@ public class Main {
 				overridden = true;
 			}
 
+			double xR = 0, zR = 0, xO = 0, zO = 0;
+
 			if (var.useChunks) {		// use Chunks or Regions
-				var.xRange = (int) (Math.ceil(((double) var.xRange) / ((double) 16))) * 16;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
-				var.zRange = (int) (Math.ceil(((double) var.zRange) / ((double) 16))) * 16;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
-				var.xOffset = (int) (Math.ceil(((double) var.xOffset) / ((double) 16))) * 16;
-				var.zOffset = (int) (Math.ceil(((double) var.zOffset) / ((double) 16))) * 16;
+
+				xR = var.xRange;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+				xR = xR / 16;
+				xR = Math.ceil(xR);
+				xR = xR * 16;
+
+				zR = var.zRange;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+				zR = zR / 16;
+				zR = Math.ceil(zR);
+				zR = zR * 16;
+
+				xO = var.xOffset;
+				xO = xO / 16;
+				xO = Math.round(xO);		//round instead of Ceiling
+				xO = xO * 16;
+
+				zO = var.zOffset;
+				zO = zO / 16;
+				zO = Math.round(zO);		//round instead of Ceiling
+				zO = zO * 16;
+
 			} else {
-				var.xRange = (int) (Math.ceil(((double) var.xRange) / ((double) 512))) * 512;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
-				var.zRange = (int) (Math.ceil(((double) var.zRange) / ((double) 512))) * 512;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
-				var.xOffset = (int) (Math.ceil(((double) var.xOffset) / ((double) 512))) * 512;
-				var.zOffset = (int) (Math.ceil(((double) var.zOffset) / ((double) 512))) * 512;
+
+				xR = var.xRange;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
+				xR = xR / 512;
+				xR = Math.ceil(xR);
+				xR = xR * 512;
+
+				zR = var.zRange;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
+				zR = zR / 512;
+				zR = Math.ceil(zR);
+				zR = zR * 512;
+
+				xO = var.xOffset;
+				xO = xO / 512;
+				xO = Math.round(xO);		//round instead of Ceiling
+				xO = xO * 512;
+
+				zO = var.zOffset;
+				zO = zO / 512;
+				zO = Math.round(zO);		//round instead of Ceiling
+				zO = zO * 512;
+
 			}
+
+			var.xRange = (int) Math.ceil(xR);
+			var.zRange = (int) Math.ceil(zR);
+			var.xOffset = (int) Math.ceil(xO);
+			var.zOffset = (int) Math.ceil(zO);
 
 			if (overridden) {
 				Out.out("Centering land generation on [" + var.xOffset + ", " + var.zOffset
 						+ "] due to switches.");
+			} else {
+				Out.out("Centering land generation on [" + var.xOffset + ", " + var.zOffset + "]");
 			}
 
 			Out.out("");
 
 			double xLoops, zLoops;
-			int curXloops = 0;
-			int curZloops = 0;
-			int xRangeAdj = 0;
-			int zRangeAdj = 0;
+			long curXloops = 0;
+			long curZloops = 0;
+			double xRangeAdj = 0;
+			double zRangeAdj = 0;
 
 			// have main loop make an arraylist of spawnpoints
 			// read from a file if MLG has run before on this world.  save to arraylist
@@ -253,31 +296,75 @@ public class Main {
 			// run mlg on remaining list of spawn points.
 
 			// X
-			xLoops = ((double) var.xRange / (double) var.increment);		//How many loops do we need?
-			xLoops = Math.ceil(xLoops);								//round up to find out!
-			xRangeAdj = (int) (xLoops * var.increment);
-			xLoops = xLoops + 1;
+			xRangeAdj = var.xRange - var.incrementFull;				//Adjusting our range of X
+			xRangeAdj = xRangeAdj / var.increment;
+			xRangeAdj = Math.ceil(xRangeAdj);						//round up to find out!
+			xRangeAdj = xRangeAdj + 1;								//add an additional increment, as we removed a full one above 
+			xRangeAdj = xRangeAdj * var.increment;
+
+			double inc = var.increment * 2;		//increment*2, and casts to double.
+
+			// thanks to e2pii (on reddit) for correcting my math here.
+			// http://www.reddit.com/r/learnmath/comments/2y14fq/what_am_i_overlooking_here/
+			xLoops = (var.xRange - var.incrementFull) / inc;				//How many loops do we need?
+			xLoops = Math.ceil(xLoops);
+			xLoops = xLoops + xLoops + 1;
 
 			// Z
-			zLoops = ((double) var.zRange / (double) var.increment);		//How many loops do we need?
-			zLoops = Math.ceil(zLoops);								//round up to find out!
-			zRangeAdj = (int) (zLoops * var.increment);
-			zLoops = zLoops + 1;
+			zRangeAdj = var.zRange - var.incrementFull;				//Adjusting our range of Z
+			zRangeAdj = zRangeAdj / var.increment;
+			zRangeAdj = Math.ceil(zRangeAdj);						//round up to find out!
+			zRangeAdj = zRangeAdj + 1;								//add an additional increment, as we removed a full one above 
+			zRangeAdj = zRangeAdj * var.increment;
+
+			zLoops = (var.zRange - var.incrementFull) / inc;				//How many loops do we need?
+			zLoops = Math.ceil(zLoops);
+			zLoops = zLoops + zLoops + 1;
 
 			Out.out("Calculating Spawn Points...");
 
 			// Perfect Squares Code:
 
-			int totalIterations = (int) (xLoops * zLoops);
-			int currentIteration = 0;
+			/*
+			if (xLoops > 3) {
+				xLoops = xLoops + 1;
+			}
+
+			if (zLoops > 3) {
+				zLoops = zLoops + 1;
+			}
+			*/
+
+			long totalIterations = (long) (xLoops * zLoops);
+
+			Out.out("Estimated Total Spawn Points: " + totalIterations);
+
+			if (totalIterations > Integer.MAX_VALUE) {
+				Out.err("TOO BIG!  Please reduce the world size.  World Size can't be larger than 17609200 x 17609200");		//or 17794560 using -i384
+				backupLevel.delete();
+				Out.out("Removed backup file.");
+				System.exit(0);
+			}
+
+			long currentIteration = 0;
 
 			long differenceTime = System.currentTimeMillis();
 
 			Long timeTracking = 0L;
 
-			final ArrayList<Coordinates> launchList = new ArrayList<Coordinates>(totalIterations);
+			ArrayList<Coordinates> launchList = new ArrayList<>(0);
+			try {
+				launchList = new ArrayList<>((int) totalIterations);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				Out.err("TOO BIG!  Your computer can't handle such a large map.  The size is dependant on 32/64 bit and Memory.");
+				backupLevel.delete();
+				Out.out("Removed backup file.");
+				System.exit(0);
+			}
 
-			for (int currentX = 0; currentX <= (xRangeAdj / 2); currentX += var.increment) {
+			// X - West to East
+			for (long currentX = 0; currentX <= (xRangeAdj / 2); currentX += var.increment) {
 				curXloops++;
 				boolean eastEdgeReached = false;
 
@@ -289,7 +376,8 @@ public class Main {
 					eastEdgeReached = true;
 				}
 
-				for (int currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += var.increment) {
+				// Z - North to South
+				for (long currentZ = 0; currentZ <= (zRangeAdj / 2); currentZ += var.increment) {
 					currentIteration++;
 
 					curZloops++;
@@ -301,41 +389,69 @@ public class Main {
 						southEdgeReached = true;
 					}
 
-					{
+					{ // Middle of Loop
+
+						if (currentIteration % 10000000 == 0) {			//for long calculations, we output an update every 10,000,000 points
+							String percentDone =
+									Double.toString((((double) currentIteration) / totalIterations) * 100);
+							final int percentIndex =
+									((percentDone.indexOf(".") + 3) > percentDone.length())
+											? percentDone.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
+							percentDone =
+									percentDone.substring(0, (percentDone.indexOf(".") == -1
+											? percentDone.length() : percentIndex));			//Trim output, unless whole number
+							Out.out("Calculated: " + currentIteration + "/" + totalIterations
+									+ " spawn points. (" + percentDone + "% Done)");
+						}
+
 						// add Coordinates to arraylist here
 						final Coordinates tempCoords =
-								new Coordinates(currentX + var.xOffset, 64, currentZ + var.zOffset);
-						launchList.add(tempCoords);
+								new Coordinates((int) currentX + var.xOffset, 64, (int) currentZ
+										+ var.zOffset);
+						//launchList.add(tempCoords);
+
+						// Write the current Coordinates to log file!
+						//FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator
+						//		+ "MLG_coordinate_list.log", tempCoords.toString() + var.newLine);
 
 						if (var.testing) {
 							System.out.println(tempCoords);
 						}
-					}
+
+					} // End of the Middle of Loop
 
 					if (curZloops == 1) {			// We are at the North edge.  We have special code for the North edge, so we need to change currentZ to be normal again.
 						currentZ =
-								(int) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
+								(long) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
 					}
 					if (southEdgeReached) {
-						currentZ = zRangeAdj;		// We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
+						currentZ = (long) zRangeAdj;		// We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
 					}
 
-				}
+				} // End Z
 				curZloops = 0;
 				if (curXloops == 1) {			// We are at the West edge.  We have special code for the West edge, so we need to change currentX to be normal again.
 					currentX =
-							(int) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
+							(long) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
 				}
 				if (eastEdgeReached) {
-					currentX = xRangeAdj;		// We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
+					currentX = (long) xRangeAdj;		// We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
 				}
 
-			}
+			} // End X
+
+			String pD = Double.toString((((double) currentIteration) / totalIterations) * 100);
+			final int pI =
+					((pD.indexOf(".") + 3) > pD.length()) ? pD.length() : (pD.indexOf(".") + 3);		//fix index on numbers like 12.3
+			pD = pD.substring(0, (pD.indexOf(".") == -1 ? pD.length() : pI));			//Trim output, unless whole number
+			Out.out("Calculated: " + currentIteration + "/" + totalIterations + " spawn points. ("
+					+ pD + "% Done)");
 
 			//get existing list, and remove this list from launchList
 			final ArrayList<Coordinates> removeList =
 					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);
 
+			Out.out("Removing known generated areas...");
 			if (!(removeList.isEmpty())) {
 				Arraylist.arrayListRemove(launchList, removeList);
 			}
@@ -345,7 +461,7 @@ public class Main {
 			System.gc();		//run the garbage collector - hopefully free up some memory!
 
 			currentIteration = 0;
-			totalIterations = launchList.size();
+			//totalIterations = launchList.size();
 			Coordinates xyz = null;
 			final Iterator<Coordinates> coordArrayIterator = launchList.iterator();
 			while (coordArrayIterator.hasNext()) {
@@ -399,6 +515,11 @@ public class Main {
 			if (currentIteration == 0) {
 				Out.out("Nothing to generate!");
 			} else {
+				//TODO: write completion code to output.
+				// FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile, ####### + var.newLine);
+				//
+				//add xrange, zrange, region/chunk, xoffset, zoffset, increment    //anything else? 
+				//				
 				Out.out("Finished generating chunks.");
 			}
 
@@ -409,8 +530,6 @@ public class Main {
 			Out.out("Generation complete in: "
 					+ Time.displayTime(var.startTime, System.currentTimeMillis()));
 			Time.waitTenSec(false);
-
-			//TODO: add if's
 
 			if (var.webLaunch) {		//if webLaunch is already false, don't check for these things
 				if (java.awt.GraphicsEnvironment.isHeadless()) {

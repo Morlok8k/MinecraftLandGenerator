@@ -47,7 +47,7 @@ public class var {
 	public static final String PROG_NAME = "Minecraft Land Generator";
 
 	/** Version Number! */
-	public static final String VERSION = "1.7.6";
+	public static final String VERSION = "1.7.7";
 
 	/** Authors */
 	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg, Gallion";
@@ -257,13 +257,19 @@ public class var {
 	/** standard server creates 625 chunks in a square around spawn. */
 	public static int MinecraftServerChunkPlayerCache = 625;	//You see this number when you first launch the server in GUI mode, after the world is loaded, but before anyone has connected.
 
+	/** standard server creates 625 chunks in a square around spawn. */
+	//Alpha, and early beta uses 441 chunks.  (or 485 for early Alpha)
+	public static int MinecraftServerChunkPlayerCacheAlpha = 441;	//alpha servers (and beta 1.0 only) 
+
+	/** these 441 chunks create a 320x320 block square */
+	public static long incrementFullAlpha =
+			(int) (Math.sqrt(MinecraftServerChunkPlayerCacheAlpha) * 16);			// 400, the length of a fresh (no players have ever logged in) server map.
+
 	/** these 625 chunks create a 400x400 block square */
-	public static int incrementFull = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16);			// 400, the length of a fresh (no players have ever logged in) server map.
+	public static long incrementFull = (int) (Math.sqrt(MinecraftServerChunkPlayerCache) * 16);			// 400, the length of a fresh (no players have ever logged in) server map.
 
 	/** due to the edge chunks being not fully populated, we subtract a chunks worth... */
-	public static int increment = incrementFull - 20;		//public static int increment = 384;			// 384, what we use to iterate between sections of the map.  Allows for some overlap to prevent "stripes"
-	//currently 380 for compatibility
-	//TODO: update to 384
+	public static long increment = incrementFull - 16;		//public static int increment = 384;			// 384, what we use to iterate between sections of the map.  Allows for some overlap to prevent "stripes"
 
 	/** debugging use... use "java -ea -jar MinecraftlandGenerator.jar" */
 	public static boolean assertsEnabled = false;
@@ -274,7 +280,7 @@ public class var {
 	/** recheck toggle! */
 	public static Boolean recheckFlag = false;
 
-	/** output GUI stuff when using GUI mode, or dont. */
+	/** output GUI stuff when using GUI mode, or don't. */
 	public static boolean UsingGUI = false;
 
 	/** Range of X to generate */
@@ -293,7 +299,7 @@ public class var {
 	public static String[] args;
 
 	/** Chunks or Regions? */
-	public static boolean useChunks = true;
+	public static boolean useChunks = false;						//default to using regions
 
 	/** Log File */
 	public static String logFile = "MinecraftLandGenerator.log";

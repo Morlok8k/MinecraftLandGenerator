@@ -260,6 +260,10 @@ public class Startup {
 					var.alternate = true;
 					Out.out("Notice: Using Alternate Launching");
 
+				} else if (nextSwitch.equals("-chunk") || nextSwitch.equals("-c")) {
+					var.useChunks = true;
+					Out.out("Notice: Using Chunks instead of Regions");
+
 				} else if (nextSwitch.startsWith("-x")) {
 					var.xOffset = Integer.valueOf(var.args[i + 2].substring(2));
 					Out.out("Notice: X Offset: " + var.xOffset);

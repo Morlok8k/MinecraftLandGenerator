@@ -93,10 +93,12 @@ public class Readme_and_HelpInfo {
                 + n
                 + "Version History:" + n
                 + "Morlok8k:" + n
-                //       + "- TODO: outliers issue / region fix" + n
-                //       + "- TODO: 16/512 block selecting" + n
-                //       + "- TODO: recaculate existing coords with new code" + n
-                //       + "- TODO: change 380 to 384?" + n //TODO
+                //       + "- TODO: squarify existing land" + n
+                + "1.7.7" + n
+                + "- Changed default iteration to 384 from 380.  if you want to use 380 (for expanding existing maps that MLG has made) use -i380" +n
+                + "- fixed bugs in the perfect squares code." +n
+                + "- defaults to expanding regions, instead of chunks. (512x512 areas, instead of 16x16 chunks.)" +n
+                + "- added \"-c\",\"-chunk\" switches to use chunks instead of Regions" +n
                 + "1.7.6" + n
                 + "- Gallion: fixed null world name (minor bug) " +n
                 + "- Morlok8k: fixed elua bug" +n
@@ -292,9 +294,11 @@ public class Readme_and_HelpInfo {
                 + "             -w : Ignore [WARNING] and [SEVERE] messages." + n
                 + "           -alt : alternate server launch sequence" + n
                 + "             -a : same as -alt" + n
-                + "        -nowait : don't pause for anything" + n
+                + "         -chunk : user entered sizes are caculated to the closest region size.  this switch caculates to the closest chunk, for finer control." + n
+                + "             -c : same as -chunk" + n
+                + "        -nowait : don't pause for anything, if possible" + n
                 + "             -n : same as -nowait" + n
-                + "            -i# : override the iteration spawn offset increment (default 380) (example: -i100)" + n
+                + "            -i# : override the iteration spawn offset increment (default: " + var.increment + ") (example: -i300 or -i380)  Note: Alpha servers, (and Beta 1.0 only) require -i300" + n
                 + "            -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)" + n
                 + "            -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)" + n
                 + n
