@@ -1,14 +1,10 @@
 Note:
 If you are seeing this, then you are looking at the source code.
 
-
-
 If you just want to use Minecraft Land Generator, this is not what you want.
 
-
-
 Go here:
-https://github.com/Morlok8k/MinecraftLandGenerator/downloads
+https://github.com/Morlok8k/MinecraftLandGenerator/tree/master/zip
 
 Then be sure to download the file that looks something like:
 MinecraftLandGenerator_X.X.X_Vanilla_Server.zip
