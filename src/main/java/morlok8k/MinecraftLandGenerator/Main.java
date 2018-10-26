@@ -33,11 +33,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
- * 
  * @author Corrodias, Morlok8k, pr0f1x
- * 
  */
 public class Main {
 
@@ -50,12 +51,15 @@ public class Main {
 
 	/**
 	 * @param args
-	 *            the command line arguments
+	 * the command line arguments
 	 */
+	private static Log log = LogFactory.getLog(Main.class);
+
 	public static void main(String[] args) {
+
 		var.startTime = System.currentTimeMillis();
 
-		var.originalArgs = args;	// we may potentially remove some args later, but we keep a record of the original for the log file.
+		var.originalArgs = args;    // we may potentially remove some args later, but we keep a record of the original for the log file.
 
 		// This is really just here for debugging...
 		// I plan on adding more asserts later, but for now, this will do.
@@ -63,28 +67,28 @@ public class Main {
 		// java -enableassertions -jar MinecraftLandGenerator.jar
 		assert var.assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
 		if (var.assertsEnabled) {
-			Out.outD("assertsEnabled: " + var.assertsEnabled);
+			log.info("assertsEnabled: " + var.assertsEnabled);
 			var.verbose = true;
-			Out.outD("Verbose mode forced!");
+			log.info("Verbose mode forced!");
 			var.testing = true;
-			Out.outD("Debug mode forced!");
+			log.info("Debug mode forced!");
 			var.dontWait = true;
-			Out.outD("-nowait mode forced!");
-			Out.outD("");
+			log.info("-nowait mode forced!");
+			log.info("");
 		}
 
-		boolean GUI = false;			// GUI needs to be true to run in graphical mode
-		boolean NOGUI = false;			// NOGUI is a flag that finds reasons to not use a graphical mode.
+		boolean GUI = false;            // GUI needs to be true to run in graphical mode
+		boolean NOGUI = false;            // NOGUI is a flag that finds reasons to not use a graphical mode.
 
-		if (args.length != 0) {			// if args are present, then we assume we want NOGUI
-			NOGUI = true;				// if no args are present, we will attempt GUI
+		if (args.length != 0) {            // if args are present, then we assume we want NOGUI
+			NOGUI = true;                // if no args are present, we will attempt GUI
 		}
 
 		String[] argsNOGUI = new String[args.length];
 		argsNOGUI = args;
-		argsNOGUI = StringArrayParse.Parse(argsNOGUI, "nogui");		//parse out "nogui"
-		if (!(args.equals(argsNOGUI))) {								//do the freshly parsed args match the original?
-			args = argsNOGUI;											//use the freshly parsed args for everything else now...
+		argsNOGUI = StringArrayParse.Parse(argsNOGUI, "nogui");        //parse out "nogui"
+		if (!(args.equals(argsNOGUI))) {                                //do the freshly parsed args match the original?
+			args = argsNOGUI;                                            //use the freshly parsed args for everything else now...
 			NOGUI = true;
 		}
 
@@ -92,21 +96,21 @@ public class Main {
 		if ((!NOGUI) && (!java.awt.GraphicsEnvironment.isHeadless())) {
 			GUI = true;
 			if (var.testing) {
-				Out.outD("MLG_GUI: This is a graphical enviroment.");
+				log.info("MLG_GUI: This is a graphical enviroment.");
 			}
 
 			//////
-			GUI = false;				// forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
+			GUI = false;                // forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
 			//////
 
 		} else {
-			GUI = false;				// No GUI for us today...
+			GUI = false;                // No GUI for us today...
 			if (var.testing) {
-				Out.outD("MLG_GUI: Command Line Only!");
+				log.info("MLG_GUI: Command Line Only!");
 			}
 		}
 
-		if (GUI) {	//GUI
+		if (GUI) {    //GUI
 			// Launch MLG_GUI
 
 			EventQueue.invokeLater(new Runnable() {
@@ -124,7 +128,7 @@ public class Main {
 				}
 			});
 
-		} else {	//No GUI
+		} else {    //No GUI
 			// Finally, Lets Start MLG!
 
 			var.UsingGUI = false;
@@ -136,10 +140,8 @@ public class Main {
 
 	/**
 	 * Start MinecraftLandGenerator (Command Line Interface)
-	 * 
+	 *
 	 * @author Corrodias, Morlok8k
-	 * @param args
-	 * 
 	 */
 	private static void runCLI() {
 		final File backupLevel;
@@ -148,16 +150,16 @@ public class Main {
 		// Basic Program Initialization
 		Startup.initialStart();
 		if (Startup.programArguments()) {
-			Out.err("Error in program arguments.");
+			log.error("Error in program arguments.");
 			return;
 		}
 		if (Startup.confFile()) {
-			Out.err("Error in conf file.");
+			log.error("Error in conf file.");
 			return;
 		}
 		try {
 			if (Setup.doSetup()) {
-				Out.err("Error in setup.");
+				log.error("Error in setup.");
 				return;
 			}
 		} catch (IOException e1) {
@@ -169,19 +171,19 @@ public class Main {
 		//                              PROCESSING
 		// =====================================================================
 
-		Out.out("Processing world \"" + var.worldPath + "\", in " + var.increment
+		log.info("Processing world \"" + var.worldPath + "\", in " + var.increment
 				+ " block increments, with: " + var.javaLine);
 		// out( MLG + "Processing \"" + worldName + "\"...");
 
-		Out.out("");
+		log.info("");
 
 		try {
-			final long generationStartTimeTracking = System.currentTimeMillis();		//Start of time remaining calculations
+			final long generationStartTimeTracking = System.currentTimeMillis();        //Start of time remaining calculations
 
-			final boolean serverLaunch = Server.runMinecraft();				//run server once at spawn point to make sure everything works.
+			final boolean serverLaunch = Server.runMinecraft();                //run server once at spawn point to make sure everything works.
 			//final boolean serverLaunch = true;	//testing only
 			if (!(serverLaunch)) {
-				System.exit(1);				// we got a warning or severe error
+				System.exit(1);                // we got a warning or severe error
 			}
 
 			if ((var.xRange == 0) & (var.zRange == 0)) {  //If the server is launched with an X and a Z of zero, then we just shutdown MLG after the initial launch.
@@ -195,17 +197,16 @@ public class Main {
 							+ var.newLine + "##Size: X" + var.xRange + "Z" + var.zRange
 							+ var.newLine);
 
-			Out.out("");
+			log.info("");
 
 			serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
 			backupLevel = new File(var.worldPath + var.fileSeparator + "level_backup.dat");
 
-			Out.out("Backing up level.dat to level_backup.dat.");
+			log.info("Backing up level.dat to level_backup.dat.\n");
 			Misc.copyFile(serverLevel, backupLevel);
-			Out.out("");
 
 			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
-			Out.out("Spawn point detected: [X,Y,Z] " + spawn);
+			log.info("Spawn point detected: [X,Y,Z] " + spawn);
 
 			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile, "# Seed: "
 					+ var.randomSeed + var.newLine + "# Spawn: " + spawn.toString() + var.newLine);
@@ -224,48 +225,48 @@ public class Main {
 
 			double xR = 0, zR = 0, xO = 0, zO = 0;
 
-			if (var.useChunks) {		// use Chunks or Regions
+			if (var.useChunks) {        // use Chunks or Regions
 
-				xR = var.xRange;			//say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
+				xR = var.xRange;            //say xRange was entered as 1000.  this changes it to be 1008, a multiple of 16. (the size of a chunk)
 				xR = xR / 16;
 				xR = Math.ceil(xR);
 				xR = xR * 16;
 
-				zR = var.zRange;			//say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
+				zR = var.zRange;            //say zRange was entered as 2000.  there is no change, as it already is a multiple of 16.
 				zR = zR / 16;
 				zR = Math.ceil(zR);
 				zR = zR * 16;
 
 				xO = var.xOffset;
 				xO = xO / 16;
-				xO = Math.round(xO);		//round instead of Ceiling
+				xO = Math.round(xO);        //round instead of Ceiling
 				xO = xO * 16;
 
 				zO = var.zOffset;
 				zO = zO / 16;
-				zO = Math.round(zO);		//round instead of Ceiling
+				zO = Math.round(zO);        //round instead of Ceiling
 				zO = zO * 16;
 
 			} else {
 
-				xR = var.xRange;			//say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
+				xR = var.xRange;            //say xRange was entered as 1000.  this changes it to be 1024, a multiple of 512. (the size of a region)
 				xR = xR / 512;
 				xR = Math.ceil(xR);
 				xR = xR * 512;
 
-				zR = var.zRange;			//say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
+				zR = var.zRange;            //say zRange was entered as 2048.  there is no change, as it already is a multiple of 512.
 				zR = zR / 512;
 				zR = Math.ceil(zR);
 				zR = zR * 512;
 
 				xO = var.xOffset;
 				xO = xO / 512;
-				xO = Math.round(xO);		//round instead of Ceiling
+				xO = Math.round(xO);        //round instead of Ceiling
 				xO = xO * 512;
 
 				zO = var.zOffset;
 				zO = zO / 512;
-				zO = Math.round(zO);		//round instead of Ceiling
+				zO = Math.round(zO);        //round instead of Ceiling
 				zO = zO * 512;
 
 			}
@@ -276,13 +277,11 @@ public class Main {
 			var.zOffset = (int) Math.ceil(zO);
 
 			if (overridden) {
-				Out.out("Centering land generation on [" + var.xOffset + ", " + var.zOffset
+				log.info("Centering land generation on [" + var.xOffset + ", " + var.zOffset
 						+ "] due to switches.");
 			} else {
-				Out.out("Centering land generation on [" + var.xOffset + ", " + var.zOffset + "]");
+				log.info("Centering land generation on [" + var.xOffset + ", " + var.zOffset + "]\n");
 			}
-
-			Out.out("");
 
 			double xLoops, zLoops;
 			long curXloops = 0;
@@ -296,32 +295,32 @@ public class Main {
 			// run mlg on remaining list of spawn points.
 
 			// X
-			xRangeAdj = var.xRange - var.incrementFull;				//Adjusting our range of X
+			xRangeAdj = var.xRange - var.incrementFull;                //Adjusting our range of X
 			xRangeAdj = xRangeAdj / var.increment;
-			xRangeAdj = Math.ceil(xRangeAdj);						//round up to find out!
-			xRangeAdj = xRangeAdj + 1;								//add an additional increment, as we removed a full one above 
+			xRangeAdj = Math.ceil(xRangeAdj);                        //round up to find out!
+			xRangeAdj = xRangeAdj + 1;                                //add an additional increment, as we removed a full one above
 			xRangeAdj = xRangeAdj * var.increment;
 
-			double inc = var.increment * 2;		//increment*2, and casts to double.
+			double inc = var.increment * 2;        //increment*2, and casts to double.
 
 			// thanks to e2pii (on reddit) for correcting my math here.
 			// http://www.reddit.com/r/learnmath/comments/2y14fq/what_am_i_overlooking_here/
-			xLoops = (var.xRange - var.incrementFull) / inc;				//How many loops do we need?
+			xLoops = (var.xRange - var.incrementFull) / inc;                //How many loops do we need?
 			xLoops = Math.ceil(xLoops);
 			xLoops = xLoops + xLoops + 1;
 
 			// Z
-			zRangeAdj = var.zRange - var.incrementFull;				//Adjusting our range of Z
+			zRangeAdj = var.zRange - var.incrementFull;                //Adjusting our range of Z
 			zRangeAdj = zRangeAdj / var.increment;
-			zRangeAdj = Math.ceil(zRangeAdj);						//round up to find out!
-			zRangeAdj = zRangeAdj + 1;								//add an additional increment, as we removed a full one above 
+			zRangeAdj = Math.ceil(zRangeAdj);                        //round up to find out!
+			zRangeAdj = zRangeAdj + 1;                                //add an additional increment, as we removed a full one above
 			zRangeAdj = zRangeAdj * var.increment;
 
-			zLoops = (var.zRange - var.incrementFull) / inc;				//How many loops do we need?
+			zLoops = (var.zRange - var.incrementFull) / inc;                //How many loops do we need?
 			zLoops = Math.ceil(zLoops);
 			zLoops = zLoops + zLoops + 1;
 
-			Out.out("Calculating Spawn Points...");
+			log.info("Calculating Spawn Points...");
 
 			// Perfect Squares Code:
 
@@ -337,12 +336,12 @@ public class Main {
 
 			long totalIterations = (long) (xLoops * zLoops);
 
-			Out.out("Estimated Total Spawn Points: " + totalIterations);
+			log.info("Estimated Total Spawn Points: " + totalIterations);
 
 			if (totalIterations > Integer.MAX_VALUE) {
-				Out.err("TOO BIG!  Please reduce the world size.  World Size can't be larger than 17609200 x 17609200");		//or 17794560 using -i384
+				log.error("TOO BIG!  Please reduce the world size.  World Size can't be larger than 17609200 x 17609200");        //or 17794560 using -i384
 				backupLevel.delete();
-				Out.out("Removed backup file.");
+				log.info("Removed backup file.");
 				System.exit(0);
 			}
 
@@ -357,9 +356,9 @@ public class Main {
 				launchList = new ArrayList<>((int) totalIterations);
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				Out.err("TOO BIG!  Your computer can't handle such a large map.  The size is dependant on 32/64 bit and Memory.");
+				log.error("TOO BIG!  Your computer can't handle such a large map.  The size is dependant on 32/64 bit and Memory.");
 				backupLevel.delete();
-				Out.out("Removed backup file.");
+				log.info("Removed backup file.");
 				System.exit(0);
 			}
 
@@ -369,10 +368,10 @@ public class Main {
 				boolean eastEdgeReached = false;
 
 				if (curXloops == 1) {
-					currentX = (((0 - var.xRange) / 2) + (var.incrementFull / 2));  	// West Edge of map
+					currentX = (((0 - var.xRange) / 2) + (var.incrementFull / 2));    // West Edge of map
 
 				} else if (currentX >= ((xRangeAdj / 2) - (var.increment / 2))) {
-					currentX = ((var.xRange / 2) - (var.incrementFull / 2));			// East Edge of map
+					currentX = ((var.xRange / 2) - (var.incrementFull / 2));            // East Edge of map
 					eastEdgeReached = true;
 				}
 
@@ -383,24 +382,24 @@ public class Main {
 					curZloops++;
 					boolean southEdgeReached = false;
 					if (curZloops == 1) {
-						currentZ = (((0 - var.zRange) / 2) + (var.incrementFull / 2));	// North Edge of map
+						currentZ = (((0 - var.zRange) / 2) + (var.incrementFull / 2));    // North Edge of map
 					} else if (currentZ >= ((zRangeAdj / 2) - (var.increment / 2))) {
-						currentZ = ((var.zRange / 2) - (var.incrementFull / 2));		// South Edge of map
+						currentZ = ((var.zRange / 2) - (var.incrementFull / 2));        // South Edge of map
 						southEdgeReached = true;
 					}
 
 					{ // Middle of Loop
 
-						if (currentIteration % 10000000 == 0) {			//for long calculations, we output an update every 10,000,000 points
+						if (currentIteration % 10000000 == 0) {            //for long calculations, we output an update every 10,000,000 points
 							String percentDone =
 									Double.toString((((double) currentIteration) / totalIterations) * 100);
 							final int percentIndex =
 									((percentDone.indexOf(".") + 3) > percentDone.length())
-											? percentDone.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
+											? percentDone.length() : (percentDone.indexOf(".") + 3);        //fix index on numbers like 12.3
 							percentDone =
 									percentDone.substring(0, (percentDone.indexOf(".") == -1
-											? percentDone.length() : percentIndex));			//Trim output, unless whole number
-							Out.out("Calculated: " + currentIteration + "/" + totalIterations
+											? percentDone.length() : percentIndex));            //Trim output, unless whole number
+							log.info("Calculated: " + currentIteration + "/" + totalIterations
 									+ " spawn points. (" + percentDone + "% Done)");
 						}
 
@@ -420,45 +419,45 @@ public class Main {
 
 					} // End of the Middle of Loop
 
-					if (curZloops == 1) {			// We are at the North edge.  We have special code for the North edge, so we need to change currentZ to be normal again.
+					if (curZloops == 1) {            // We are at the North edge.  We have special code for the North edge, so we need to change currentZ to be normal again.
 						currentZ =
 								(long) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
 					}
 					if (southEdgeReached) {
-						currentZ = (long) zRangeAdj;		// We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
+						currentZ = (long) zRangeAdj;        // We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
 					}
 
 				} // End Z
 				curZloops = 0;
-				if (curXloops == 1) {			// We are at the West edge.  We have special code for the West edge, so we need to change currentX to be normal again.
+				if (curXloops == 1) {            // We are at the West edge.  We have special code for the West edge, so we need to change currentX to be normal again.
 					currentX =
 							(long) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
 				}
 				if (eastEdgeReached) {
-					currentX = (long) xRangeAdj;		// We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
+					currentX = (long) xRangeAdj;        // We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
 				}
 
 			} // End X
 
 			String pD = Double.toString((((double) currentIteration) / totalIterations) * 100);
 			final int pI =
-					((pD.indexOf(".") + 3) > pD.length()) ? pD.length() : (pD.indexOf(".") + 3);		//fix index on numbers like 12.3
-			pD = pD.substring(0, (pD.indexOf(".") == -1 ? pD.length() : pI));			//Trim output, unless whole number
-			Out.out("Calculated: " + currentIteration + "/" + totalIterations + " spawn points. ("
+					((pD.indexOf(".") + 3) > pD.length()) ? pD.length() : (pD.indexOf(".") + 3);        //fix index on numbers like 12.3
+			pD = pD.substring(0, (pD.indexOf(".") == -1 ? pD.length() : pI));            //Trim output, unless whole number
+			log.info("Calculated: " + currentIteration + "/" + totalIterations + " spawn points. ("
 					+ pD + "% Done)");
 
 			//get existing list, and remove this list from launchList
 			final ArrayList<Coordinates> removeList =
 					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);
 
-			Out.out("Removing known generated areas...");
-			if (!(removeList.isEmpty())) {
-				Arraylist.arrayListRemove(launchList, removeList);
+			log.info("Removing known generated areas...");
+			if (!removeList.isEmpty()) {
+				launchList.removeAll( removeList);
 			}
 
-			removeList.clear();		// we are done with this now.
+			removeList.clear();        // we are done with this now.
 
-			System.gc();		//run the garbage collector - hopefully free up some memory!
+			System.gc();        //run the garbage collector - hopefully free up some memory!
 
 			currentIteration = 0;
 			totalIterations = launchList.size();
@@ -474,22 +473,22 @@ public class Main {
 						Double.toString((((double) currentIteration - 1) / totalIterations) * 100);
 				final int percentIndex =
 						((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
-								.length() : (percentDone.indexOf(".") + 3);		//fix index on numbers like 12.3
+								.length() : (percentDone.indexOf(".") + 3);        //fix index on numbers like 12.3
 				percentDone =
 						percentDone.substring(0,
 								(percentDone.indexOf(".") == -1 ? percentDone.length()
-										: percentIndex));			//Trim output, unless whole number
+										: percentIndex));            //Trim output, unless whole number
 
-				Out.out("Setting spawn to [X,Y,Z]: " + xyz + " (" + currentIteration + " of "
+				log.info("Setting spawn to [X,Y,Z]: " + xyz + " (" + currentIteration + " of "
 						+ totalIterations + ") " + percentDone + "% Done"); // Time Remaining estimate
 
 				timeTracking = System.currentTimeMillis();
 
 				//NEW CODE:
 				differenceTime =
-						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);		// Updated.  we now count all runs, instead of the last 4.
-				differenceTime *= 1 + (totalIterations - currentIteration);									// this should provide a more accurate result.
-				Out.out("Estimated time remaining: " + Time.displayTime(differenceTime));						// I've noticed it gets pretty accurate after about 8 launches!
+						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);        // Updated.  we now count all runs, instead of the last 4.
+				differenceTime *= 1 + (totalIterations - currentIteration);                                    // this should provide a more accurate result.
+				log.info("Estimated time remaining: " + Time.displayTime(differenceTime));                        // I've noticed it gets pretty accurate after about 8 launches!
 
 				// Set the spawn point
 				SpawnPoint.setSpawn(serverLevel, xyz);
@@ -498,7 +497,7 @@ public class Main {
 				boolean serverSuccess = false;
 
 				serverSuccess = Server.runMinecraft();
-				Out.out("");
+				log.info("");
 
 				//////// End server launch code
 
@@ -507,36 +506,36 @@ public class Main {
 					FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile,
 							xyz.toString() + var.newLine);
 				} else {
-					System.exit(1);				// we got a warning or severe error
+					System.exit(1);                // we got a warning or severe error
 				}
 
 			}
 
 			if (currentIteration == 0) {
-				Out.out("Nothing to generate!");
+				log.info("Nothing to generate!");
 			} else {
 				//TODO: write completion code to output.
 				// FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile, ####### + var.newLine);
 				//
-				//add xrange, zrange, region/chunk, xoffset, zoffset, increment    //anything else? 
-				//				
-				Out.out("Finished generating chunks.");
+				//add xrange, zrange, region/chunk, xoffset, zoffset, increment    //anything else?
+				//
+				log.info("Finished generating chunks.");
 			}
 
 			Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
-			Out.out("Restored original level.dat.");
+			log.info("Restored original level.dat.");
 
-			Out.out("Generation complete in: "
+			log.info("Generation complete in: "
 					+ Time.displayTime(var.startTime, System.currentTimeMillis()));
 			Time.waitTenSec(false);
 
-			if (var.webLaunch) {		//if webLaunch is already false, don't check for these things
+			if (var.webLaunch) {        //if webLaunch is already false, don't check for these things
 				if (java.awt.GraphicsEnvironment.isHeadless()) {
-					var.webLaunch = false;					//headless enviroment - cant bring up webpage!
+					var.webLaunch = false;                    //headless enviroment - cant bring up webpage!
 				}
 				final File web1 = new File("web");
-				final File web2 = new File("web.txt");		//user has put in the magical file to not launch the webpage
+				final File web2 = new File("web.txt");        //user has put in the magical file to not launch the webpage
 				final File web3 = new File("web.txt.txt");
 				if (web2.exists() || (web1.exists() || web3.exists())) {  //check for "web.txt", if not found, check for "web", and if still not found, check for "web.txt.txt"
 					var.webLaunch = false;
@@ -548,12 +547,12 @@ public class Main {
 				try {
 					java.awt.Desktop.getDesktop().browse(splashPage);
 				} catch (final IOException e) {
-					Out.err("Error displaying webpage... " + e.getLocalizedMessage());
+					log.error("Error displaying webpage... " + e.getLocalizedMessage());
 				}
 			} else {
-				Out.out("Please Visit: http://adf.ly/520855/mlg");
-				Out.out("Or: " + var.WEBSITE);
-				Out.out("Thanks!");
+				log.info("Please Visit: http://adf.ly/520855/mlg");
+				log.info("Or: " + var.WEBSITE);
+				log.info("Thanks!");
 			}
 
 		} catch (final IOException ex) {
