@@ -38,6 +38,7 @@ public class Arraylist {
 	 * @param remove
 	 * @return
 	 */
+
 	public static ArrayList<Coordinates> arrayListRemove(final ArrayList<Coordinates> list,
 			final ArrayList<Coordinates> remove) {
 
