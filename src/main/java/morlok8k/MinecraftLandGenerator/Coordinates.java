@@ -55,7 +55,9 @@ public class Coordinates {
 			}
 		}
 
-		if (notCoords) { return new Coordinates(0, 0, 0); }
+		if (notCoords) {
+			return new Coordinates(0, 0, 0);
+		}
 
 		if (shortMode) {
 

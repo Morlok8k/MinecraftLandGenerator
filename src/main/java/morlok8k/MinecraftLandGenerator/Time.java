@@ -15,23 +15,31 @@
 #  0. You just DO WHAT THE FUCK YOU WANT TO.                          #
 #                                                                     #
 #######################################################################
-*/
+*//*
+
 
 package morlok8k.MinecraftLandGenerator;
 
+*/
 /**
  * 
  * @author morlok8k
- */
+ *//*
+
 public class Time {
 
-	/**
+*/
+/*	*//*
+*/
+/**
 	 * Returns the time in a readable format given a time in Millis.
 	 * 
 	 * @param timeMillis
 	 * @author Morlok8k
 	 * @return String of Readable Time
-	 */
+	 *//*
+*/
+/*
 	public static String displayTime(final long timeMillis) {
 
 		final long seconds = timeMillis / 1000;
@@ -73,27 +81,34 @@ public class Time {
 		return (took);
 	}
 
-	/**
+	*//*
+*/
+/**
 	 * Returns the time in a readable format between two points of time given in Millis.
 	 * 
 	 * @param startTimeMillis
 	 * @param endTimeMillis
 	 * @author Morlok8k
 	 * @return String of Readable Time
-	 */
+	 *//*
+*/
+/*
 	public static String displayTime(final long startTimeMillis, final long endTimeMillis) {
 
 		final long millis = (endTimeMillis - startTimeMillis);
 		//I just duplicated displayTime to have a start & end times, because it just made things simpler to code.
 		return (Time.displayTime(millis));
-	}
+	}*//*
 
-	/**
+
+	*/
+/**
 	 * waits ten seconds. outputs 10%, 20%, etc after each second.
 	 * 
 	 * @param output
 	 * @author Morlok8k
-	 */
+	 *//*
+
 	public static void waitTenSec(final boolean output) {
 
 		if (var.dontWait) { return; }			//Don't wait!
@@ -122,3 +137,4 @@ public class Time {
 
 	}
 }
+*/

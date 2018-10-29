@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * 
  * @author morlok8k
@@ -32,6 +35,8 @@ public class Readme_and_HelpInfo {
 	 * @author Morlok8k
 	 * 
 	 */
+	private static Log log = LogFactory.getLog(Main.class);
+
 	public static void readMe(String readmeFile) {
 
 		if ((readmeFile == "") || (readmeFile == null)) {
@@ -353,8 +358,8 @@ public class Readme_and_HelpInfo {
 		String returnString = null;
 
 		if (SysOut) {
-			Out.out(Str);
-			Out.out("");
+			log.info(Str);
+			log.info("");
 		} else {
 			returnString = Str;
 		}

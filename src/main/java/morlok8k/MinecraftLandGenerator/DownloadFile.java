@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.bert_bos.UTF8URL.Unescape;
 
 /**
@@ -34,7 +36,7 @@ import org.w3c.bert_bos.UTF8URL.Unescape;
  * @author morlok8k
  */
 public class DownloadFile {
-
+	private static Log log = LogFactory.getLog(Main.class);
 	/**
 	 * 
 	 * Downloads a File using a URL in a String.<br>
@@ -71,8 +73,8 @@ public class DownloadFile {
 		fileName = Unescape.unescape(fileName);
 
 		if (Output) {
-			Out.out("Downloading: " + URL);
-			Out.out("Saving as: " + fileName);
+			log.info("Downloading: " + URL);
+			log.info("Saving as: " + fileName);
 		}
 
 		final long differenceTime = System.currentTimeMillis();
@@ -80,7 +82,7 @@ public class DownloadFile {
 		timeTracking[0] = System.currentTimeMillis();
 
 		if (Output) {
-			Out.outP(var.MLG + "*");
+			log.info(var.MLG + "*");
 		}
 
 		try {
@@ -96,20 +98,20 @@ public class DownloadFile {
 				bout.write(data, 0, x);
 				count = count + x;
 				if (Output) {
-					Out.outP("*");
+					log.info("*");
 				}
 			}
 			bout.close();
 			in.close();
 			if (Output) {
-				Out.outP(var.newLine);
-				Out.out(count + " byte(s) copied");
+				log.info(var.newLine);
+				log.info(count + " byte(s) copied");
 			}
 
 			timeTracking[1] = System.currentTimeMillis();
-			//differenceTime = (timeTracking[1] - timeTracking[0]);
+			long differenceTime1 = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				Out.out("Elapsed Time: " + Time.displayTime(timeTracking[0], timeTracking[1]));
+				log.info("Elapsed Time: " + String.format("%02d:%02d", (differenceTime1 / 1000) / 60, (differenceTime1 / 1000) % 60));
 			}
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
@@ -122,7 +124,7 @@ public class DownloadFile {
 			success = false;
 		}
 		if (Output) {
-			Out.out("Done");
+			log.info("Done");
 		}
 		return success;
 	}

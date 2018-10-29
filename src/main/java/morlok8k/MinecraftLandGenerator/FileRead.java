@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +40,11 @@ public class FileRead {
 	 * @param file
 	 * @return
 	 */
+
+	private static Log log = LogFactory.getLog(Main.class);
+	
 	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
+		
 
 		final ArrayList<Coordinates> Return = new ArrayList<>();
 
@@ -82,10 +89,10 @@ public class FileRead {
 			in.close();
 
 		} catch (final FileNotFoundException ex) {
-			Out.out("Could not find " + file + ".");
+			log.info("Could not find " + file + ".");
 			return Return;
 		} catch (final IOException ex) {
-			Out.err("Could not read " + file + ".");
+			log.error("Could not read " + file + ".");
 			return Return;
 		}
 
@@ -182,32 +189,32 @@ public class FileRead {
 			in.close();
 
 			if (var.testing) {
-				Out.outD("Test Output: Reading of Config File ");
-				Out.outD("    serverPath: " + var.serverPath);
-				Out.outD("      javaLine: " + var.javaLine);
-				Out.outD("      doneText: " + var.doneText);
-				Out.outD(" preparingText: " + var.preparingText);
-				Out.outD("preparingLevel: " + var.preparingLevel);
-				Out.outD("       level_0: " + var.level_0);
-				Out.outD("       level_1: " + var.level_1);
-				Out.outD("       level_2: " + var.level_2);
-				Out.outD("       level_3: " + var.level_3);
-				Out.outD("       level_4: " + var.level_4);
-				Out.outD("       level_5: " + var.level_5);
-				Out.outD("       level_6: " + var.level_6);
-				Out.outD("       level_7: " + var.level_7);
-				Out.outD("       level_8: " + var.level_8);
-				Out.outD("       level_9: " + var.level_9);
-				Out.outD("      waitSave: " + var.waitSave);
-				Out.outD("     webLaunch: " + var.webLaunch);
+				log.debug("Test Output: Reading of Config File ");
+				log.debug("    serverPath: " + var.serverPath);
+				log.debug("      javaLine: " + var.javaLine);
+				log.debug("      doneText: " + var.doneText);
+				log.debug(" preparingText: " + var.preparingText);
+				log.debug("preparingLevel: " + var.preparingLevel);
+				log.debug("       level_0: " + var.level_0);
+				log.debug("       level_1: " + var.level_1);
+				log.debug("       level_2: " + var.level_2);
+				log.debug("       level_3: " + var.level_3);
+				log.debug("       level_4: " + var.level_4);
+				log.debug("       level_5: " + var.level_5);
+				log.debug("       level_6: " + var.level_6);
+				log.debug("       level_7: " + var.level_7);
+				log.debug("       level_8: " + var.level_8);
+				log.debug("       level_9: " + var.level_9);
+				log.debug("      waitSave: " + var.waitSave);
+				log.debug("     webLaunch: " + var.webLaunch);
 			}
 		} catch (final FileNotFoundException ex) {
-			Out.err("Could not find "
+			log.error("Could not find "
 					+ var.MinecraftLandGeneratorConf
 					+ ". It is recommended that you run the application with the -conf option to create it.");
 			return;
 		} catch (final IOException ex) {
-			Out.err("Could not read " + var.MinecraftLandGeneratorConf + ".");
+			log.error("Could not read " + var.MinecraftLandGeneratorConf + ".");
 			return;
 		}
 	}

@@ -349,7 +349,7 @@ public class Main {
 
 			long differenceTime = System.currentTimeMillis();
 
-			Long timeTracking = 0L;
+			Long timeTracking;
 
 			ArrayList<Coordinates> launchList = new ArrayList<>(0);
 			try {
@@ -452,7 +452,7 @@ public class Main {
 
 			log.info("Removing known generated areas...");
 			if (!removeList.isEmpty()) {
-				launchList.removeAll( removeList);
+				launchList.removeAll(removeList);
 			}
 
 			removeList.clear();        // we are done with this now.
@@ -488,7 +488,7 @@ public class Main {
 				differenceTime =
 						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);        // Updated.  we now count all runs, instead of the last 4.
 				differenceTime *= 1 + (totalIterations - currentIteration);                                    // this should provide a more accurate result.
-				log.info("Estimated time remaining: " + Time.displayTime(differenceTime));                        // I've noticed it gets pretty accurate after about 8 launches!
+				log.info("Estimated time remaining: " + String.format("%02d:%02d", (differenceTime / 1000) / 60, (differenceTime / 1000) % 60));                        // I've noticed it gets pretty accurate after about 8 launches!
 
 				// Set the spawn point
 				SpawnPoint.setSpawn(serverLevel, xyz);
@@ -525,10 +525,10 @@ public class Main {
 			Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			log.info("Restored original level.dat.");
-
+			long completeIn =var.startTime - System.currentTimeMillis();
 			log.info("Generation complete in: "
-					+ Time.displayTime(var.startTime, System.currentTimeMillis()));
-			Time.waitTenSec(false);
+					+ String.format("%02d:%02d", (completeIn / 1000) / 60, (completeIn / 1000) % 60));
+		//	Time.waitTenSec(false);
 
 			if (var.webLaunch) {        //if webLaunch is already false, don't check for these things
 				if (java.awt.GraphicsEnvironment.isHeadless()) {
