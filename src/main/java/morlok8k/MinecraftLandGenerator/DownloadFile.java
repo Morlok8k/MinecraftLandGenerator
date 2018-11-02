@@ -32,29 +32,24 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.bert_bos.UTF8URL.Unescape;
 
 /**
- * 
  * @author morlok8k
  */
 public class DownloadFile {
+
 	private static Log log = LogFactory.getLog(Main.class);
 	/**
-	 * 
 	 * Downloads a File using a URL in a String.<br>
 	 * (If the file is a dynamic URL (Not like "http://example.com/file.txt") and it can't get the filename, it saves it as <i>"System.currentTimeMillis();"</i>) <br>
 	 * <br>
 	 * Thanks to bs123 at <br>
 	 * <a href="http://www.daniweb.com/software-development/java/threads/84370"> http://www.daniweb.com/software-development/java/threads/84370</a>
-	 * 
-	 * @author Morlok8k
-	 * @param URL
-	 *            URL in a String
-	 * @param Output
-	 *            Displays output if true
+	 *
+	 * @param URL    URL in a String
+	 * @param Output Displays output if true
 	 * @return Boolean: true if download was successful, false if download wasn't
+	 * @author Morlok8k
 	 */
 	public static boolean downloadFile(final String URL, final boolean Output) {
-
-		boolean success = true;
 
 		String fileName = URL.substring(URL.lastIndexOf("/") + 1, URL.length());
 
@@ -78,7 +73,7 @@ public class DownloadFile {
 		}
 
 		final long differenceTime = System.currentTimeMillis();
-		final Long[] timeTracking = new Long[] { differenceTime, differenceTime };
+		final Long[] timeTracking = new Long[]{differenceTime, differenceTime};
 		timeTracking[0] = System.currentTimeMillis();
 
 		if (Output) {
@@ -86,10 +81,8 @@ public class DownloadFile {
 		}
 
 		try {
-			BufferedInputStream in;
-			in = new BufferedInputStream(new URL(URL).openStream());
-			FileOutputStream fos;
-			fos = new FileOutputStream(fileName);
+			BufferedInputStream in = new BufferedInputStream(new URL(URL).openStream());
+			FileOutputStream fos = new FileOutputStream(fileName);
 			final BufferedOutputStream bout = new BufferedOutputStream(fos, size);
 			final byte[] data = new byte[size];
 			int x = 0;
@@ -111,21 +104,21 @@ public class DownloadFile {
 			timeTracking[1] = System.currentTimeMillis();
 			long differenceTime1 = (timeTracking[1] - timeTracking[0]);
 			if (Output) {
-				log.info("Elapsed Time: " + String.format("%02d:%02d", (differenceTime1 / 1000) / 60, (differenceTime1 / 1000) % 60));
+				log.info("Elapsed Time: " + String.format("%02d min:%02d sec", (differenceTime1 / 1000) / 60, (differenceTime1 / 1000) % 60));
 			}
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
-			success = false;
+			return false;
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();
-			success = false;
+			return  false;
 		} catch (final IOException e) {
 			e.printStackTrace();
-			success = false;
+			return false;
 		}
 		if (Output) {
 			log.info("Done");
 		}
-		return success;
+		return true;
 	}
 }
