@@ -19,7 +19,6 @@
 
 package morlok8k.MinecraftLandGenerator.GUI;
 
-import morlok8k.MinecraftLandGenerator.Time;
 import morlok8k.MinecraftLandGenerator.var;
 
 public class Start implements Runnable {
@@ -89,7 +88,6 @@ public class Start implements Runnable {
 		while (var.stoppingServerGUI == false) {
 			// this is where we run the server loops!
 			MLG_GUI.frmMLG_GUI.repaint();
-			Time.waitTenSec(true);
 		}
 
 	}

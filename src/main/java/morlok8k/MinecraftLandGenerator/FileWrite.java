@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,6 +32,8 @@ import java.io.IOException;
  * @author morlok8k
  */
 public class FileWrite {
+
+	private static Log log = LogFactory.getLog(Main.class);
 
 	/**
 	 * http://www.roseindia.net/java/example/java/io/java-append-to-file.shtml <br>
@@ -130,10 +135,10 @@ public class FileWrite {
 			outFile.write(txt);
 			outFile.newLine();
 			outFile.close();
-			Out.out(file + " file created.");
+			log.info(file + " file created.");
 			return;
 		} catch (final IOException ex) {
-			Out.err("Could not create " + var.MinecraftLandGeneratorConf + ".");
+			log.error("Could not create " + var.MinecraftLandGeneratorConf + ".");
 			ex.printStackTrace();
 			return;
 		}

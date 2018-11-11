@@ -114,13 +114,13 @@ public class Time {
 		if (var.dontWait) { return; }			//Don't wait!
 
 		if (output) {
-			Out.outP(var.MLG);						//here we wait 10 sec.
+			log.infoP(var.MLG);						//here we wait 10 sec.
 		}
 
 		int count = 0;
 		while (count <= 100) {
 			if (output) {
-				Out.outP(count + "% ");
+				log.infoP(count + "% ");
 			}
 
 			try {
@@ -131,7 +131,7 @@ public class Time {
 			count += 10;
 		}
 		if (output) {
-			Out.outP(var.newLine);
+			log.infoP(var.newLine);
 		}
 		return;
 

@@ -66,7 +66,7 @@ public class SpawnPoint {
 
 			final LongTag Seed = (LongTag) newData.get("RandomSeed");
 			var.randomSeed = Seed.getValue();
-			Out.out("Seed: " + var.randomSeed); // lets output the seed, cause why not?
+			System.out.println("Seed: " + var.randomSeed); // lets output the seed, cause why not?
 
 			final Coordinates ret =
 					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());

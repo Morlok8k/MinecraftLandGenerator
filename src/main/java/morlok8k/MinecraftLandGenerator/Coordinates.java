@@ -9,6 +9,7 @@ package morlok8k.MinecraftLandGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.*;
 
 /**
  * Coordinates are in the form of [X,Y,Z] or (X,Z)<br>
@@ -31,6 +32,7 @@ public class Coordinates {
 	 * @return
 	 * @author Morlok8k
 	 */
+
 	public static Coordinates parseString(String StringOfCoords) {
 		//parse out string
 		StringOfCoords = StringOfCoords.trim();
@@ -95,7 +97,7 @@ public class Coordinates {
 
 	/**
 	 * Parses a Coordinates object from a String. Leading and trailing garbage is ignored.
-	 * 
+	 *
 	 * @param stringOfCoords
 	 *            A short- or long-form coordinate string as described at the two toString() methods
 	 * @return
@@ -137,7 +139,6 @@ public class Coordinates {
 
 		if (!matched) {
 			System.err.println("Invalid coordinate format: " + stringOfCoords);
-			System.err.println();
 		}
 		return new Coordinates(X, Y, Z);
 	}
@@ -289,14 +290,14 @@ public class Coordinates {
 		// Because it doesn't know how to deal with my custom data.
 		// So instead of getting "blahblahblah.Coordinates@745f"
 		//		(the location of the class and the hexstring of the hashcode)
-		// I return "[X,Y,Z]" 
+		// I return "[X,Y,Z]"
 
 		return ("[" + X + "," + Y + "," + Z + "]");
 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param Short
 	 * @return
 	 */
@@ -306,5 +307,10 @@ public class Coordinates {
 		}
 		return toString();							// Idiot catch.  default to: "[X,Y,Z]"
 
+	}
+	public static Coordinates parse(String coords){
+		String [] splitted = coords.substring(1,coords.length()-2).trim().split(",");
+
+		return null;
 	}
 }

@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,7 +39,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * 
  * @author morlok8k
  */
 public class Update {
@@ -51,25 +53,30 @@ public class Update {
 	 * computer will have the correct time stamp. (or possibly a copy from the original computer)<br>
 	 * <br>
 	 * This saves the hash and the timestamp (now known as the BuildID)
-	 * 
+	 *
 	 * @param downloadOnly
 	 * @author Morlok8k
 	 */
+	private static Log log = LogFactory.getLog(Main.class);
+
 	public static void buildID(final boolean downloadOnly) {
+
 
 		// download BuildID from Github.
 		final boolean fileSuccess =
 				DownloadFile.downloadFile(var.github_MLG_BuildID_URL, var.testing);
 		if (fileSuccess) {
-			Out.out(var.buildIDFile + " file downloaded.");
+			log.info(var.buildIDFile + " file downloaded.");
 			var.flag_downloadedBuildID = true;
 
-			if (downloadOnly) { return; }
+			if (downloadOnly) {
+				return;
+			}
 
 		}
 
 		if (downloadOnly) {
-			Out.err("Couldn't Download new " + var.buildIDFile);
+			log.error("Couldn't Download new " + var.buildIDFile);
 			return;
 		}
 
@@ -80,10 +87,12 @@ public class Update {
 			try {
 				var.MLGFileName = getClassLoader(var.cls);
 			} catch (final Exception e) {
-				Out.out("Error: Finding file failed");
+				log.info("Error: Finding file failed");
 				e.printStackTrace();
 			}
-			if (var.MLGFileName.equals(var.rsrcError)) { return; }
+			if (var.MLGFileName.equals(var.rsrcError)) {
+				return;
+			}
 		}
 
 		if (var.MLG_Current_Hash == null) {
@@ -92,7 +101,7 @@ public class Update {
 				var.MLG_Current_Hash = MD5.fileMD5(var.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (final Exception e) {
-				Out.out("Error: MD5 from file failed");
+				log.info("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -102,7 +111,7 @@ public class Update {
 		try {
 			time = getCompileTimeStamp(var.cls);
 		} catch (final Exception e) {
-			Out.out("Error: TimeStamp from file failed");
+			log.info("Error: TimeStamp from file failed");
 			e.printStackTrace();
 		}
 		// out(d.toString());
@@ -125,7 +134,7 @@ public class Update {
 				if (line.contains(var.MLG_Current_Hash)) {
 					notNew = true;
 					if (var.testing) {
-						Out.outD("NotNew");
+						log.info("NotNew");
 					}
 				}
 
@@ -147,7 +156,7 @@ public class Update {
 			fileRename.renameTo(new File(var.buildIDFile));
 
 		} catch (final FileNotFoundException ex) {
-			Out.out("\"" + var.buildIDFile + "\" file not Found.  Generating New \""
+			log.info("\"" + var.buildIDFile + "\" file not Found.  Generating New \""
 					+ var.buildIDFile + "\" File");
 
 			FileWrite.writeTxtFile(var.buildIDFile,
@@ -155,7 +164,7 @@ public class Update {
 							+ var.VERSION + INFO);
 
 		} catch (final IOException ex) {
-			Out.err("Could not create \"" + var.buildIDFile + "\".");
+			log.error("Could not create \"" + var.buildIDFile + "\".");
 			return;
 		}
 
@@ -163,7 +172,7 @@ public class Update {
 
 	/**
 	 * This gets the filename of a .jar (typically this one!)
-	 * 
+	 *
 	 * @param classFile
 	 * @return
 	 * @throws IOException
@@ -179,19 +188,19 @@ public class Update {
 		// out(filename);
 
 		// START Garbage removal:
-		int bang = filename.indexOf("!");		// remove everything after xxxx.jar
-		if (bang == -1) { 						// a real example:
-			bang = filename.length();			// jar:file:/home/morlok8k/test.jar!/me/Morlok8k/test/Main.class
+		int bang = filename.indexOf("!");        // remove everything after xxxx.jar
+		if (bang == -1) {                        // a real example:
+			bang = filename.length();            // jar:file:/home/morlok8k/test.jar!/me/Morlok8k/test/Main.class
 		}
-		int file = filename.indexOf("file:");	// removes junk from the beginning of the path
+		int file = filename.indexOf("file:");    // removes junk from the beginning of the path
 		file = file + 5;
 		if (file == -1) {
 			file = 0;
 		}
 		if (filename.contains("rsrc:")) {
-			Out.err("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
-			Out.err("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
-			Out.err("(Your Libraries need to be extracted.)");
+			log.error("THIS WAS COMPILED USING \"org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader\"! ");
+			log.error("DO NOT PACKAGE YOUR .JAR'S WITH THIS CLASSLOADER CODE!");
+			log.error("(Your Libraries need to be extracted.)");
 			return var.rsrcError;
 		}
 		if (filename.contains(".jar")) {
@@ -208,7 +217,7 @@ public class Update {
 	 * <br>
 	 * Thanks to Roedy Green at <br>
 	 * <a href="http://mindprod.com/jgloss/compiletimestamp.html">http://mindprod .com/jgloss/compiletimestamp.html</a>
-	 * 
+	 *
 	 * @param classFile
 	 * @return
 	 * @throws IOException
@@ -231,9 +240,8 @@ public class Update {
 
 	/**
 	 * Gets the BuildID for MLG
-	 * 
+	 *
 	 * @author Morlok8k
-	 * 
 	 */
 	public static void readBuildID() {
 
@@ -241,16 +249,18 @@ public class Update {
 			var.MLG_Last_Modified_Date = new Date(new Long(0));  //set the day to Jan 1, 1970 for failure
 			return;
 		}
-		var.inf_loop_protect_BuildID++;		// this is to prevent an infinite loop (however unlikely)
+		var.inf_loop_protect_BuildID++;        // this is to prevent an infinite loop (however unlikely)
 
 		if (var.MLGFileName == null) {
 			try {
 				var.MLGFileName = getClassLoader(var.cls);
 			} catch (final Exception e) {
-				Out.out("Error: Finding file failed");
+				log.info("Error: Finding file failed");
 				e.printStackTrace();
 			}
-			if (var.MLGFileName.equals(var.rsrcError)) { return; }
+			if (var.MLGFileName.equals(var.rsrcError)) {
+				return;
+			}
 		}
 
 		var.MLGFileNameShort =
@@ -258,7 +268,7 @@ public class Update {
 						var.MLGFileName.length());
 
 		if (var.testing) {
-			Out.outD("Currently Running as file:" + var.MLGFileNameShort);
+			log.info("Currently Running as file:" + var.MLGFileNameShort);
 		}
 
 		if (var.MLG_Current_Hash == null) {
@@ -267,7 +277,7 @@ public class Update {
 				var.MLG_Current_Hash = MD5.fileMD5(var.MLGFileName);
 				// out(hash + "  " + MLGFileName);
 			} catch (final Exception e) {
-				Out.out("Error: MD5 from file failed");
+				log.info("Error: MD5 from file failed");
 				e.printStackTrace();
 			}
 		}
@@ -283,7 +293,7 @@ public class Update {
 				String line;
 
 				if (var.testing) {
-					Out.outD("TimeStamps in buildIDFile:");
+					log.info("TimeStamps in buildIDFile:");
 				}
 				while ((line = in.readLine()) != null) {
 
@@ -300,7 +310,7 @@ public class Update {
 						pos = -1;
 					}
 
-					if (end == 0) {	//hash is first char, meaning entire line is a comment
+					if (end == 0) {    //hash is first char, meaning entire line is a comment
 						end = line.length();
 						pos = 0;
 					}
@@ -314,7 +324,7 @@ public class Update {
 					//timeStamps.add(line.substring(pos + 1, end));
 
 					if (var.testing) {
-						Out.outD(var.timeStamps.get(tsCount));
+						log.info(var.timeStamps.get(tsCount));
 					}
 
 					tsCount++;
@@ -333,38 +343,38 @@ public class Update {
 								final long tCalc = var.MLG_Last_Modified_Long - highestModTime;
 
 								if (var.testing) {
-									Out.outD("tCalc\tMLG_Last_Modified_Long\thighestModTime"
+									log.info("tCalc\tMLG_Last_Modified_Long\thighestModTime"
 											+ var.newLine + tCalc + "\t"
 											+ var.MLG_Last_Modified_Long + "\t" + highestModTime);
 								}
 
 								if (highestModTime == 0L) {
 
-									Out.err("Archive Intergrity Check Failed: .zip/.jar file Issue.");
-									Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+									log.error("Archive Intergrity Check Failed: .zip/.jar file Issue.");
+									log.error("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 
 								} else {
 									if (tCalc < -43200000L) {
 
 										//time is newer?  (.zip file is newer than BuildID)
-										Out.err("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
+										log.error("Archive Intergrity Check Failed: .zip file is newer than BuildID. Offset: "
 												+ (tCalc / 1000) + "sec.");
-										Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+										log.error("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 
 									if (tCalc < 43200000L) {
 
 										//times are within 24 hours (+/- 12 hours) of each other.  (typically 1-2 seconds, but left room for real-world error - due to timezone bugs with some operating systems)
 										if (var.testing | var.flag_downloadedBuildID) {
-											Out.out("Archive Intergrity Check Passed. Offset: "
+											log.info("Archive Intergrity Check Passed. Offset: "
 													+ (tCalc / 1000) + "sec.");
 										}
 
 									} else {
 										//times dont match.  (.zip file is older than specified BuildID)
-										Out.err("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
+										log.error("Archive Intergrity Check Failed: .zip file is older than BuildID. Offset: "
 												+ (tCalc / 1000) + "sec.");
-										Out.err("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
+										log.error("Archive Intergrity Check Failed: (MLG will still run.  Just note that this may not be an official version.)");
 									}
 								}
 								//return;
@@ -379,13 +389,13 @@ public class Update {
 				if (foundLine == false) {
 					// out("[DEBUG] FoundLine False");
 					buildID(false);
-					readBuildID();	// yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
+					readBuildID();    // yes I'm calling the function from itself. potential infinite loop? possibly. I haven't encountered it yet!
 					return;
 				}
 			} catch (final Exception e) {
-				Out.err("Cant Read " + var.buildIDFile + "!");
-				Out.err(e.getLocalizedMessage());
-				Out.err("");
+				log.error("Cant Read " + var.buildIDFile + "!");
+				log.error(e.getLocalizedMessage());
+				log.error("");
 				// e.printStackTrace();
 				buildID(false);
 				readBuildID();
@@ -398,13 +408,12 @@ public class Update {
 
 	/**
 	 * Updates MLG to the Latest Version
-	 * 
+	 *
 	 * @author Morlok8k
-	 * 
 	 */
 	public static boolean updateMLG() {
 
-		buildID(true);		//get latest BuildID file.
+		buildID(true);        //get latest BuildID file.
 		var.MLG_Last_Modified_Date = null;
 		readBuildID();
 
@@ -416,14 +425,14 @@ public class Update {
 			s = e.next();
 			diff = var.MLG_Last_Modified_Date.compareTo(new Date(new Long(s)));
 
-			if (diff < 0) {	// if this is less than 0, there is a new version of MLG on the Internet!
-				Out.out("There is a NEW VERSION Of " + var.PROG_NAME + " available online!");
+			if (diff < 0) {    // if this is less than 0, there is a new version of MLG on the Internet!
+				log.info("There is a NEW VERSION Of " + var.PROG_NAME + " available online!");
 
 				try {
 					final File fileRename = new File(var.MLG_JarFile);
 					fileRename.renameTo(new File(var.MLG_JarFile + ".old"));
 				} catch (final Exception e1) {
-					Out.out("Rename attempt #1 failed!");
+					log.info("Rename attempt #1 failed!");
 					e1.printStackTrace();
 
 					try {
@@ -431,7 +440,7 @@ public class Update {
 						final File fileDelete = new File(var.MLG_JarFile);
 						fileDelete.delete();
 					} catch (final Exception e2) {
-						Out.out("Rename attempt #2 failed!");
+						log.info("Rename attempt #2 failed!");
 						e2.printStackTrace();
 
 						return false;
@@ -441,7 +450,7 @@ public class Update {
 
 				final boolean fileSuccess = DownloadFile.downloadFile(var.github_MLG_jar_URL, true);
 				if (fileSuccess) {
-					Out.out(var.MLG_JarFile + " downloaded.");
+					log.info(var.MLG_JarFile + " downloaded.");
 					return true;
 				}
 
@@ -453,14 +462,14 @@ public class Update {
 
 	/**
 	 * <b>.zip file Get Modification Time</b><br>
-	 * 
+	 * <p>
 	 * Takes a string of a path to a .zip file (or .jar), and and returns a Long of the latest "Last Time Modified". <br>
 	 * <br>
-	 * 
+	 * <p>
 	 * Thanks to the following:<br>
 	 * <a href="http://www.java-examples.com/get-modification-time-zip-entry-example">http://www.java-examples.com/get-modification-time-zip-entry-example</a><br>
 	 * <a href="http://www.java-examples.com/get-crc-32-checksum-zip-entry-example">http://www.java-examples.com/get-crc-32-checksum-zip-entry-example</a>
-	 * 
+	 *
 	 * @param zipFile
 	 * @return
 	 * @author Morlok8k
@@ -480,7 +489,7 @@ public class Update {
 			final Enumeration<? extends ZipEntry> e = zipF.entries();
 
 			if (var.testing) {
-				Out.outD("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
+				log.info("File Name\t\tCRC\t\tModification Time\n---------------------------------\n");
 			}
 
 			while (e.hasMoreElements()) {
@@ -488,7 +497,7 @@ public class Update {
 
 				Long modTime = entry.getTime();
 
-				if (!(entry.getName().toUpperCase().contains(".CLASS"))) {			//ignore highest timestamp for non .class files, as they can be injected into the .jar file much later after compiling.
+				if (!(entry.getName().toUpperCase().contains(".CLASS"))) {            //ignore highest timestamp for non .class files, as they can be injected into the .jar file much later after compiling.
 					modTime = 0L;
 				}
 
@@ -502,7 +511,7 @@ public class Update {
 					final Date modificationTime = new Date(modTime);
 					final String CRC = Long.toHexString(entry.getCrc());
 
-					Out.outD(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
+					log.info(entryName + "\t" + CRC + "\t" + modificationTime + "\t"
 							+ modTime.toString());
 				}
 
@@ -513,8 +522,8 @@ public class Update {
 			return highestModTime;
 
 		} catch (final IOException ioe) {
-			Out.out("Error opening zip file" + ioe);
-			return 0L;		//return Jan. 1, 1970 12:00 GMT for failures
+			log.info("Error opening zip file" + ioe);
+			return 0L;        //return Jan. 1, 1970 12:00 GMT for failures
 		}
 	}
 }

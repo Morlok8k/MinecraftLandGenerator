@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +38,7 @@ import java.util.Date;
  * 
  */
 public class Startup {
+	private static Log log = LogFactory.getLog(Main.class);
 
 	public static void initialStart() {
 
@@ -44,15 +48,15 @@ public class Startup {
 
 		// The following displays no matter what happens, so we needed this date stuff to happen first.
 
-		Out.out(var.PROG_NAME + " version " + var.VERSION);
-		Out.out("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number.
+		log.info(var.PROG_NAME + " version " + var.VERSION);
+		log.info("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number.
 		// thus different timezones wont display a different buildID
-		Out.out("This version was last modified on "
+		log.info("This version was last modified on "
 				+ var.dateFormat.format(var.MLG_Last_Modified_Date));
-		Out.out("");
-		Out.out("Uses a Minecraft server to generate square land of a specified size.");
-		Out.out("");
-		Out.out("");
+		log.info("");
+		log.info("Uses a Minecraft server to generate square land of a specified size.");
+		log.info("");
+		log.info("");
 
 	}
 
@@ -77,14 +81,14 @@ public class Startup {
 		if (!(var.args.equals(newArgs))) {								//do the freshly parsed args match the original?
 			var.dontWait = true;											//if not, we dont wait for anything!
 			var.args = newArgs;												//use the freshly parsed args for everything else now...
-			Out.out("Notice: Not waiting for anything...");
+			log.info("Notice: Not waiting for anything...");
 		}
 
 		if (var.args.length == 0) {																//we didn't find a an X and Z size, so lets ask for one.
-			Out.out("Please Enter the size of world you want.  Example: X:1000  Z:1000");
-			Out.outP(var.MLG + "X:");
+			log.info("Please Enter the size of world you want.  Example: X:1000  Z:1000");
+			log.info(var.MLG + "X:");
 			var.xRange = Input_CLI.getInt("X:");
-			Out.outP(var.MLG + "Z:");
+			log.info(var.MLG + "Z:");
 			var.zRange = Input_CLI.getInt("Z:");
 			var.args = new String[] { String.valueOf(var.xRange), String.valueOf(var.zRange) };
 
@@ -110,7 +114,7 @@ public class Startup {
 					final boolean fileSuccess =
 							DownloadFile.downloadFile(var.github_MLG_Conf_URL, var.testing);
 					if (fileSuccess) {
-						Out.out(var.MinecraftLandGeneratorConf + " file downloaded.");
+						log.info(var.MinecraftLandGeneratorConf + " file downloaded.");
 						return true;
 					}
 				}
@@ -123,14 +127,12 @@ public class Startup {
 				|| var.args[0].equalsIgnoreCase("-printspawn")) {
 			// okay, sorry, this is an ugly hack, but it's just a last-minute feature.
 			Misc.printSpawn();
-			Time.waitTenSec(false);
 			return true;
 		} else if (var.args[0].equalsIgnoreCase("-build")) {
 			Update.buildID(false);
 			return true;
 		} else if (var.args[0].equalsIgnoreCase("-update")) {
 			Update.updateMLG();
-			Time.waitTenSec(false);
 			return true;
 		} else if (var.args[0].equalsIgnoreCase("-readme")) {
 
@@ -144,8 +146,7 @@ public class Startup {
 			if (var.args.length == 2) {
 				DownloadFile.downloadFile(var.args[1], true);
 			} else {
-				Out.out("No File to Download!");
-				Time.waitTenSec(false);
+				log.info("No File to Download!");
 			}
 			return true;
 
@@ -198,22 +199,18 @@ public class Startup {
 
 				} catch (final FileNotFoundException ex) {
 					System.err.println(var.args[1] + " - File not found");
-					Time.waitTenSec(false);
 					return true;
 				} catch (final IOException ex) {
 					System.err.println(var.args[1] + " - Could not read file.");
-					Time.waitTenSec(false);
 					return true;
 				}
 			} else {
-				Out.out("No File with links!");
-				Time.waitTenSec(false);
+				log.info("No File with links!");
 			}
 			return true;
 
 		} else if (var.args.length == 1) {
-			Out.out("For help, use java -jar " + var.MLGFileNameShort + " -help");
-			Time.waitTenSec(false);
+			log.info("For help, use java -jar " + var.MLGFileNameShort + " -help");
 			return true;
 		}
 
@@ -224,16 +221,16 @@ public class Startup {
 
 			if ((var.xRange < 1000) && (var.xRange != 0)) {
 				var.xRange = 1000;							//if less than 1000, (and not 0) set to 1000 (Calculations don't work well on very small maps)
-				Out.err("X size too small - Changing X to 1000");
+				log.error("X size too small - Changing X to 1000");
 			}
 			if ((var.zRange < 1000) && (var.zRange != 0)) {
 				var.zRange = 1000;
-				Out.err("Z size too small - Changing Z to 1000");
+				log.error("Z size too small - Changing Z to 1000");
 			}
 
 		} catch (final NumberFormatException ex) {
-			Out.err("Invalid X or Z argument.");
-			Out.err("Please Enter the size of world you want.  Example: X:1000  Z:1000");
+			log.error("Invalid X or Z argument.");
+			log.error("Please Enter the size of world you want.  Example: X:1000  Z:1000");
 			var.xRange = Input_CLI.getInt("X:");
 			var.zRange = Input_CLI.getInt("Z:");
 
@@ -246,43 +243,42 @@ public class Startup {
 				final String nextSwitch = var.args[i + 2].toLowerCase();
 				if (nextSwitch.equals("-verbose") || nextSwitch.equals("-v")) {
 					var.verbose = true;
-					Out.out("Notice: Verbose Mode");
+					log.info("Notice: Verbose Mode");
 
 				} else if (nextSwitch.startsWith("-i")) {
 					var.increment = Integer.parseInt(var.args[i + 2].substring(2));
-					Out.out("Notice: Non-Default Increment: " + var.increment);
+					log.info("Notice: Non-Default Increment: " + var.increment);
 
 				} else if (nextSwitch.startsWith("-w")) {
 					var.ignoreWarnings = true;
-					Out.out("Notice: Warnings from Server are Ignored");
+					log.info("Notice: Warnings from Server are Ignored");
 
 				} else if (nextSwitch.equals("-alt") || nextSwitch.equals("-a")) {
 					var.alternate = true;
-					Out.out("Notice: Using Alternate Launching");
+					log.info("Notice: Using Alternate Launching");
 
 				} else if (nextSwitch.equals("-chunk") || nextSwitch.equals("-c")) {
 					var.useChunks = true;
-					Out.out("Notice: Using Chunks instead of Regions");
+					log.info("Notice: Using Chunks instead of Regions");
 
 				} else if (nextSwitch.startsWith("-x")) {
 					var.xOffset = Integer.valueOf(var.args[i + 2].substring(2));
-					Out.out("Notice: X Offset: " + var.xOffset);
+					log.info("Notice: X Offset: " + var.xOffset);
 
 				} else if (nextSwitch.startsWith("-y") || nextSwitch.startsWith("-z")) {		//NOTE: "-y" is just here for backwards compatibility
 					var.zOffset = Integer.valueOf(var.args[i + 2].substring(2));
-					Out.out("Notice: Z Offset: " + var.zOffset);
+					log.info("Notice: Z Offset: " + var.zOffset);
 					if (nextSwitch.startsWith("-y")) {
-						Out.out("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
-						Time.waitTenSec(false);
+						log.info("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
 					}
 
 				} else {
 					var.serverPath = var.args[i + 2];
-					Out.out("Notice: Attempting to use Alternate Server:" + var.serverPath);
+					log.info("Notice: Attempting to use Alternate Server:" + var.serverPath);
 				}
 			}
 		} catch (final NumberFormatException ex) {
-			Out.err("Invalid switch value.");
+			log.error("Invalid switch value.");
 			return true;
 		}
 
@@ -295,7 +291,7 @@ public class Startup {
 		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
 
 		if ((var.serverPath == null) || (var.javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
-			Out.err(var.MinecraftLandGeneratorConf
+			log.error(var.MinecraftLandGeneratorConf
 					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
 
 			// return;
@@ -320,11 +316,10 @@ public class Startup {
 		}
 
 		if (oldConf) {
-			Out.err("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
+			log.error("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
 
 			FileWrite.saveConf(false);		//old conf
 
-			Time.waitTenSec(false);
 			return true;
 
 		}

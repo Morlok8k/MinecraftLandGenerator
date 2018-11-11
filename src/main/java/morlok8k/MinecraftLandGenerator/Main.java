@@ -205,7 +205,6 @@ public class Main {
 
 			log.info("Backing up level.dat to level_backup.dat.\n");
 			Misc.copyFile(serverLevel, backupLevel);
-			Files.copy()
 
 			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
 			log.info("Spawn point detected: [X,Y,Z] " + spawn);

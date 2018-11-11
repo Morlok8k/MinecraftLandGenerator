@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,6 +35,8 @@ import java.io.IOException;
 //TODO : Remove var.worldPath entirely because storing that is useless.
 
 public class Setup {
+
+	private static Log log = LogFactory.getLog(Main.class);
 
 	static boolean doSetup() throws IOException {
 		final File serverPathFile;
@@ -47,7 +52,7 @@ public class Setup {
 			/*FileNotFoundException fileException =
 					new FileNotFoundException("The server directory is invalid: " + var.serverPath);
 			throw fileException;*/
-			Out.err("The server directory is invalid: " + var.serverPath);
+			log.error("The server directory is invalid: " + var.serverPath);
 			return true;
 		}
 
@@ -57,7 +62,7 @@ public class Setup {
 					new BufferedReader(new FileReader(new File(var.serverPath + var.fileSeparator
 							+ "server.properties")));
 		} catch (IOException e) {
-			Out.err("Could not open the server.properties file.");
+			log.error("Could not open the server.properties file.");
 			return true;
 		}
 
@@ -95,7 +100,7 @@ public class Setup {
 		if (var.worldName == null) { // If after all this we still don't have a proper world name, stop everything and throw an exception
 			/*NullPointerException noNameException = new NullPointerException("There is no world name defined in the server.properties file!");
 			throw noNameException;*/
-			Out.err("There is no world name defined in the server.properties file!");
+			log.error("There is no world name defined in the server.properties file!");
 			return true;
 		}
 
@@ -111,8 +116,8 @@ public class Setup {
 
 		if (levelDat.exists() && levelDat.isFile()) {
 			if (backupLevel.exists()) {
-				Out.err("There is a level_backup.dat file left over from a previous attempt that failed.");
-				Out.out("Resuming...");
+				log.error("There is a level_backup.dat file left over from a previous attempt that failed.");
+				log.info("Resuming...");
 
 				//use resume data
 				final File serverLevel = new File(var.worldPath + var.fileSeparator + "level.dat");
@@ -136,19 +141,19 @@ public class Setup {
 		} else {
 			/*FileNotFoundException fileException =
 			      new FileNotFoundException("The currently configured world does not exist.");*/
-			Out.err("The currently configured world does not exist! Launching the server once to create it...");
+			log.error("The currently configured world does not exist! Launching the server once to create it...");
 			try {
 				var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)
 				var.minecraft.directory(new File(var.serverPath));
 				var.minecraft.redirectErrorStream(true);
 				if (!(Server.runMinecraft())) {
-					Out.err("Huh oh! Something went wrong with the server! Exiting...");
+					log.error("Huh oh! Something went wrong with the server! Exiting...");
 					System.exit(1);                // we got a warning or severe error
 				}
 			} catch (IOException e) {
 				return true;
 			}
-			Out.err("World created! Starting world generation...");
+			log.error("World created! Starting world generation...");
 		}
 		return false;
 	}

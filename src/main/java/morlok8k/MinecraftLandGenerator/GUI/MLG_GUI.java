@@ -51,9 +51,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
-import morlok8k.MinecraftLandGenerator.Out;
 import morlok8k.MinecraftLandGenerator.Startup;
-import morlok8k.MinecraftLandGenerator.Time;
 import morlok8k.MinecraftLandGenerator.Update;
 import morlok8k.MinecraftLandGenerator.var;
 
@@ -635,7 +633,7 @@ public class MLG_GUI {
 		final String title = var.PROG_NAME + " v" + var.VERSION;
 
 		//JOptionPane.showMessageDialog(frmMLG_GUI, message, title, JOptionPane.INFORMATION_MESSAGE);
-		Out.msg(message, title, JOptionPane.INFORMATION_MESSAGE);
+		System.out.println(message + title+ JOptionPane.INFORMATION_MESSAGE);
 
 	}
 
@@ -693,7 +691,6 @@ public class MLG_GUI {
 
 		var.stoppingServerGUI = true;
 
-		Time.waitTenSec(true);
 
 		while (var.runningServerGUI) {
 			//;

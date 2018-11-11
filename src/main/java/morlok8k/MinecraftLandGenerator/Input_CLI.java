@@ -19,12 +19,15 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * 
  * @author morlok8k
  */
 public class Input_CLI {
-
+	private static Log log = LogFactory.getLog(Main.class);
 	/**
 	 * getInt(String msg) - outputs a message, will only accept a valid integer from keyboard
 	 * 
@@ -35,18 +38,19 @@ public class Input_CLI {
 	 */
 	public static int getInt(final String msg) {
 
+
 		int Return = 0;
 
 		while (!(var.sc.hasNextInt())) {
 			var.sc.nextLine();
-			Out.outP(var.MLG + "Invalid Input. " + msg);
+			log.error(var.MLG + "Invalid Input. " + msg);
 		}
 
 		Return = var.sc.nextInt();
 
 		if (Return < 1000) {
-			Out.out("Input must be 1000 or larger.");
-			Out.outP(var.MLG + msg);
+			log.info("Input must be 1000 or larger.");
+			log.info(var.MLG + msg);
 			Return = getInt(msg);
 		}
 

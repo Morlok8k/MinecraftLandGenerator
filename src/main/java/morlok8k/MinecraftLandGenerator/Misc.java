@@ -19,6 +19,9 @@
 
 package morlok8k.MinecraftLandGenerator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,6 +34,7 @@ import java.io.OutputStream;
  * @author morlok8k
  */
 public class Misc {
+	private static Log log = LogFactory.getLog(Main.class);
 
 	/**
 	 * I'd love to use nio, but it requires Java 7.<br>
@@ -80,10 +84,10 @@ public class Misc {
 		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		try {
 			final Coordinates spawn = SpawnPoint.getSpawn(level);
-			Out.out("The current spawn point is: [X,Y,Z] " + spawn);
+			log.info("The current spawn point is: [X,Y,Z] " + spawn);
 			return true;
 		} catch (final IOException ex) {
-			Out.err("Error while reading " + level.getPath());
+			log.error("Error while reading " + level.getPath());
 			return false;
 		}
 	}
