@@ -21,7 +21,6 @@ package morlok8k.MinecraftLandGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.io.BufferedReader;

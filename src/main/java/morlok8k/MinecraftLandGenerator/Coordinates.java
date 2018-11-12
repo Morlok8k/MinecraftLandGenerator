@@ -5,7 +5,7 @@
  * #######################################################################
  */
 
-package morlok8k.MinecraftLandGenerator;
+//package morlok8k.MinecraftLandGenerator;
 
 import org.joml.Vector3i;
 
@@ -17,7 +17,7 @@ import org.joml.Vector3i;
  * y-axis (elevation): how high or low (from 0 to 255 (previously 128), with 64 being sea level) <br>
  * The origin point: When both X and Z are both zero. (elevation is irrelevant)<br>
  */
-public class Coordinates {
+//public class Coordinates {
 /*
 
 	*/
@@ -299,4 +299,4 @@ public class Coordinates {
 	}
 
 */
-}
+//}
