@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joml.Vector3i;
 
 
 /**
@@ -206,7 +207,7 @@ public class Main {
 			log.info("Backing up level.dat to level_backup.dat.\n");
 			Misc.copyFile(serverLevel, backupLevel);
 
-			final Coordinates spawn = SpawnPoint.getSpawn(serverLevel);
+			final Vector3i spawn = SpawnPoint.getSpawn(serverLevel);
 			log.info("Spawn point detected: [X,Y,Z] " + spawn);
 
 			FileWrite.AppendTxtFile(var.worldPath + var.fileSeparator + var.logFile, "# Seed: "
@@ -214,12 +215,12 @@ public class Main {
 
 			boolean overridden = false;
 			if (var.xOffset == null) {
-				var.xOffset = spawn.getX();
+				var.xOffset = spawn.x;
 			} else {
 				overridden = true;
 			}
 			if (var.zOffset == null) {
-				var.zOffset = spawn.getZ();
+				var.zOffset = spawn.z;
 			} else {
 				overridden = true;
 			}
@@ -352,7 +353,7 @@ public class Main {
 
 			Long timeTracking;
 
-			ArrayList<Coordinates> launchList = new ArrayList<>(0);
+			ArrayList<Vector3i> launchList = new ArrayList<>(0);
 			try {
 				launchList = new ArrayList<>((int) totalIterations);
 			} catch (Exception e1) {
@@ -405,8 +406,8 @@ public class Main {
 						}
 
 						// add Coordinates to arraylist here
-						final Coordinates tempCoords =
-								new Coordinates((int) currentX + var.xOffset, 64, (int) currentZ
+						final Vector3i tempCoords =
+								new Vector3i((int) currentX + var.xOffset, 64, (int) currentZ
 										+ var.zOffset);
 						launchList.add(tempCoords);
 
@@ -448,7 +449,7 @@ public class Main {
 					+ pD + "% Done)");
 
 			//get existing list, and remove this list from launchList
-			final ArrayList<Coordinates> removeList =
+			final ArrayList<Vector3i> removeList =
 					FileRead.readArrayListCoordLog(var.worldPath + var.fileSeparator + var.logFile);
 
 			log.info("Removing known generated areas...");
@@ -462,8 +463,8 @@ public class Main {
 
 			currentIteration = 0;
 			totalIterations = launchList.size();
-			Coordinates xyz = null;
-			final Iterator<Coordinates> coordArrayIterator = launchList.iterator();
+			Vector3i xyz = null;
+			final Iterator<Vector3i> coordArrayIterator = launchList.iterator();
 			while (coordArrayIterator.hasNext()) {
 				currentIteration++;
 				xyz = coordArrayIterator.next();

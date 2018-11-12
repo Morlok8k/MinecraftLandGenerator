@@ -33,6 +33,7 @@ import org.jnbt.LongTag;
 import org.jnbt.NBTInputStream;
 import org.jnbt.NBTOutputStream;
 import org.jnbt.Tag;
+import org.joml.Vector3i;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class SpawnPoint {
 	 * @throws IOException
 	 * @author Corrodias
 	 */
-	protected static Coordinates getSpawn(final File level) throws IOException {
+	protected static Vector3i getSpawn(final File level) throws IOException {
 		try {
 			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
 			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
@@ -68,8 +69,8 @@ public class SpawnPoint {
 			var.randomSeed = Seed.getValue();
 			System.out.println("Seed: " + var.randomSeed); // lets output the seed, cause why not?
 
-			final Coordinates ret =
-					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
+			final Vector3i ret =
+					new Vector3i(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
 			return ret;
 		} catch (final ClassCastException ex) {
 			throw new IOException("Invalid level format.");
@@ -91,7 +92,7 @@ public class SpawnPoint {
 	 *             if there are any problems reading/writing the file
 	 * @author Corrodias
 	 */
-	protected static void setSpawn(final File level, final Coordinates xyz) throws IOException {
+	protected static void setSpawn(final File level, final Vector3i xyz) throws IOException {
 
 		try {
 			final NBTInputStream input = new NBTInputStream(new FileInputStream(level));
@@ -141,9 +142,9 @@ public class SpawnPoint {
 			@SuppressWarnings("unused")
 			final IntTag spawnZ = (IntTag) newData.get("SpawnZ"); // I don't want to remove existing code, either by myself (Morlok8k) or Corrodias
 
-			newData.put("SpawnX", new IntTag("SpawnX", xyz.getX()));		// pulling the data out of the Coordinates,
-			newData.put("SpawnY", new IntTag("SpawnY", xyz.getY()));		// and putting it into our IntTag's
-			newData.put("SpawnZ", new IntTag("SpawnZ", xyz.getZ()));
+			newData.put("SpawnX", new IntTag("SpawnX", xyz.x));		// pulling the data out of the Coordinates,
+			newData.put("SpawnY", new IntTag("SpawnY", xyz.y));		// and putting it into our IntTag's
+			newData.put("SpawnZ", new IntTag("SpawnZ", xyz.z));
 
 			// Again, we can't modify the data map in the old Tag, so we have to make a new one.
 			final CompoundTag newDataTag = new CompoundTag("Data", newData);

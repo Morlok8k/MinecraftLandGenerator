@@ -21,6 +21,7 @@ package morlok8k.MinecraftLandGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joml.Vector3i;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,7 +84,7 @@ public class Misc {
 		}
 		final File level = new File(var.worldPath + var.fileSeparator + "level.dat");
 		try {
-			final Coordinates spawn = SpawnPoint.getSpawn(level);
+			final Vector3i spawn = SpawnPoint.getSpawn(level);
 			log.info("The current spawn point is: [X,Y,Z] " + spawn);
 			return true;
 		} catch (final IOException ex) {

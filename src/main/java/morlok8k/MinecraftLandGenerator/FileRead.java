@@ -21,6 +21,8 @@ package morlok8k.MinecraftLandGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,23 +32,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * 
  * @author morlok8k
  */
 public class FileRead {
 
 	/**
-	 * 
 	 * @param file
 	 * @return
 	 */
 
 	private static Log log = LogFactory.getLog(Main.class);
-	
-	public static ArrayList<Coordinates> readArrayListCoordLog(final String file) {
-		
 
-		final ArrayList<Coordinates> Return = new ArrayList<>();
+	public static ArrayList<Vector3i> readArrayListCoordLog(final String file) {
+
+
+		final ArrayList<Vector3i> Return = new ArrayList<>();
 
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(new File(file)));
@@ -58,21 +58,21 @@ public class FileRead {
 
 				int end = line.indexOf('#'); // comments, ignored lines
 				boolean ignoreLine = false;
-				Coordinates c = new Coordinates();
+				Vector3i c;
 
 				if (end == -1) { // If we have no hash sign, then we read till the end of the line
 					end = line.length();
 				}
 
-				if (end == 0) {	//hash is first char, meaning entire line is a comment
+				if (end == 0) {    //hash is first char, meaning entire line is a comment
 					ignoreLine = true;
 				}
 
 				if (!(ignoreLine)) {
-					c = Coordinates.parseString(line.substring(0, end));
+					c = parseString(line.substring(0, end));
 					Return.add(c);
 				} else {
-					if (line.startsWith("##Size:")) {				// Potential Resume data.
+					if (line.startsWith("##Size:")) {                // Potential Resume data.
 						int xx = 0;
 						int zz = 0;
 
@@ -100,8 +100,8 @@ public class FileRead {
 	}
 
 	/**
-     *
-     */
+	 *
+	 */
 	public static void readConf() {
 		//TODO: element comment
 		//String errorMsg = "";
@@ -127,7 +127,7 @@ public class FileRead {
 					pos = -1;
 				}
 
-				if (end == 0) {	//hash is first char, meaning entire line is a comment
+				if (end == 0) {    //hash is first char, meaning entire line is a comment
 					end = line.length();
 					pos = 0;
 				}
@@ -216,6 +216,29 @@ public class FileRead {
 		} catch (final IOException ex) {
 			log.error("Could not read " + var.MinecraftLandGeneratorConf + ".");
 			return;
+		}
+	}
+
+	public static Vector3i parseString(String StringOfCoords) {
+		StringOfCoords = StringOfCoords.trim();
+
+		int start = StringOfCoords.indexOf("[");
+		int end = StringOfCoords.indexOf("]");
+
+		String[] coordlong = StringOfCoords.substring(start, end).split(",");
+		if ((start == -1) || (end == -1)) {
+
+			start = StringOfCoords.indexOf("(");
+			end = StringOfCoords.indexOf(")");
+			String[] coordshort = StringOfCoords.substring(start, end).split(",");
+			if ((start != -1) && (end != -1)) {
+				return new Vector3i(Integer.valueOf(coordshort[0]), 64, Integer.valueOf(coordshort[2]));
+			} else {
+				return new Vector3i(0, 0, 0);
+			}
+		} else {
+
+			return new Vector3i(Integer.valueOf(coordlong[0]), Integer.valueOf(coordlong[1]), Integer.valueOf(coordlong[2]));
 		}
 	}
 }
