@@ -23,7 +23,6 @@
 
 package morlok8k.MinecraftLandGenerator;
 
-import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -32,11 +31,9 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import morlok8k.MinecraftLandGenerator.GUI.MLG_GUI;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Vector3i;
-
 
 /**
  * @author Corrodias, Morlok8k, pr0f1x
@@ -52,91 +49,12 @@ public class Main {
 
 	/**
 	 * @param args
-	 * the command line arguments
+	 *            the command line arguments
 	 */
 	private static Log log = LogFactory.getLog(Main.class);
 
 	public static void main(String[] args) {
-
-		var.startTime = System.currentTimeMillis();
-
-		var.originalArgs = args;    // we may potentially remove some args later, but we keep a record of the original for the log file.
-
-		// This is really just here for debugging...
-		// I plan on adding more asserts later, but for now, this will do.
-		// to enable this, run:
-		// java -enableassertions -jar MinecraftLandGenerator.jar
-		assert var.assertsEnabled = true;  // Intentional side-effect!!!  (This may cause a Warning, which is safe to ignore: "Possible accidental assignment in place of a comparison. A condition expression should not be reduced to an assignment")
-		if (var.assertsEnabled) {
-			log.info("assertsEnabled: " + var.assertsEnabled);
-			var.verbose = true;
-			log.info("Verbose mode forced!");
-			var.testing = true;
-			log.info("Debug mode forced!");
-			var.dontWait = true;
-			log.info("-nowait mode forced!");
-			log.info("");
-		}
-
-		boolean GUI = false;            // GUI needs to be true to run in graphical mode
-		boolean NOGUI = false;            // NOGUI is a flag that finds reasons to not use a graphical mode.
-
-		if (args.length != 0) {            // if args are present, then we assume we want NOGUI
-			NOGUI = true;                // if no args are present, we will attempt GUI
-		}
-
-		String[] argsNOGUI = new String[args.length];
-		argsNOGUI = args;
-		argsNOGUI = StringArrayParse.Parse(argsNOGUI, "nogui");        //parse out "nogui"
-		if (!(args.equals(argsNOGUI))) {                                //do the freshly parsed args match the original?
-			args = argsNOGUI;                                            //use the freshly parsed args for everything else now...
-			NOGUI = true;
-		}
-
-		//MLG_GUI Choosing code...
-		if ((!NOGUI) && (!java.awt.GraphicsEnvironment.isHeadless())) {
-			GUI = true;
-			if (var.testing) {
-				log.info("MLG_GUI: This is a graphical enviroment.");
-			}
-
-			//////
-			GUI = false;                // forcing GUI to be false for now, because I don't have the MLG_GUI code ready yet!
-			//////
-
-		} else {
-			GUI = false;                // No GUI for us today...
-			if (var.testing) {
-				log.info("MLG_GUI: Command Line Only!");
-			}
-		}
-
-		if (GUI) {    //GUI
-			// Launch MLG_GUI
-
-			EventQueue.invokeLater(new Runnable() {
-
-				@SuppressWarnings("static-access")
-				@Override
-				public void run() {
-
-					try {
-						final MLG_GUI window = new MLG_GUI();
-						window.frmMLG_GUI.setVisible(true);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-
-		} else {    //No GUI
-			// Finally, Lets Start MLG!
-
-			var.UsingGUI = false;
-			var.args = args;
-			Main.runCLI();
-		}
-
+		Main.runCLI();
 	}
 
 	/**
@@ -281,7 +199,8 @@ public class Main {
 				log.info("Centering land generation on [" + var.xOffset + ", " + var.zOffset
 						+ "] due to switches.");
 			} else {
-				log.info("Centering land generation on [" + var.xOffset + ", " + var.zOffset + "]\n");
+				log.info("Centering land generation on [" + var.xOffset + ", " + var.zOffset
+						+ "]\n");
 			}
 
 			double xLoops, zLoops;
@@ -329,7 +248,7 @@ public class Main {
 			if (xLoops > 3) {
 				xLoops = xLoops + 1;
 			}
-
+			
 			if (zLoops > 3) {
 				zLoops = zLoops + 1;
 			}
@@ -340,7 +259,8 @@ public class Main {
 			log.info("Estimated Total Spawn Points: " + totalIterations);
 
 			if (totalIterations > Integer.MAX_VALUE) {
-				log.error("TOO BIG!  Please reduce the world size.  World Size can't be larger than 17609200 x 17609200");        //or 17794560 using -i384
+				log.error(
+						"TOO BIG!  Please reduce the world size.  World Size can't be larger than 17609200 x 17609200");        //or 17794560 using -i384
 				backupLevel.delete();
 				log.info("Removed backup file.");
 				System.exit(0);
@@ -357,7 +277,8 @@ public class Main {
 				launchList = new ArrayList<>((int) totalIterations);
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				log.error("TOO BIG!  Your computer can't handle such a large map.  The size is dependant on 32/64 bit and Memory.");
+				log.error(
+						"TOO BIG!  Your computer can't handle such a large map.  The size is dependant on 32/64 bit and Memory.");
 				backupLevel.delete();
 				log.info("Removed backup file.");
 				System.exit(0);
@@ -392,22 +313,20 @@ public class Main {
 					{ // Middle of Loop
 
 						if (currentIteration % 10000000 == 0) {            //for long calculations, we output an update every 10,000,000 points
-							String percentDone =
-									Double.toString((((double) currentIteration) / totalIterations) * 100);
+							String percentDone = Double.toString(
+									(((double) currentIteration) / totalIterations) * 100);
 							final int percentIndex =
 									((percentDone.indexOf(".") + 3) > percentDone.length())
 											? percentDone.length() : (percentDone.indexOf(".") + 3);        //fix index on numbers like 12.3
-							percentDone =
-									percentDone.substring(0, (percentDone.indexOf(".") == -1
-											? percentDone.length() : percentIndex));            //Trim output, unless whole number
+							percentDone = percentDone.substring(0, (percentDone.indexOf(".") == -1
+									? percentDone.length() : percentIndex));            //Trim output, unless whole number
 							log.info("Calculated: " + currentIteration + "/" + totalIterations
 									+ " spawn points. (" + percentDone + "% Done)");
 						}
 
 						// add Coordinates to arraylist here
-						final Vector3i tempCoords =
-								new Vector3i((int) currentX + var.xOffset, 64, (int) currentZ
-										+ var.zOffset);
+						final Vector3i tempCoords = new Vector3i((int) currentX + var.xOffset, 64,
+								(int) currentZ + var.zOffset);
 						launchList.add(tempCoords);
 
 						// Write the current Coordinates to log file!
@@ -421,8 +340,8 @@ public class Main {
 					} // End of the Middle of Loop
 
 					if (curZloops == 1) {            // We are at the North edge.  We have special code for the North edge, so we need to change currentZ to be normal again.
-						currentZ =
-								(long) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment))) * var.increment);
+						currentZ = (long) ((Math.ceil((((0 - zRangeAdj) / 2) / var.increment)))
+								* var.increment);
 					}
 					if (southEdgeReached) {
 						currentZ = (long) zRangeAdj;        // We reached the South edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
@@ -431,8 +350,8 @@ public class Main {
 				} // End Z
 				curZloops = 0;
 				if (curXloops == 1) {            // We are at the West edge.  We have special code for the West edge, so we need to change currentX to be normal again.
-					currentX =
-							(long) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment))) * var.increment);
+					currentX = (long) ((Math.ceil((((0 - xRangeAdj) / 2) / var.increment)))
+							* var.increment);
 				}
 				if (eastEdgeReached) {
 					currentX = (long) xRangeAdj;        // We reached the East edge, so we make sure that we exit the "for loop", bypassing the "1152 bug"
@@ -472,13 +391,10 @@ public class Main {
 
 				String percentDone =
 						Double.toString((((double) currentIteration - 1) / totalIterations) * 100);
-				final int percentIndex =
-						((percentDone.indexOf(".") + 3) > percentDone.length()) ? percentDone
-								.length() : (percentDone.indexOf(".") + 3);        //fix index on numbers like 12.3
-				percentDone =
-						percentDone.substring(0,
-								(percentDone.indexOf(".") == -1 ? percentDone.length()
-										: percentIndex));            //Trim output, unless whole number
+				final int percentIndex = ((percentDone.indexOf(".") + 3) > percentDone.length())
+						? percentDone.length() : (percentDone.indexOf(".") + 3);        //fix index on numbers like 12.3
+				percentDone = percentDone.substring(0,
+						(percentDone.indexOf(".") == -1 ? percentDone.length() : percentIndex));            //Trim output, unless whole number
 
 				log.info("Setting spawn to [X,Y,Z]: " + xyz + " (" + currentIteration + " of "
 						+ totalIterations + ") " + percentDone + "% Done"); // Time Remaining estimate
@@ -489,7 +405,8 @@ public class Main {
 				differenceTime =
 						(timeTracking - generationStartTimeTracking) / (currentIteration + 1);        // Updated.  we now count all runs, instead of the last 4.
 				differenceTime *= 1 + (totalIterations - currentIteration);                                    // this should provide a more accurate result.
-				log.info("Estimated time remaining: " + String.format("%02d:%02d", (differenceTime / 1000) / 60, (differenceTime / 1000) % 60));                        // I've noticed it gets pretty accurate after about 8 launches!
+				log.info("Estimated time remaining: " + String.format("%02d:%02d",
+						(differenceTime / 1000) / 60, (differenceTime / 1000) % 60));                        // I've noticed it gets pretty accurate after about 8 launches!
 
 				// Set the spawn point
 				SpawnPoint.setSpawn(serverLevel, xyz);
@@ -526,10 +443,10 @@ public class Main {
 			Misc.copyFile(backupLevel, serverLevel);
 			backupLevel.delete();
 			log.info("Restored original level.dat.");
-			long completeIn =var.startTime - System.currentTimeMillis();
-			log.info("Generation complete in: "
-					+ String.format("%02d:%02d", (completeIn / 1000) / 60, (completeIn / 1000) % 60));
-		//	Time.waitTenSec(false);
+			long completeIn = var.startTime - System.currentTimeMillis();
+			log.info("Generation complete in: " + String.format("%02d:%02d",
+					(completeIn / 1000) / 60, (completeIn / 1000) % 60));
+			//	Time.waitTenSec(false);
 
 			if (var.webLaunch) {        //if webLaunch is already false, don't check for these things
 				if (java.awt.GraphicsEnvironment.isHeadless()) {

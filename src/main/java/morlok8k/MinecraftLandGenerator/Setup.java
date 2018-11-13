@@ -19,13 +19,13 @@
 
 package morlok8k.MinecraftLandGenerator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
@@ -58,9 +58,8 @@ public class Setup {
 
 		//---------- Verify server.properties
 		try {
-			serverPropertiesFile =
-					new BufferedReader(new FileReader(new File(var.serverPath + var.fileSeparator
-							+ "server.properties")));
+			serverPropertiesFile = new BufferedReader(new FileReader(
+					new File(var.serverPath + var.fileSeparator + "server.properties")));
 		} catch (IOException e) {
 			log.error("Could not open the server.properties file.");
 			return true;
@@ -116,7 +115,8 @@ public class Setup {
 
 		if (levelDat.exists() && levelDat.isFile()) {
 			if (backupLevel.exists()) {
-				log.error("There is a level_backup.dat file left over from a previous attempt that failed.");
+				log.error(
+						"There is a level_backup.dat file left over from a previous attempt that failed.");
 				log.info("Resuming...");
 
 				//use resume data
@@ -141,16 +141,14 @@ public class Setup {
 		} else {
 			/*FileNotFoundException fileException =
 			      new FileNotFoundException("The currently configured world does not exist.");*/
-			log.error("The currently configured world does not exist! Launching the server once to create it...");
+			log.error(
+					"The currently configured world does not exist! Launching the server once to create it...");
 			try {
 				var.minecraft = new ProcessBuilder(var.javaLine.split("\\s")); // is this always going to work? i don't know.	(most likely yes)
 				var.minecraft.directory(new File(var.serverPath));
 				var.minecraft.redirectErrorStream(true);
-				if (!(Server.runMinecraft())) {
-					log.error("Huh oh! Something went wrong with the server! Exiting...");
-					System.exit(1);                // we got a warning or severe error
-				}
-			} catch (IOException e) {
+				Server.runMinecraft();
+			} catch (IOException | InterruptedException e) {
 				return true;
 			}
 			log.error("World created! Starting world generation...");

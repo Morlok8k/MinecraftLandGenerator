@@ -19,16 +19,15 @@
 
 package morlok8k.MinecraftLandGenerator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
@@ -39,26 +38,6 @@ import java.util.Date;
  */
 public class Startup {
 	private static Log log = LogFactory.getLog(Main.class);
-
-	public static void initialStart() {
-
-		// Lets get the date, and our BuildID
-		var.date = new Date();
-		Update.readBuildID();
-
-		// The following displays no matter what happens, so we needed this date stuff to happen first.
-
-		log.info(var.PROG_NAME + " version " + var.VERSION);
-		log.info("BuildID: (" + var.MLG_Last_Modified_Date.getTime() + ")");		// instead of dateformatting the buildid, we return the raw Long number.
-		// thus different timezones wont display a different buildID
-		log.info("This version was last modified on "
-				+ var.dateFormat.format(var.MLG_Last_Modified_Date));
-		log.info("");
-		log.info("Uses a Minecraft server to generate square land of a specified size.");
-		log.info("");
-		log.info("");
-
-	}
 
 	/**
 	 * 
@@ -269,7 +248,8 @@ public class Startup {
 					var.zOffset = Integer.valueOf(var.args[i + 2].substring(2));
 					log.info("Notice: Z Offset: " + var.zOffset);
 					if (nextSwitch.startsWith("-y")) {
-						log.info("Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
+						log.info(
+								"Notice: MLG now uses Z instead of Y.  Please use the -z switch instead");
 					}
 
 				} else {
@@ -284,47 +264,4 @@ public class Startup {
 
 		return false;		// success!
 	}
-
-	public static boolean confFile() {
-		FileRead.readConf();
-
-		boolean oldConf = false; // This next section checks to see if we have a old configuration file (or none!)
-
-		if ((var.serverPath == null) || (var.javaLine == null)) { 			// MLG 1.2 Check for a valid .conf file.
-			log.error(var.MinecraftLandGeneratorConf
-					+ " does not contain all required properties.  Making New File!");	// Please recreate it by running this application with -conf.
-
-			// return;
-
-			// We no longer quit. We generate a new one with defaults.
-
-			var.javaLine = var.defaultJavaLine;
-			var.serverPath = ".";
-			oldConf = true;
-		}
-
-		if (var.doneText == null) {					// MLG 1.4.0
-			oldConf = true;
-		} else if (var.preparingText == null) {	// MLG 1.4.0
-			oldConf = true;
-		} else if (var.preparingLevel == null) {	// MLG 1.4.5 / 1.5.0
-			oldConf = true;
-		} else if (var.level_1 == null) {			// MLG 1.4.5 / 1.5.0
-			oldConf = true;
-		} else if (var.level_0 == null) {			// MLG 1.5.1 / 1.6.0
-			oldConf = true;
-		}
-
-		if (oldConf) {
-			log.error("Old Version of " + var.MinecraftLandGeneratorConf + " found.  Updating...");
-
-			FileWrite.saveConf(false);		//old conf
-
-			return true;
-
-		}
-
-		return false;		// success!
-	}
-
 }
