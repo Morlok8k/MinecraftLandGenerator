@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
 import java.nio.file.Path;
-@Command(name = "mgl", subcommands = {
+@Command(name = "mlg", subcommands = {
 		HelpCommand.class})
 
 public class CommandLineMain implements  Runnable{
@@ -24,13 +24,13 @@ public class CommandLineMain implements  Runnable{
 	@Parameters(index = "2", description = "path to the directory in which the server runs")
 	private Path serverPath;
 
-	@Option(names = "-i", description = "override the iteration spawn offset increment")
+	@Option(names = "-i", description = "override the iteration spawn offset increment",  defaultValue = "380", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
 	private int increment = 380;
 
-	@Option(names = "-i", description = "set the X offset to generate land around")
+	@Option(names = {"--x-offset", "-xoff"}, description = "set the X offset to generate land around")
 	private int xOffset = 0;
 
-	@Option(names = "-i", description = "set the Z offset to generate land around")
+	@Option(names = {"--y-offset", "-yoff"}, description = "set the Z offset to generate land around")
 	private int zOffset = 0;
 
 
