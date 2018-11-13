@@ -24,11 +24,11 @@ import org.apache.commons.logging.LogFactory;
 import org.joml.Vector3i;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
@@ -37,35 +37,10 @@ import java.io.OutputStream;
 public class Misc {
 	private static Log log = LogFactory.getLog(Main.class);
 
-	/**
-	 * I'd love to use nio, but it requires Java 7.<br>
-	 * I could use Apache Commons, but i don't want to include a library for one little thing.<br>
-	 * Copies src file to dst file.<br>
-	 * If the dst file does not exist, it is created<br>
-	 * 
-	 * @author Corrodias
-	 * @param src
-	 * @param dst
-	 * @throws IOException
-	 */
-
-
 	// TODO replace with Java Copy Path
+	@Deprecated
 	public static void copyFile(final File src, final File dst) throws IOException {
-		final InputStream copyIn = new FileInputStream(src);
-		final OutputStream copyOut = new FileOutputStream(dst);
-
-		// Transfer bytes from in to out
-		final byte[] buf = new byte[1024];
-		int len;
-		while ((len = copyIn.read(buf)) >= 0) {
-			if (len > 0) {
-				copyOut.write(buf, 0, len);
-			}
-		}
-		copyIn.close();
-		copyOut.flush();
-		copyOut.close();
+		FileUtils.copyFile(src, dst);
 	}
 
 	//TODO: add description

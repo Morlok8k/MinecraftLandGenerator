@@ -45,6 +45,7 @@ public class DownloadFile {
 	 * @return true if download was successful, false if not
 	 * @author piegames
 	 */
+	@Deprecated
 	public static boolean downloadFile(final String url, final boolean Output) {
 		try {
 			URL download = new URL(url);
