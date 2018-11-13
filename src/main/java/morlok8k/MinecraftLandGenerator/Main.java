@@ -27,7 +27,6 @@ import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
