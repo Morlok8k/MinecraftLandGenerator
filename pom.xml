@@ -25,6 +25,12 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -54,5 +60,10 @@
 			<version>3.7.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.piegamesde</groupId>
+			<artifactId>nbt</artifactId>
+			<version>dbe4ea253b</version>
+		</dependency>
 	</dependencies>
 </project>
