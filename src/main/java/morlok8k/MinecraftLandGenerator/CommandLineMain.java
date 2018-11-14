@@ -1,6 +1,6 @@
 package morlok8k.MinecraftLandGenerator;
 
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,47 +9,33 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.joml.Vector2i;
 
+import morlok8k.MinecraftLandGenerator.CommandLineMain.AutoSpawnpoints;
+import morlok8k.MinecraftLandGenerator.CommandLineMain.ManualSpawnpoints;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-import picocli.CommandLine.RunLast;
+import picocli.CommandLine.ParentCommand;
+import picocli.CommandLine.RunAll;
 
-@Command(name = "mlg", subcommands = { HelpCommand.class })
-
+@Command(name = "MinecraftLandGenerator",
+		subcommands = { HelpCommand.class, ManualSpawnpoints.class, AutoSpawnpoints.class })
 public class CommandLineMain implements Runnable {
 
 	private static Log log = LogFactory.getLog(CommandLineMain.class);
 
 	@Option(names = { "-v", "--verbose" }, description = "Be verbose.")
 	private boolean verbose = false;
-	@Option(names = { "-r", "--region" }, description = "Regionfiles instead of chunks")
-	private boolean regionFile = false;
 
-	@Option(names = { "-s", "--customspawn" }, description = "Customized SpawnPoints")
-	private String[] customSpawnPoints;
-
-	@Option(names = "-i", description = "override the iteration spawn offset increment",
-			defaultValue = "380", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
-	private int increment = 380;
-
-	@Option(names = { "--x-offset", "-x" },
-			description = "set the X offset to generate land around")
-	private int xOffset = 0;
-
-	@Option(names = { "--y-offset", "-y" },
-			description = "set the Z offset to generate land around")
-	private int zOffset = 0;
-
-	@Parameters(index = "0", description = "X-coordinate")
-	private int X;
-
-	@Parameters(index = "1", description = "Z-coordinate")
-	private int Z;
+	@Option(names = { "--debug-server" },
+			description = "Print the Minecraft server log to stdout for debugging")
+	private boolean debugServer = false;
 
 	@Option(names = { "-s", "--serverFile" }, description = "Path to the server's jar file.",
 			defaultValue = "server.jar", showDefaultValue = Visibility.ALWAYS)
@@ -63,37 +49,117 @@ public class CommandLineMain implements Runnable {
 			description = "Java command to launch the server. Defaults to `java -jar`.")
 	private String[] javaOpts;
 
+	@Command(name = "auto-spawnpoints")
+	public static class AutoSpawnpoints implements Runnable {
+
+		@ParentCommand
+		private CommandLineMain parent;
+
+		@Option(names = "-i", description = "override the iteration spawn offset increment",
+				defaultValue = "380", showDefaultValue = CommandLine.Help.Visibility.ALWAYS)
+		private int increment = 380;
+
+		@Parameters(index = "0", description = "X-coordinate")
+		private int x;
+		@Parameters(index = "1", description = "Z-coordinate")
+		private int z;
+		@Parameters(index = "2", description = "Width")
+		private int w;
+		@Parameters(index = "3", description = "Height")
+		private int h;
+
+		public AutoSpawnpoints() {
+		}
+
+		@Override
+		public void run() {
+			Server server = new Server(parent.debugServer, parent.javaOpts, parent.serverFile);
+			World world;
+			try {
+				world = server.initWorld(parent.worldPath);
+			} catch (IOException | InterruptedException e) {
+				log.error("Could not initialize world", e);
+				return;
+			}
+
+			log.info("Generating world");
+			server.runMinecraft(world, generateSpawnpoints(x, z, w, h, increment, 12));
+			log.info("Cleaning up temporary files");
+			try {
+				world.resetSpawn();
+				server.restoreWorld();
+			} catch (IOException e) {
+				log.warn(
+						"Could not delete backup files (server.properties.bak and level.dat.bak). Please delete them manually",
+						e);
+			}
+			log.info("Done.");
+		}
+
+	}
+
+	@Command(name = "manual-spawnpoints")
+	public static class ManualSpawnpoints implements Runnable {
+
+		@ParentCommand
+		private CommandLineMain parent;
+
+//		@Option(names = { "-s", "--customspawn" }, description = "Customized SpawnPoints")
+//		private String[] customSpawnPoints;
+
+		public ManualSpawnpoints() {
+		}
+
+		@Override
+		public void run() {
+			Server server = new Server(parent.debugServer, parent.javaOpts, parent.serverFile);
+			World world;
+			try {
+				world = server.initWorld(parent.worldPath);
+			} catch (IOException | InterruptedException e) {
+				log.error("Could not initialize world", e);
+				return;
+			}
+			List<Vector2i> spawnpoints = new ArrayList<>();
+			spawnpoints.add(new Vector2i(100, 100));
+			spawnpoints.add(new Vector2i(200, 100));
+			spawnpoints.add(new Vector2i(300, 100));
+			spawnpoints.add(new Vector2i(400, 100));
+			log.info("Generating world");
+			server.runMinecraft(world, spawnpoints);
+			log.info("Cleaning up temporary files");
+			try {
+				world.resetSpawn();
+				server.restoreWorld();
+			} catch (IOException e) {
+				log.warn(
+						"Could not delete backup files (server.properties.bak and level.dat.bak). Please delete them manually",
+						e);
+			}
+			log.info("Done.");
+		}
+	}
+
 	public CommandLineMain() {
 
 	}
 
 	@Override
 	public void run() {
-		Server server = new Server(javaOpts, serverFile);
-		if (worldPath != null)
-			server.setWorld(worldPath);
-		else worldPath = server.getWorld();
-		if (worldPath == null || !Files.exists(worldPath)) {
-			log.warn(
-					"No world was specified or the world at the given path does not exist. Starting the server once to create one...");
-			server.runMinecraft();
-			worldPath = server.getWorld();
+		if (verbose) {
+			Configurator.setRootLevel(Level.DEBUG);
 		}
-		if (worldPath == null || !Files.exists(worldPath)) {
-			log.fatal("There is still no world, we cannot continue without world");
-			return;
-		}
-		for (Vector2i spawn : generateSpawnpoints(startX, startZ, width, height, maxInc,
-				generationRadius)) {
-			server.setSpawn(level, spawn);
-			server.runMinecraft();
-		}
-		server.restoreWorld();
 	}
 
 	public static void main(String[] args) {
+		/* Without this, JOML will print vectors out in scientific notation which isn't the most human readable thing in the world */
+		System.setProperty("joml.format", "false");
+
+		args = new String[] { "-v", "--debug-server", "-s",
+				"/home/piegames/Documents/GitHub/MinecraftLandGenerator/testserver/server.jar",
+				"auto-spawnpoints", "200", "100", "200", "100" };
 		CommandLine cli = new CommandLine(new CommandLineMain());
-		cli.parseWithHandler(new RunLast(), args);
+		cli.parseWithHandler(new RunAll(), args);
 	}
 
 	/**

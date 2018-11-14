@@ -8,35 +8,23 @@
 package morlok8k.MinecraftLandGenerator;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Vector2i;
-import org.joml.Vector3i;
-
-import com.flowpowered.nbt.CompoundMap;
-import com.flowpowered.nbt.CompoundTag;
-import com.flowpowered.nbt.IntTag;
-import com.flowpowered.nbt.Tag;
-import com.flowpowered.nbt.stream.NBTInputStream;
-import com.flowpowered.nbt.stream.NBTOutputStream;
 
 /**
  * 
@@ -48,8 +36,10 @@ public class Server {
 
 	protected final ProcessBuilder builder;
 	protected final Path workDir;
+	protected final boolean debugServer;
 
-	public Server(String[] javaOpts, Path serverFile) {
+	public Server(boolean debugServer, String[] javaOpts, Path serverFile) {
+		this.debugServer = debugServer;
 		List<String> opts = new ArrayList<>(
 				Arrays.asList(javaOpts != null ? javaOpts : new String[] { "java", "-jar" }));
 		opts.add(serverFile.toString());
@@ -58,6 +48,23 @@ public class Server {
 		builder.redirectErrorStream(true);
 		workDir = serverFile.getParent();
 		builder.directory(workDir.toFile());
+	}
+
+	public World initWorld(Path worldPath) throws IOException, InterruptedException {
+		if (worldPath != null)
+			setWorld(worldPath);
+		else worldPath = getWorld();
+		if (worldPath == null || !Files.exists(worldPath)) {
+			log.warn(
+					"No world was specified or the world at the given path does not exist. Starting the server once to create one...");
+			runMinecraft();
+			worldPath = getWorld();
+			if (!worldPath.isAbsolute()) worldPath = workDir.resolve(worldPath);
+		}
+		if (worldPath == null || !Files.exists(worldPath))
+			throw new NoSuchFileException(String.valueOf(worldPath));
+		log.debug("Using world path " + worldPath);
+		return new World(worldPath);
 	}
 
 	public void setWorld(Path worldPath) throws IOException {
@@ -79,83 +86,32 @@ public class Server {
 		Properties props = new Properties();
 		if (!Files.exists(propsFile)) return null;
 		props.load(Files.newInputStream(propsFile));
-		return Paths.get(props.getProperty("level-name"));
+		if (!props.containsKey("level-name")) return null;
+		log.info("Found level in server.properties: " + props.getProperty("level-name"));
+		Path p = Paths.get(props.getProperty("level-name"));
+		if (!p.isAbsolute()) p = workDir.resolve(p);
+		return p;
 	}
 
 	public void restoreWorld() throws IOException {
 		Path propsFile = workDir.resolve("server.properties");
-		Files.move(propsFile.resolveSibling("server.properties.bak"), propsFile,
-				StandardCopyOption.REPLACE_EXISTING);
+		if (Files.exists(propsFile.resolveSibling("server.properties.bak")))
+			Files.move(propsFile.resolveSibling("server.properties.bak"), propsFile,
+					StandardCopyOption.REPLACE_EXISTING);
 	}
 
-	/**
-	 * @param level
-	 * @return
-	 * @throws IOException
-	 * @author Corrodias
-	 */
-	protected static Vector3i getSpawn(final File level) throws IOException {
-		try (NBTInputStream input = new NBTInputStream(new FileInputStream(level));) {
-			final CompoundTag levelTag = (CompoundTag) input.readTag();
-			final Map<String, Tag<?>> levelData =
-					((CompoundTag) levelTag.getValue().get("Data")).getValue();
-
-			final IntTag spawnX = (IntTag) levelData.get("SpawnX");
-			final IntTag spawnY = (IntTag) levelData.get("SpawnY");
-			final IntTag spawnZ = (IntTag) levelData.get("SpawnZ");
-
-			return new Vector3i(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
-		} catch (final ClassCastException | NullPointerException ex) {
-			throw new IOException("Invalid level format.");
-		}
-	}
-
-	protected static void setSpawn(Path world, Vector2i chunkSpawn) throws IOException {
-		setSpawn(world.resolve("level.dat").toFile(),
-				new Vector3i(chunkSpawn.x << 4 | 7, 64, chunkSpawn.y << 4 | 8));
-	}
-
-	/**
-	 * Changes the spawn point in the given Alpha/Beta level to the given coordinates.<br>
-	 * Note that, in Minecraft levels, the Y coordinate is height.<br>
-	 * (We picture maps from above, but the game was made from a different perspective)
-	 * 
-	 * @param level
-	 *            the level file to change the spawn point in
-	 * @param xyz
-	 *            the Coordinates of the spawn point
-	 * @throws IOException
-	 *             if there are any problems reading/writing the file
-	 * @author Corrodias
-	 */
-	protected static void setSpawn(final File level, final Vector3i xyz) throws IOException {
-		// TODO clean this up even more
-		try (NBTInputStream input = new NBTInputStream(new FileInputStream(level));) {
-			final CompoundTag originalTopLevelTag = (CompoundTag) input.readTag();
-			input.close();
-
-			final Map<String, Tag<?>> originalData =
-					((CompoundTag) originalTopLevelTag.getValue().get("Data")).getValue();
-			// This is our map of data. It is an unmodifiable map, for some reason, so we have to make a copy.
-			final Map<String, Tag<?>> newData = new LinkedHashMap<>(originalData);
-
-			newData.put("SpawnX", new IntTag("SpawnX", xyz.x));		// pulling the data out of the Coordinates,
-			newData.put("SpawnY", new IntTag("SpawnY", xyz.y));		// and putting it into our IntTag's
-			newData.put("SpawnZ", new IntTag("SpawnZ", xyz.z));
-
-			// Again, we can't modify the data map in the old Tag, so we have to make a new one.
-			final CompoundTag newDataTag = new CompoundTag("Data", new CompoundMap(newData));
-			final Map<String, Tag<?>> newTopLevelMap = new HashMap<>(1);
-			newTopLevelMap.put("Data", newDataTag);
-			final CompoundTag newTopLevelTag = new CompoundTag("", new CompoundMap(newTopLevelMap));
-
-			final NBTOutputStream output = new NBTOutputStream(new FileOutputStream(level));
-			output.writeTag(newTopLevelTag);
-			output.close();
-		} catch (final ClassCastException ex) {
-			throw new IOException("Invalid level format.");
-		} catch (final NullPointerException ex) {
-			throw new IOException("Invalid level format.");
+	public void runMinecraft(World world, List<Vector2i> spawnpoints) {
+		log.debug("All spawn points: " + spawnpoints);
+		for (int i = 0; i < spawnpoints.size(); i++) {
+			Vector2i spawn = spawnpoints.get(i);
+			try {
+				log.info("Processing " + i + "/" + spawnpoints.size() + ", spawn point " + spawn);
+				world.setSpawn(spawn);
+				runMinecraft();
+			} catch (IOException | InterruptedException e) {
+				log.warn("Could not process spawn point " + spawn
+						+ " this part of the world don't be generated", e);
+			}
 		}
 	}
 
@@ -168,6 +124,9 @@ public class Server {
 	 * @author Corrodias, Morlok8k, piegames
 	 */
 	public void runMinecraft() throws IOException, InterruptedException {
+		log.debug("Setting EULA");
+		Files.write(workDir.resolve("eula.txt"), "eula=true".getBytes(), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 		log.info("Starting server");
 		final Process process = builder.start();
 
@@ -175,7 +134,7 @@ public class Server {
 				new BufferedReader(new InputStreamReader(process.getInputStream()));
 		for (String line = pOut.readLine(); line != null; line = pOut.readLine()) {
 			line = line.trim();
-			if (log.isDebugEnabled()) log.debug(line);
+			if (debugServer) System.out.println(line);
 
 			if (line.contains("Done")) {
 				PrintStream out = new PrintStream(process.getOutputStream());
