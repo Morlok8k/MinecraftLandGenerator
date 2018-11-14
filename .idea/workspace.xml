@@ -4,7 +4,7 @@
     <list default="true" id="6303f571-4608-4678-b04c-0c6cb20f921f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/CommandLineMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/CommandLineMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/StringArrayParse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/StringArrayParse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Readme_and_HelpInfo.java" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -36,27 +36,27 @@
         <counts>
           <entry key="0-SNAPSHOT" value="3" />
           <entry key="conf" value="1" />
-          <entry key="java" value="94" />
+          <entry key="java" value="95" />
           <entry key="xml" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="HOCON" value="1" />
-          <entry key="JAVA" value="94" />
+          <entry key="JAVA" value="95" />
           <entry key="UML" value="3" />
           <entry key="XML" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="2605" />
+          <entry key="java" value="2768" />
           <entry key="xml" value="19" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="2605" />
+          <entry key="JAVA" value="2768" />
           <entry key="XML" value="19" />
         </counts>
       </usages-collector>
@@ -81,10 +81,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/CommandLineMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+            <state relative-caret-position="308">
+              <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1657#1658#0" expanded="true" />
+                <element signature="e#1699#1700#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -172,7 +174,6 @@
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Out.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Test.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Time.java" />
-        <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Readme_and_HelpInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Arraylist.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/DownloadFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/GUI/Start.java" />
@@ -192,6 +193,7 @@
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/StringArrayParse.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/CommandLineMain.java" />
+        <option value="$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Readme_and_HelpInfo.java" />
       </list>
     </option>
   </component>
@@ -422,7 +424,7 @@
       <workItem from="1541964344032" duration="2472000" />
       <workItem from="1542023345146" duration="1198000" />
       <workItem from="1542129590076" duration="39000" />
-      <workItem from="1542129672857" duration="6749000" />
+      <workItem from="1542129672857" duration="8426000" />
     </task>
     <servers />
   </component>
@@ -441,7 +443,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41095000" />
+    <option name="totallyTimeSpent" value="42772000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -615,13 +617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Readme_and_HelpInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="38" selection-start-line="38" selection-end-line="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Update.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10538">
@@ -749,12 +744,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/Readme_and_HelpInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" column="36" lean-forward="true" selection-start-line="10" selection-start-column="36" selection-end-line="10" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/morlok8k/MinecraftLandGenerator/CommandLineMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
+        <state relative-caret-position="308">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1657#1658#0" expanded="true" />
+            <element signature="e#1699#1700#0" expanded="true" />
           </folding>
         </state>
       </provider>
