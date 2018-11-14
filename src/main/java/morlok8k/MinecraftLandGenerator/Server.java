@@ -40,6 +40,8 @@ public class Server {
 
 	public Server(boolean debugServer, String[] javaOpts, Path serverFile) {
 		this.debugServer = debugServer;
+		if (!Files.exists(serverFile)) throw new IllegalArgumentException(serverFile.toString()
+				+ " must be an existing file pointing to the minecraft server");
 		List<String> opts = new ArrayList<>(
 				Arrays.asList(javaOpts != null ? javaOpts : new String[] { "java", "-jar" }));
 		opts.add(serverFile.toString());
