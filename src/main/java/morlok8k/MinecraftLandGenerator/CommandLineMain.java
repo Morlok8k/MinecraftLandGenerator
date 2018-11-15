@@ -1,11 +1,12 @@
 package morlok8k.MinecraftLandGenerator;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,19 +15,22 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.joml.Vector2i;
 
 import morlok8k.MinecraftLandGenerator.CommandLineMain.AutoSpawnpoints;
+import morlok8k.MinecraftLandGenerator.CommandLineMain.ForceloadChunks;
 import morlok8k.MinecraftLandGenerator.CommandLineMain.ManualSpawnpoints;
+import morlok8k.MinecraftLandGenerator.World.Dimension;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.ITypeConverter;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.ParentCommand;
 import picocli.CommandLine.RunAll;
 
-@Command(name = "MinecraftLandGenerator",
-		subcommands = { HelpCommand.class, ManualSpawnpoints.class, AutoSpawnpoints.class })
+@Command(name = "MinecraftLandGenerator", subcommands = { HelpCommand.class,
+		ManualSpawnpoints.class, AutoSpawnpoints.class, ForceloadChunks.class })
 public class CommandLineMain implements Runnable {
 
 	private static Log log = LogFactory.getLog(CommandLineMain.class);
@@ -50,104 +54,162 @@ public class CommandLineMain implements Runnable {
 			description = "Java command to launch the server. Defaults to `java -jar`.")
 	private String[] javaOpts;
 
-	@Command(name = "auto-spawnpoints")
-	public static class AutoSpawnpoints implements Runnable {
+	@Override
+	public void run() {
+		if (verbose) {
+			Configurator.setRootLevel(Level.DEBUG);
+		}
+	}
 
+	protected static class RectangleMixin {
+		@Parameters(index = "0", description = "X-coordinate")
+		int x;
+		@Parameters(index = "1", description = "Z-coordinate")
+		int z;
+		@Parameters(index = "2", description = "Width")
+		int w;
+		@Parameters(index = "3", description = "Height")
+		int h;
+	}
+
+	protected static abstract class CommandLineHelper implements Runnable {
 		@ParentCommand
-		private CommandLineMain parent;
+		protected CommandLineMain parent;
+
+		protected Server server;
+		protected World world;
+
+		@Override
+		public final void run() {
+			try {
+				server = new Server(parent.serverFile, parent.debugServer, parent.javaOpts);
+			} catch (FileAlreadyExistsException e1) {
+				log.fatal(
+						"Server backup file already exists. Please delete or restore it and then start again",
+						e1);
+				return;
+			} catch (NoSuchFileException e1) {
+				log.fatal(
+						"Server file does not exist. Please download the minecraft server and provide the path to it",
+						e1);
+				return;
+			}
+			try {
+				world = server.initWorld(parent.worldPath);
+			} catch (IOException | InterruptedException e) {
+				log.fatal("Could not initialize world", e);
+				return;
+			}
+
+			runGenerate();
+
+			log.info("Cleaning up temporary files");
+			try {
+				world.resetChanges();
+				server.resetChanges();
+			} catch (IOException e) {
+				log.warn(
+						"Could not delete backup files (server.properties.bak and level.dat.bak). Please delete them manually",
+						e);
+			}
+			log.info("Done.");
+		}
+
+		protected abstract void runGenerate();
+
+	}
+
+	@Command(name = "auto-spawnpoints")
+	public static class AutoSpawnpoints extends CommandLineHelper {
+
+		@Mixin
+		private RectangleMixin bounds;
 
 		@Option(names = "-i", description = "override the iteration spawn offset increment",
 				defaultValue = "25", showDefaultValue = CommandLine.Help.Visibility.ALWAYS,
 				hidden = true)
 		private int increment = 25;
 
-		@Parameters(index = "0", description = "X-coordinate")
-		private int x;
-		@Parameters(index = "1", description = "Z-coordinate")
-		private int z;
-		@Parameters(index = "2", description = "Width")
-		private int w;
-		@Parameters(index = "3", description = "Height")
-		private int h;
-
-		public AutoSpawnpoints() {
-		}
-
 		@Override
-		public void run() {
-			Server server = new Server(parent.debugServer, parent.javaOpts, parent.serverFile);
-			World world;
-			try {
-				world = server.initWorld(parent.worldPath);
-			} catch (IOException | InterruptedException e) {
-				log.error("Could not initialize world", e);
-				return;
-			}
-
+		public void runGenerate() {
 			log.info("Generating world");
-			server.runMinecraft(world, generateSpawnpoints(x, z, w, h, increment));
-			log.info("Cleaning up temporary files");
-			try {
-				world.resetSpawn();
-				server.restoreWorld();
-			} catch (IOException e) {
-				log.warn(
-						"Could not delete backup files (server.properties.bak and level.dat.bak). Please delete them manually",
-						e);
+			List<Vector2i> spawnpoints =
+					World.generateSpawnpoints(bounds.x, bounds.z, bounds.w, bounds.h, increment);
+			for (int i = 0; i < spawnpoints.size(); i++) {
+				Vector2i spawn = spawnpoints.get(i);
+				try {
+					log.info("Processing " + i + "/" + spawnpoints.size() + ", spawn point "
+							+ spawn);
+					world.setSpawn(spawn);
+					server.runMinecraft();
+				} catch (IOException | InterruptedException e) {
+					log.warn("Could not process spawn point " + spawn
+							+ " this part of the world won't be generated", e);
+				}
 			}
-			log.info("Done.");
 		}
 
 	}
 
 	@Command(name = "manual-spawnpoints")
-	public static class ManualSpawnpoints implements Runnable {
-
-		@ParentCommand
-		private CommandLineMain parent;
+	public static class ManualSpawnpoints extends CommandLineHelper {
 
 		@Parameters(index = "0..*")
-		private Vector2i[] spawnPoints;
-//		@Option(names = { "-s", "--customspawn" }, description = "Customized SpawnPoints")
-//		private String[] customSpawnPoints;
-
-		public ManualSpawnpoints() {
-		}
+		private Vector2i[] spawnpoints;
 
 		@Override
-		public void run() {
-			Server server = new Server(parent.debugServer, parent.javaOpts, parent.serverFile);
-			World world;
-			try {
-				world = server.initWorld(parent.worldPath);
-			} catch (IOException | InterruptedException e) {
-				log.error("Could not initialize world", e);
-				return;
-			}
-			List<Vector2i> spawnpoints = new ArrayList<>();
+		public void runGenerate() {
 			log.info("Generating world");
-			server.runMinecraft(world, spawnpoints);
-			log.info("Cleaning up temporary files");
-			try {
-				world.resetSpawn();
-				server.restoreWorld();
-			} catch (IOException e) {
-				log.warn(
-						"Could not delete backup files (server.properties.bak and level.dat.bak). Please delete them manually",
-						e);
+			log.debug("All spawn points: " + Arrays.toString(spawnpoints));
+			for (int i = 0; i < spawnpoints.length; i++) {
+				Vector2i spawn = spawnpoints[i];
+				try {
+					log.info("Processing " + i + "/" + spawnpoints.length + ", spawn point "
+							+ spawn);
+					world.setSpawn(spawn);
+					server.runMinecraft();
+				} catch (IOException | InterruptedException e) {
+					log.warn("Could not process spawn point " + spawn
+							+ " this part of the world won't be generated", e);
+				}
 			}
-			log.info("Done.");
 		}
 	}
 
-	public CommandLineMain() {
+	@Command(name = "forceload-chunks")
+	public static class ForceloadChunks extends CommandLineHelper {
+		@Mixin
+		private RectangleMixin bounds;
 
-	}
+		@Option(names = "--dimension")
+		private Dimension dimension;
 
-	@Override
-	public void run() {
-		if (verbose) {
-			Configurator.setRootLevel(Level.DEBUG);
+		@Option(names = "--max-loaded", defaultValue = "16384")
+		private int maxLoaded;
+
+		@Override
+		protected void runGenerate() {
+			ArrayList<Vector2i> loadedChunks = new ArrayList<>();
+			for (int x = bounds.x; x < bounds.x + bounds.w; x++)
+				for (int z = bounds.z; z < bounds.z + bounds.h; z++)
+					loadedChunks.add(new Vector2i(x, z));
+			log.info("Generating world");
+			if (loadedChunks.size() < 5000)
+				log.debug("Chunks to generate: " + loadedChunks);
+			else log.debug(loadedChunks.size() + " chunks to generate");
+			int stepCount = (int) Math.ceil((double) loadedChunks.size() / maxLoaded);
+			for (int i = 0; i < stepCount; i++) {
+				List<Vector2i> batch = loadedChunks.subList(i * maxLoaded,
+						Math.min((i + 1) * maxLoaded, loadedChunks.size() - 1));
+				log.info("Generating batch " + i + " / " + stepCount + " with " + batch.size()
+						+ " chunks");
+				try {
+					world.setLoadedChunks(batch, dimension);
+					server.runMinecraft();
+				} catch (IOException | InterruptedException e) {
+					log.error("Could not force-load chunks", e);
+				}
+			}
 		}
 	}
 
@@ -167,37 +229,5 @@ public class CommandLineMain implements Runnable {
 			}
 		});
 		cli.parseWithHandler(new RunAll(), args);
-	}
-
-	/**
-	 * @param increment
-	 *            Maximum number of chunks between two spawn points, horizontally or vertically
-	 * @param margin
-	 *            The radius to each side that will be generated by the server (Not the diameter!)
-	 */
-	public static List<Vector2i> generateSpawnpoints(int startX, int startZ, int width, int height,
-			int increment) {
-		int margin = increment / 2;
-		if (width < margin || height < margin)
-			throw new IllegalArgumentException("Width and height must both be at least " + increment
-					+ ", but are " + width + " and " + height);
-		List<Integer> xPoints =
-				generateLinearSpawnpoints(startX + margin, width - increment, increment);
-		log.debug("X grid: " + xPoints);
-		List<Integer> zPoints =
-				generateLinearSpawnpoints(startZ + margin, height - increment, increment);
-		log.debug("Z grid: " + zPoints);
-		List<Vector2i> spawnPoints = new ArrayList<>(xPoints.size() * zPoints.size());
-		for (int x : xPoints)
-			for (int z : zPoints)
-				spawnPoints.add(new Vector2i(x, z));
-		return spawnPoints;
-	}
-
-	private static List<Integer> generateLinearSpawnpoints(int start, int length, int maxStep) {
-		int stepCount = (int) Math.ceil((double) length / maxStep);
-		double realStep = length / stepCount;
-		return IntStream.rangeClosed(0, stepCount).mapToObj(i -> start + (int) (realStep * i))
-				.collect(Collectors.toList());
 	}
 }

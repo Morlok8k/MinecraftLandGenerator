@@ -11,11 +11,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +24,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joml.Vector2i;
 
 /**
  * 
@@ -37,18 +36,21 @@ public class Server {
 	protected final ProcessBuilder builder;
 	protected final Path workDir;
 	protected final boolean debugServer;
+	protected BackupHandler serverProperties;
 
-	public Server(boolean debugServer, String[] javaOpts, Path serverFile) {
+	public Server(Path serverFile, boolean debugServer, String[] javaOpts)
+			throws FileAlreadyExistsException, NoSuchFileException {
 		this.debugServer = debugServer;
-		if (!Files.exists(serverFile)) throw new IllegalArgumentException(serverFile.toString()
-				+ " must be an existing file pointing to the minecraft server");
+		if (!Files.exists(serverFile)) throw new NoSuchFileException(serverFile.toString());
+		workDir = serverFile.getParent();
+		serverProperties = new BackupHandler(workDir.resolve("server.properties"));
+
 		List<String> opts = new ArrayList<>(
 				Arrays.asList(javaOpts != null ? javaOpts : new String[] { "java", "-jar" }));
 		opts.add(serverFile.toString());
 		opts.add("nogui");
 		builder = new ProcessBuilder(opts);
 		builder.redirectErrorStream(true);
-		workDir = serverFile.getParent();
 		builder.directory(workDir.toFile());
 	}
 
@@ -74,8 +76,8 @@ public class Server {
 		if (!Files.exists(propsFile)) {
 			Files.write(propsFile, "level-name=".concat(propsFile.toString()).getBytes());
 		} else {
-			/* Make a backup first*/
-			Files.copy(propsFile, propsFile.resolveSibling("server.properties.bak"));
+			serverProperties.backup();
+
 			Properties props = new Properties();
 			props.load(Files.newInputStream(propsFile));
 			props.put("level-name", worldPath.toString());
@@ -95,26 +97,8 @@ public class Server {
 		return p;
 	}
 
-	public void restoreWorld() throws IOException {
-		Path propsFile = workDir.resolve("server.properties");
-		if (Files.exists(propsFile.resolveSibling("server.properties.bak")))
-			Files.move(propsFile.resolveSibling("server.properties.bak"), propsFile,
-					StandardCopyOption.REPLACE_EXISTING);
-	}
-
-	public void runMinecraft(World world, List<Vector2i> spawnpoints) {
-		log.debug("All spawn points: " + spawnpoints);
-		for (int i = 0; i < spawnpoints.size(); i++) {
-			Vector2i spawn = spawnpoints.get(i);
-			try {
-				log.info("Processing " + i + "/" + spawnpoints.size() + ", spawn point " + spawn);
-				world.setSpawn(spawn);
-				runMinecraft();
-			} catch (IOException | InterruptedException e) {
-				log.warn("Could not process spawn point " + spawn
-						+ " this part of the world don't be generated", e);
-			}
-		}
+	public void resetChanges() throws IOException {
+		serverProperties.restore();
 	}
 
 	/**
@@ -135,12 +119,18 @@ public class Server {
 		final BufferedReader pOut =
 				new BufferedReader(new InputStreamReader(process.getInputStream()));
 		for (String line = pOut.readLine(); line != null; line = pOut.readLine()) {
+			if (Thread.interrupted()) {
+				log.warn("Got interrupted by other process, stopping");
+				process.destroy();
+				break;
+			}
 			line = line.trim();
 			if (debugServer) System.out.println(line);
 
 			if (line.contains("Done")) {
 				PrintStream out = new PrintStream(process.getOutputStream());
 
+				out.println("forceload query");
 				log.info("Stopping server...");
 				out.println("save-all");
 				out.flush();
