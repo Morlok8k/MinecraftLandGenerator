@@ -26,8 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Start and manipulate a Minecraft server.
  * 
- * @author morlok8k
+ * @author morlok8k, piegames
  */
 public class Server {
 
@@ -35,12 +36,21 @@ public class Server {
 
 	protected final ProcessBuilder builder;
 	protected final Path workDir;
-	protected final boolean debugServer;
 	protected BackupHandler serverProperties;
 
-	public Server(Path serverFile, boolean debugServer, String[] javaOpts)
+	/**
+	 * @param serverFile
+	 *            the path to the server.jar. The folder it is in will be used as server work directory.
+	 * @param javaOpts
+	 *            the command line to start the server. To actually launch it, the path to the server file and "nogui" will be appended.
+	 *            The default value is ["java", "-jar"]. Use this to specify JVM options (like more RAM etc.) or to enforce the usage of a specific java version.
+	 * @throws FileAlreadyExistsException
+	 *             if there is an old backup of the server.properties
+	 * @throws NoSuchFileException
+	 *             if the server jar file does not exist
+	 */
+	public Server(Path serverFile, String[] javaOpts)
 			throws FileAlreadyExistsException, NoSuchFileException {
-		this.debugServer = debugServer;
 		if (!Files.exists(serverFile)) throw new NoSuchFileException(serverFile.toString());
 		workDir = serverFile.getParent();
 		serverProperties = new BackupHandler(workDir.resolve("server.properties"));
@@ -54,14 +64,32 @@ public class Server {
 		builder.directory(workDir.toFile());
 	}
 
-	public World initWorld(Path worldPath) throws IOException, InterruptedException {
+	/**
+	 * Initialize the world. This will do the following:
+	 * <ul>
+	 * <li>If {@code worldPath} is not {@code null}, store it in the {@code server.properties}, creating it when needed</li>
+	 * <li>If {@code worldPath} is {@code null}, read the {@code server.properties} for one</li>
+	 * <li>If {@code worldPath} is {@code null} and no path could be retrieved from the {@code server.properties}, start the server to generate a new world and use its path</li>
+	 * <li>If there is still no valid path pointing to an existing folder, throw an {@link NoSuchFileException}</li>
+	 * </ul>
+	 * 
+	 * @param worldPath
+	 *            the path to the world to generate. May be {@code null}
+	 * @see #runMinecraft(boolean)
+	 * @throws NoSuchFileException
+	 *             if we fail to get a valid world folder using multiple methods
+	 * @return A {@link World} object representing the world that will be loaded from the server by {@link #runMinecraft(boolean)}
+	 * @author piegames
+	 */
+	public World initWorld(Path worldPath, boolean debugServer)
+			throws IOException, InterruptedException {
 		if (worldPath != null)
 			setWorld(worldPath);
 		else worldPath = getWorld();
 		if (worldPath == null || !Files.exists(worldPath)) {
 			log.warn(
 					"No world was specified or the world at the given path does not exist. Starting the server once to create one...");
-			runMinecraft();
+			runMinecraft(debugServer);
 			worldPath = getWorld();
 			if (!worldPath.isAbsolute()) worldPath = workDir.resolve(worldPath);
 		}
@@ -71,6 +99,11 @@ public class Server {
 		return new World(worldPath);
 	}
 
+	/**
+	 * Set the world's path in the server.properties, creating it if it does not exist yet.
+	 * 
+	 * @author piegames
+	 */
 	public void setWorld(Path worldPath) throws IOException {
 		Path propsFile = workDir.resolve("server.properties");
 		if (!Files.exists(propsFile)) {
@@ -85,6 +118,12 @@ public class Server {
 		}
 	}
 
+	/**
+	 * Retrieve the world currently specified in the {@code server.properties} file. Returns {@code null} if the file does not exist or if the world is not specified in the file. The returned path
+	 * will be made absolute by resolving it against the server folder.
+	 * 
+	 * @author piegames
+	 */
 	public Path getWorld() throws IOException {
 		Path propsFile = workDir.resolve("server.properties");
 		Properties props = new Properties();
@@ -97,19 +136,22 @@ public class Server {
 		return p;
 	}
 
+	/** Reset all changes made to the server. Currently, this is only the {@code server.properties} */
 	public void resetChanges() throws IOException {
 		serverProperties.restore();
 	}
 
 	/**
-	 * Starts the process in the given ProcessBuilder, monitors its output for a "Done" message, and sends it a "stop" message.
-	 * If "verbose" is true, the process's output will also be printed to the console.
+	 * Start the Minecraft server using the current settings, wait until it finished loading the world and stop it. Communication with the server is done via standard IO streams and commands.
 	 * 
+	 * @param debugServer
+	 *            if set to true, all output from the server will be redirected to {@link System#out} for debugging purposes.
 	 * @throws IOException
 	 * @throws InterruptedException
+	 *             if the thread gets interrupted while waiting for the server process to finish. This should never happen.
 	 * @author Corrodias, Morlok8k, piegames
 	 */
-	public void runMinecraft() throws IOException, InterruptedException {
+	public void runMinecraft(boolean debugServer) throws IOException, InterruptedException {
 		log.debug("Setting EULA");
 		Files.write(workDir.resolve("eula.txt"), "eula=true".getBytes(), StandardOpenOption.CREATE,
 				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
