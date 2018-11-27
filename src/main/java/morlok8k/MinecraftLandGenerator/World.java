@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -188,9 +189,10 @@ public class World {
 	}
 
 	private static List<Integer> generateLinearSpawnpoints(int start, int length, int maxStep) {
-		int stepCount = (int) Math.ceil((double) length / maxStep);
+		double stepCount = Math.ceil((double) length / maxStep);
+		if (stepCount == 0) return Arrays.asList(start);
 		double realStep = length / stepCount;
-		return IntStream.rangeClosed(0, stepCount).mapToObj(i -> start + (int) (realStep * i))
+		return IntStream.rangeClosed(0, (int) stepCount).mapToObj(i -> start + (int) (realStep * i))
 				.collect(Collectors.toList());
 	}
 }
