@@ -7,7 +7,7 @@
 
 	<groupId>groupId</groupId>
 	<artifactId>MinecraftLandGenerator</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>2.0.0</version>
 
 	<build>
 		<plugins>
@@ -32,11 +32,6 @@
 		</repository>
 	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
-		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -69,6 +64,13 @@
 			<groupId>com.github.piegamesde</groupId>
 			<artifactId>nbt</artifactId>
 			<version>dbe4ea253b</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
