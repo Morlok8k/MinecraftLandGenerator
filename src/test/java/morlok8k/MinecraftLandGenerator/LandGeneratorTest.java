@@ -1,8 +1,13 @@
+package morlok8k.MinecraftLandGenerator;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.joml.Vector2i;
 import org.junit.Test;
@@ -13,6 +18,20 @@ public class LandGeneratorTest {
 
 	static {
 		System.setProperty("joml.format", "false");
+	}
+
+	@Test
+	public void testForceload() {
+		int SIZE = 256;
+		List<Vector2i> chunks = new ArrayList<>(SIZE * SIZE * 4);
+		for (int z = -SIZE; z < SIZE; z++)
+			for (int x = -SIZE; x < SIZE; x++)
+				chunks.add(new Vector2i(x, z));
+		long[] data = World.mapLoadedChunks(chunks);
+		List<Vector2i> chunks2 = Arrays.stream(data)
+				.mapToObj(l -> new Vector2i((int) (l & 0xFFFFFFFF), (int) (l >>> 32)))
+				.collect(Collectors.toList());
+		assertEquals(chunks, chunks2);
 	}
 
 	@Test

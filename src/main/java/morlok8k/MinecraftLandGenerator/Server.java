@@ -74,7 +74,7 @@ public class Server {
 	 * </ul>
 	 * 
 	 * @param worldPath
-	 *            the path to the world to generate. May be {@code null}
+	 *            the path to the world to generate. Should be relative to the server's folder (because the server can't handle absolute paths). May be {@code null}.
 	 * @see #runMinecraft(boolean)
 	 * @throws NoSuchFileException
 	 *             if we fail to get a valid world folder using multiple methods
@@ -83,12 +83,14 @@ public class Server {
 	 */
 	public World initWorld(Path worldPath, boolean debugServer)
 			throws IOException, InterruptedException {
-		if (worldPath != null)
+		if (worldPath != null) {
 			setWorld(worldPath);
-		else worldPath = getWorld();
+			worldPath = workDir.resolve(worldPath);
+		} else worldPath = getWorld();
 		if (worldPath == null || !Files.exists(worldPath)) {
 			log.warn(
 					"No world was specified or the world at the given path does not exist. Starting the server once to create one...");
+			log.debug("The path is " + worldPath + " | " + worldPath.toAbsolutePath());
 			runMinecraft(debugServer);
 			worldPath = getWorld();
 			if (!worldPath.isAbsolute()) worldPath = workDir.resolve(worldPath);

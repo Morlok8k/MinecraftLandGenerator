@@ -92,13 +92,16 @@ public class World {
 		handler.backup();
 		try (NBTOutputStream out = new NBTOutputStream(Files.newOutputStream(handler.file))) {
 			CompoundMap dataMap = new CompoundMap();
-			dataMap.put(new LongArrayTag("Forced", chunks.stream()
-					.mapToLong(v -> ((long) v.y << 32) | ((long) v.x & 0xFFFFFFFF)).toArray()));
+			dataMap.put(new LongArrayTag("Forced", mapLoadedChunks(chunks)));
 			CompoundMap rootMap = new CompoundMap();
 			rootMap.put(new CompoundTag("data", dataMap));
 			out.writeTag(new CompoundTag("", rootMap));
 			out.flush();
 		}
+	}
+
+	static long[] mapLoadedChunks(List<Vector2i> chunks) {
+		return chunks.stream().mapToLong(v -> ((long) v.y << 32) | (v.x & 0xFFFFFFFFL)).toArray();
 	}
 
 	/**
