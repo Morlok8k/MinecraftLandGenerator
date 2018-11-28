@@ -107,7 +107,7 @@ public class Server {
 	public void setWorld(Path worldPath) throws IOException {
 		Path propsFile = workDir.resolve("server.properties");
 		if (!Files.exists(propsFile)) {
-			Files.write(propsFile, "level-name=".concat(propsFile.toString()).getBytes());
+			Files.write(propsFile, "level-name=".concat(worldPath.toString()).getBytes());
 		} else {
 			serverProperties.backup();
 

@@ -92,8 +92,8 @@ public class World {
 		handler.backup();
 		try (NBTOutputStream out = new NBTOutputStream(Files.newOutputStream(handler.file))) {
 			CompoundMap dataMap = new CompoundMap();
-			dataMap.put(new LongArrayTag("Forced",
-					chunks.stream().mapToLong(v -> ((long) v.y << 32) | v.x).toArray()));
+			dataMap.put(new LongArrayTag("Forced", chunks.stream()
+					.mapToLong(v -> ((long) v.y << 32) | ((long) v.x & 0xFFFFFFFF)).toArray()));
 			CompoundMap rootMap = new CompoundMap();
 			rootMap.put(new CompoundTag("data", dataMap));
 			out.writeTag(new CompoundTag("", rootMap));
