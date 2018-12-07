@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -209,6 +210,9 @@ public class MinecraftLandGenerator implements Runnable {
 						+ "in slower generation. Smaller values will result in starting the server more often, which has some overhead and takes time. "
 						+ "Set this as high as possible without totally filling up your RAM.")
 		private int maxLoaded;
+		@Option(names = { "--lazy", "-l" },
+				description = "Scan the world for existing chunks and skip them.")
+		private boolean lazy;
 
 		@Override
 		protected void runGenerate() {
@@ -216,6 +220,21 @@ public class MinecraftLandGenerator implements Runnable {
 			for (int x = bounds.x; x < bounds.x + bounds.w; x++)
 				for (int z = bounds.z; z < bounds.z + bounds.h; z++)
 					loadedChunks.add(new Vector2i(x, z));
+			if (lazy) {
+				log.info("Searching for existing chunks to be skipped");
+				/*
+				 * All chunks to load -> The set of region files containing them -> (The chunks in those region files -> to world coordinates)
+				 * -> to list -> remove from original list
+				 */
+				int size = loadedChunks.size();
+				loadedChunks.removeAll(
+						loadedChunks.stream().map(v -> new Vector2i(v.x >> 5, v.y >> 5)).distinct()
+								.flatMap(v -> world.availableChunks(v, dimension)
+										.map(w -> new Vector2i((v.x << 5) | w.x, (v.y << 5) | w.y)))
+								.collect(Collectors.toList()));
+				log.debug("Removed " + (size - loadedChunks.size())
+						+ " chunks that are already present");
+			}
 			log.info("Generating world");
 			if (loadedChunks.size() < 5000)
 				log.debug("Chunks to generate: " + loadedChunks);
@@ -224,7 +243,7 @@ public class MinecraftLandGenerator implements Runnable {
 			for (int i = 0; i < stepCount; i++) {
 				List<Vector2i> batch = loadedChunks.subList(i * maxLoaded,
 						Math.min((i + 1) * maxLoaded, loadedChunks.size() - 1));
-				log.info("Generating batch " + i + " / " + stepCount + " with " + batch.size()
+				log.info("Generating batch " + (i + 1) + " / " + stepCount + " with " + batch.size()
 						+ " chunks");
 				try {
 					world.setLoadedChunks(batch, dimension);

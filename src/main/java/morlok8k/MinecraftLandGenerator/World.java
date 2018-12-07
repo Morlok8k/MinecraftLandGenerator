@@ -1,12 +1,16 @@
 package morlok8k.MinecraftLandGenerator;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -197,5 +202,48 @@ public class World {
 		double realStep = length / stepCount;
 		return IntStream.rangeClosed(0, (int) stepCount).mapToObj(i -> start + (int) (realStep * i))
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * List all available chunks in a region file.
+	 * 
+	 * @param regionX
+	 *            the x coordinate of the region file in the world
+	 * @param regionZ
+	 *            the z coordinate of the region file in the world
+	 * @param dimension
+	 *            the dimension of the region file in the world
+	 * @return a stream of all chunks in the given region file, in coordinates relative to the region file's origin (not in world coordinates)
+	 * @see #availableChunks(Vector2i, Dimension)
+	 */
+	public List<Vector2i> availableChunks(int regionX, int regionZ, Dimension dimension) {
+		return availableChunks(new Vector2i(regionX, regionZ), dimension)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * List all available chunks in a region file.
+	 * 
+	 * @param regionCoords
+	 *            the coordinates of the region file
+	 * @param dimension
+	 *            the dimension of the region file in the world
+	 * @return a stream of all chunks in the given region file, in coordinates relative to the region file's origin (not in world coordinates)
+	 * @see #availableChunks(int, int, Dimension)
+	 */
+	public Stream<Vector2i> availableChunks(Vector2i regionCoords, Dimension dimension) {
+		Path path = world.resolve(dimension.path).resolve("region")
+				.resolve("r." + regionCoords.x + "." + regionCoords.y + ".mca");
+		if (!Files.exists(path)) return Collections.<Vector2i> emptyList().stream();
+		try (FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
+			ByteBuffer buffer = ByteBuffer.allocate(4096);
+			channel.read(buffer);
+			buffer.flip();
+			return IntStream.range(0, buffer.capacity()).filter(i -> buffer.get(i) != 0)
+					.mapToObj(i -> new Vector2i(i & 31, i >> 5));
+		} catch (IOException e) {
+			log.warn("Could not open region file " + path + ", assuming it contains no chunks", e);
+			return Collections.<Vector2i> emptyList().stream();
+		}
 	}
 }
