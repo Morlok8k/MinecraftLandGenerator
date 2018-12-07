@@ -148,21 +148,9 @@ public class MinecraftLandGenerator implements Runnable {
 
 		@Override
 		public void runGenerate() {
-			log.info("Generating world");
 			List<Vector2i> spawnpoints =
 					World.generateSpawnpoints(bounds.x, bounds.z, bounds.w, bounds.h, increment);
-			for (int i = 0; i < spawnpoints.size(); i++) {
-				Vector2i spawn = spawnpoints.get(i);
-				try {
-					log.info("Processing " + i + "/" + spawnpoints.size() + ", spawn point "
-							+ spawn);
-					world.setSpawn(spawn);
-					server.runMinecraft(parent.debugServer);
-				} catch (IOException | InterruptedException e) {
-					log.warn("Could not process spawn point " + spawn
-							+ " this part of the world won't be generated", e);
-				}
-			}
+			manualSpawnpoints(server, world, spawnpoints, parent.debugServer);
 		}
 
 	}
@@ -177,20 +165,7 @@ public class MinecraftLandGenerator implements Runnable {
 
 		@Override
 		public void runGenerate() {
-			log.info("Generating world");
-			log.debug("All spawn points: " + Arrays.toString(spawnpoints));
-			for (int i = 0; i < spawnpoints.length; i++) {
-				Vector2i spawn = spawnpoints[i];
-				try {
-					log.info("Processing " + i + "/" + spawnpoints.length + ", spawn point "
-							+ spawn);
-					world.setSpawn(spawn);
-					server.runMinecraft(parent.debugServer);
-				} catch (IOException | InterruptedException e) {
-					log.warn("Could not process spawn point " + spawn
-							+ " this part of the world won't be generated", e);
-				}
-			}
+			manualSpawnpoints(server, world, Arrays.asList(spawnpoints), parent.debugServer);
 		}
 	}
 
@@ -220,37 +195,70 @@ public class MinecraftLandGenerator implements Runnable {
 			for (int x = bounds.x; x < bounds.x + bounds.w; x++)
 				for (int z = bounds.z; z < bounds.z + bounds.h; z++)
 					loadedChunks.add(new Vector2i(x, z));
-			if (lazy) {
-				log.info("Searching for existing chunks to be skipped");
-				/*
-				 * All chunks to load -> The set of region files containing them -> (The chunks in those region files -> to world coordinates)
-				 * -> to list -> remove from original list
-				 */
-				int size = loadedChunks.size();
-				loadedChunks.removeAll(
-						loadedChunks.stream().map(v -> new Vector2i(v.x >> 5, v.y >> 5)).distinct()
-								.flatMap(v -> world.availableChunks(v, dimension)
-										.map(w -> new Vector2i((v.x << 5) | w.x, (v.y << 5) | w.y)))
-								.collect(Collectors.toList()));
-				log.debug("Removed " + (size - loadedChunks.size())
-						+ " chunks that are already present");
+			forceloadChunks(server, world, loadedChunks, dimension, lazy, maxLoaded,
+					parent.debugServer);
+		}
+	}
+
+	/**
+	 * Internal method of the "auto-spawnpoints" and "manual-spawnpoints" commands, exposed to remove boilerplate code in similar use cases. It will not throw any exceptions on failure and instead log
+	 * them together with
+	 * debug information.
+	 */
+	public static void manualSpawnpoints(Server server, World world, List<Vector2i> spawnpoints,
+			boolean debugServer) {
+		log.info("Generating world");
+		log.debug("All spawn points: " + spawnpoints);
+		for (int i = 0; i < spawnpoints.size(); i++) {
+			Vector2i spawn = spawnpoints.get(i);
+			try {
+				log.info("Processing " + (i + 1) + "/" + spawnpoints.size() + ", spawn point "
+						+ spawn);
+				world.setSpawn(spawn);
+				server.runMinecraft(debugServer);
+			} catch (IOException | InterruptedException e) {
+				log.warn("Could not process spawn point " + spawn
+						+ " this part of the world won't be generated", e);
 			}
-			log.info("Generating world");
-			if (loadedChunks.size() < 5000)
-				log.debug("Chunks to generate: " + loadedChunks);
-			else log.debug(loadedChunks.size() + " chunks to generate");
-			int stepCount = (int) Math.ceil((double) loadedChunks.size() / maxLoaded);
-			for (int i = 0; i < stepCount; i++) {
-				List<Vector2i> batch = loadedChunks.subList(i * maxLoaded,
-						Math.min((i + 1) * maxLoaded, loadedChunks.size() - 1));
-				log.info("Generating batch " + (i + 1) + " / " + stepCount + " with " + batch.size()
-						+ " chunks");
-				try {
-					world.setLoadedChunks(batch, dimension);
-					server.runMinecraft(parent.debugServer);
-				} catch (IOException | InterruptedException e) {
-					log.error("Could not force-load chunks", e);
-				}
+		}
+	}
+
+	/**
+	 * Internal method of the "forceload-chunks" command, exposed to remove boilerplate code in similar use cases. It will not throw any exceptions on failure and instead log them together with
+	 * debug information.
+	 */
+	public static void forceloadChunks(Server server, World world, List<Vector2i> loadedChunks,
+			Dimension dimension, boolean lazy, int maxLoaded, boolean debugServer) {
+		if (lazy) {
+			log.info("Searching for existing chunks to be skipped");
+			/*
+			 * All chunks to load -> The set of region files containing them -> (The chunks in those region files -> to world coordinates)
+			 * -> to list -> remove from original list
+			 */
+			int size = loadedChunks.size();
+			loadedChunks.removeAll(loadedChunks.stream().map(v -> new Vector2i(v.x >> 5, v.y >> 5))
+					.distinct().parallel()
+					.flatMap(v -> world.availableChunks(v, dimension)
+							.map(w -> new Vector2i((v.x << 5) | w.x, (v.y << 5) | w.y)))
+					.collect(Collectors.toList()));
+			log.debug(
+					"Removed " + (size - loadedChunks.size()) + " chunks that are already present");
+		}
+		log.info("Generating world");
+		if (loadedChunks.size() < 5000)
+			log.debug("Chunks to generate: " + loadedChunks);
+		else log.debug(loadedChunks.size() + " chunks to generate");
+		int stepCount = (int) Math.ceil((double) loadedChunks.size() / maxLoaded);
+		for (int i = 0; i < stepCount; i++) {
+			List<Vector2i> batch = loadedChunks.subList(i * maxLoaded,
+					Math.min((i + 1) * maxLoaded, loadedChunks.size() - 1));
+			log.info("Generating batch " + (i + 1) + " / " + stepCount + " with " + batch.size()
+					+ " chunks");
+			try {
+				world.setLoadedChunks(batch, dimension);
+				server.runMinecraft(debugServer);
+			} catch (IOException | InterruptedException e) {
+				log.error("Could not force-load chunks", e);
 			}
 		}
 	}
