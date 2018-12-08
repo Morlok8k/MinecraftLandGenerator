@@ -240,18 +240,18 @@ public class MinecraftLandGenerator implements Runnable {
 					.distinct().parallel()
 					.flatMap(v -> world.availableChunks(v, dimension)
 							.map(w -> new Vector2i((v.x << 5) | w.x, (v.y << 5) | w.y)))
-					.collect(Collectors.toList()));
+					.collect(Collectors.toSet()));
 			log.debug(
 					"Removed " + (size - loadedChunks.size()) + " chunks that are already present");
 		}
 		log.info("Generating world");
 		if (loadedChunks.size() < 5000)
-			log.debug("Chunks to generate: " + loadedChunks);
+			log.debug(loadedChunks.size() + " chunks to generate: " + loadedChunks);
 		else log.debug(loadedChunks.size() + " chunks to generate");
 		int stepCount = (int) Math.ceil((double) loadedChunks.size() / maxLoaded);
 		for (int i = 0; i < stepCount; i++) {
 			List<Vector2i> batch = loadedChunks.subList(i * maxLoaded,
-					Math.min((i + 1) * maxLoaded, loadedChunks.size() - 1));
+					Math.min((i + 1) * maxLoaded, loadedChunks.size()));
 			log.info("Generating batch " + (i + 1) + " / " + stepCount + " with " + batch.size()
 					+ " chunks");
 			try {

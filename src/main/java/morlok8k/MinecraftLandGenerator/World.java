@@ -2,6 +2,7 @@ package morlok8k.MinecraftLandGenerator;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -239,7 +240,8 @@ public class World {
 			ByteBuffer buffer = ByteBuffer.allocate(4096);
 			channel.read(buffer);
 			buffer.flip();
-			return IntStream.range(0, buffer.capacity()).filter(i -> buffer.get(i) != 0)
+			IntBuffer locations = buffer.asIntBuffer();
+			return IntStream.range(0, locations.capacity()).filter(i -> locations.get(i) >>> 8 != 0)
 					.mapToObj(i -> new Vector2i(i & 31, i >> 5));
 		} catch (IOException e) {
 			log.warn("Could not open region file " + path + ", assuming it contains no chunks", e);
