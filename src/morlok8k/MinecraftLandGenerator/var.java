@@ -47,10 +47,10 @@ public class var {
 	public static final String PROG_NAME = "Minecraft Land Generator";
 
 	/** Version Number! */
-	public static final String VERSION = "1.7.7";
+	public static final String VERSION = "1.7.8";
 
 	/** Authors */
-	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg, Gallion";
+	public static final String AUTHORS = "Corrodias, Morlok8k, pr0f1x, jaseg, Gallion, VADemon";
 
 	/** Website */
 	public static final String WEBSITE = "https://sites.google.com/site/minecraftlandgenerator/";
@@ -184,6 +184,9 @@ public class var {
 
 	/** Beta 1.9 glitch workaround. (not needed unless using beta 1.9) */
 	public static boolean waitSave = false;
+
+	/** Delay shutdown to give OS time to free memory from current application **/
+	public static boolean postShutdownDelay = false;
 
 	/** Ignores Warnings from the server. Used for compatibility and special cases */
 	public static boolean ignoreWarnings = false;
