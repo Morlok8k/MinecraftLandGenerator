@@ -170,6 +170,8 @@ public class FileRead {
 						} else {
 							var.waitSave = false;
 						}
+					} else if (property.equals("postShutdownDelay")) {
+						var.postShutdownDelay = value.toLowerCase().equals("true") ? true : false;
 					} else if (property.equals("weblaunch")) {
 						if (value.toLowerCase().equals("true")) {
 							var.webLaunch = true;

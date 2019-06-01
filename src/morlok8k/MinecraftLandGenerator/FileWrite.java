@@ -102,6 +102,8 @@ public class FileWrite {
                 + var.newLine
                 + "#Optional: Wait a few seconds after saving." + var.newLine
                 + "WaitSave=false" + var.newLine
+				+ "#Optional: Wait a few seconds after server shutdown for OS memory housekeeping."
+				+ "postShutdownDelay=false"
                 + "webLaunch=true";
         //@formatter:on
 
