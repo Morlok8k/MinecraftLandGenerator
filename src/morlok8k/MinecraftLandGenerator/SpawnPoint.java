@@ -64,9 +64,17 @@ public class SpawnPoint {
 			final IntTag spawnY = (IntTag) newData.get("SpawnY");
 			final IntTag spawnZ = (IntTag) newData.get("SpawnZ");
 
-			final LongTag Seed = (LongTag) newData.get("RandomSeed");
-			var.randomSeed = Seed.getValue();
-			Out.out("Seed: " + var.randomSeed); // lets output the seed, cause why not?
+			LongTag Seed = (LongTag) newData.get("RandomSeed");
+			if (Seed == null) {
+				CompoundTag WorldGenSettings = (CompoundTag) newData.get("WorldGenSettings");
+				if (WorldGenSettings != null) {
+					Seed = (LongTag) WorldGenSettings.getValue().get("seed");
+				}
+			}
+			if (Seed != null) {
+				var.randomSeed = Seed.getValue();
+				Out.out("Seed: " + var.randomSeed); // lets output the seed, cause why not?
+			}
 
 			final Coordinates ret =
 					new Coordinates(spawnX.getValue(), spawnY.getValue(), spawnZ.getValue());
