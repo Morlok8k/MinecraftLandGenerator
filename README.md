@@ -1,37 +1,43 @@
-Minecraft Land Generator version 1.7.6
+# Minecraft Land Generator version 1.7.6
 
 Updated January 19, 2015
 (BuildID: 1421666774000)
 
-Original Code by Corrodias		November 2010
-Enhanced Code by Morlok8k		Feb. 2011 to Now (or at least to January 19, 2015!)
-Additional Code by pr0f1x		October 2011
-Additional Code/Idea by jaseg    August 2012
-Additional Code by Gallion       January 2015
+| Author  | Edited |
+| ------------- | -------------      |
+| Original Code by Corrodias  | November 2010  |
+| Enhanced Code by Morlok8k  | Feb. 2011 to Now (or at least to January 19, 2015!)  |
+| Additional Code by pr0f1x  | October 2011  |
+| Additional Code/Idea by jaseg  | August 2012  |
+| Additional Code by Gallion  | January 2015  |
 
-Website: https://sites.google.com/site/minecraftlandgenerator/
-Forum: http://www.minecraftforum.net/topic/187737-
-Source: https://github.com/Morlok8k/MinecraftLandGenerator
 
------------------------------------------------
+
+Website: https://sites.google.com/site/minecraftlandgenerator/<br>
+Forum: http://www.minecraftforum.net/topic/187737-<br>
+Source: https://github.com/Morlok8k/MinecraftLandGenerator<br>
+
+---
 
 This program lets you generate an area of land with your Minecraft SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
 When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point.
-The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.
+The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.<br>
 
-This program is free, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)
+This program is free, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)<br>
 
 Copyright © 2010
-This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.<br>
 
 The JNBT library is included (inside the .jar). It is not public domain. Its license is included, as LICENSE.TXT.
-It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)
+It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https://github.com/Morlok8k/JNBT (Current)<br>
 
 The "unescape" method/function is also not Public Domain.  Its License is the W3C© Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
------------------------------------------------
 
-Usage: java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
+
+Usage: 
+```
+java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
 
 Arguments:
               x : X range to generate
@@ -49,8 +55,9 @@ Switches:
             -i# : override the iteration spawn offset increment (default 380) (example: -i100)
             -x# : set the X offset to generate land around (example: -x0 or -x1000 or -x-500)
             -z# : set the Z offset to generate land around (example: -z0 or -z1000 or -z-500)
-
+```
 Other options:
+```
   java -jar MinecraftLandGenerator.jar -update
         Checks for and downloads new versions of MLG online.
 
@@ -75,11 +82,12 @@ Other options:
   java -jar MinecraftLandGenerator.jar -help
   java -jar MinecraftLandGenerator.jar /?
         Prints this message.
-
+```
 When launched with the -conf switch, this application creates a MinecraftLandGenerator.conf file that contains configuration options.
 If this file does not exist or does not contain all required properties, the application will not run.
 
 MinecraftLandGenerator.conf properties:
+```
            Java : The command line to use to launch the server
      ServerPath : The path to the directory in which the server runs (can be overridden by the serverpath argument)
       Done_Text : The output from the server that tells us that we are done
@@ -96,8 +104,8 @@ Preparing_Level : The output from the server that tells us the level it is worki
         Level-8 : Name of Level 8: (Future Level)
         Level-9 : Name of Level 9: (Future Level)
        WaitSave : Optional: Wait before saving.
-
------------------------------------------------
+```
+---
 
 Version History:
 Morlok8k:
