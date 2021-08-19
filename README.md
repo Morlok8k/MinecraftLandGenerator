@@ -1,7 +1,7 @@
 # Minecraft Land Generator version 1.7.6
 
-Updated January 19, 2015
-(BuildID: 1421666774000)
+_Updated January 19, 2015
+(BuildID: 1421666774000)_
 
 | Author  | Edited |
 | ------------- | -------------      |
@@ -11,8 +11,6 @@ Updated January 19, 2015
 | Additional Code/Idea by jaseg  | August 2012  |
 | Additional Code by Gallion  | January 2015  |
 
-
-
 Website: https://sites.google.com/site/minecraftlandgenerator/<br>
 Forum: http://www.minecraftforum.net/topic/187737-<br>
 Source: https://github.com/Morlok8k/MinecraftLandGenerator<br>
@@ -20,7 +18,7 @@ Source: https://github.com/Morlok8k/MinecraftLandGenerator<br>
 ---
 
 This program lets you generate an area of land with your Minecraft SMP server (and is prossibly future-proof for newer versions). You set up your java command line and minecraft server paths in the MinecraftLandGenerator.conf file, set up the server's server.properties file with the name of the world you wish to use, and then run this program.
-When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point.
+When a Minecraft server is launched, it automatically generates chunks within a square area of 25x25 chunks (400x400 blocks), centered on the current spawn point (formally 20x20 chunks, 320x320 blocks). When provided X and Z ranges as arguments, this program will launch the server repeatedly, editing the level.dat file between sessions, to generate large amounts of land without players having to explore them. The generated land will have about the X and Z ranges as requested by the arguments, though it will not be exact due to the spawn point typically not on the border of a chunk. (Because of this, MLG by default adds a slight overlap with each pass - 380x380 blocks) You can use the -x and -z switches to override the spawn offset and center the land generation on a different point.<br>
 The program makes a backup of level.dat as level_backup.dat before editing, and restores the backup at the end. In the event that a level_backup.dat file already exists, the program will refuse to proceed, leaving the user to determine why the level_backup.dat file exists and whether they would rather restore it or delete it, which must be done manually.<br>
 
 This program is free, and the source code is included in the .jar file.  (If accidently missing, like in 1.3.0 and 1.4.0, it is always available at Github.)<br>
@@ -34,7 +32,7 @@ It is also available at: http://jnbt.sourceforge.net/ (Original) and at: https:/
 The "unescape" method/function is also not Public Domain.  Its License is the W3C© Software License, and located here: http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 Other Public Domain code has been used in this program, and references to sources are included in the comments of Minecraft Land Generator's source code.
 
-
+---
 Usage: 
 ```
 java -jar MinecraftLandGenerator.jar x z [serverpath] [switches]
@@ -107,27 +105,34 @@ Preparing_Level : The output from the server that tells us the level it is worki
 ```
 ---
 
-Version History:
-Morlok8k:
+Version History:<br>
+Morlok8k:<br>
+
 1.7.6
 - Gallion: fixed null world name (minor bug) 
 - Morlok8k: fixed elua bug
+
 1.7.5
 - Added "save-all" to alternate mode 
 - Added fix for new style of java error messages
+
 1.7.4
 - Released Minecraft land Generator under the WTFPL.  (With the permission of Corrodias)
+
 1.7.3
 - Fixed a minor display bug (specifically when using Server Generation Fix Mod)
 - Updated Readme text a bit.
+
 1.7.2
 - Fixed "1152 bug"
 - Updated to JNBT 1.3
 - adjusted archive integrity check to account for timezone-related bugs...
+
 1.7.1
 - Major Code Refactoring
 - Updated to JNBT 1.2
 - making code ready for a GUI
+
 1.7.0
 - Major Code Optimization
 - Drastically reduced the amount of time it takes for MLG to expand a world after it has already done so before!
@@ -137,11 +142,13 @@ Morlok8k:
 - Made xx% output nicer by rewriting previous existing line.
 - Misc. Tweaks
 - Misc. Additions
+
 1.6.3
 - Minor Code Optimization
 - Finely got on the ball and added the JNBT source and everything (as an internal .zip) to be completely faithful to his license
 - Also adding script files internally in the .jar for archive (or offline) purposes. (Manual Extract needed for use)
 - Modified output of MLG slightly to show whats the server and whats MLG. (I may do more with this later.)
+
 1.6.2
 - Major Code Optimization
 - Updated Time Output again.  Now says "1 Minute" instead of "1 Minutes".
@@ -167,12 +174,14 @@ Morlok8k:
 - MLG displays if the server is converting the Map format, when not in verbose mode. (McRegion -> Anvil, or Chunk-File -> McRegion)
 - Minor fixes/edits/typos
 - Added link to new MLG website to readme file
+
 1.6.03
 - added decoding of escape characters of URL's (so a space is a " " and not "%20")
 - added "-downloadlist [list]" where [list] is a text file with URL's on each line
 
 1.6.02
 - small fix on caculating md5sum where old version didnt pad out to 32chars with zeros on the left side- quick Archive intergity fix after injecting source code into .jar after it compiled.- no new functionality, md5 issue doesnt affect -update on old versions.
+
 1.6.0
 - NOW DOES NOT NEED ANY SCRIPT FILES!
 - Added the ability to download files from the internet
@@ -206,9 +215,8 @@ Morlok8k:
 
 		+ (the goal is to have MLG be configureable, so it can work on any version of the server, past or present.)
 
-*** 1.4.5 (pre 1.5.0) ***
+**_1.4.5 (pre 1.5.0)_**
 - sorry!  I shouldn't release untested code...
-*************************
 
 1.4.4
 - Added ablilty to ignore [WARNING] and [SEVERE] errors with "-w"
@@ -232,9 +240,9 @@ Morlok8k:
 1.3.0
 - Fixed Problems with Minecraft Beta 1.3 -- Morlok8k
 
------------------------------------------------
-
+---
 Corrodias:
+
 1.2.0
 - land generation now centers on the spawn point instead of [0, 0]
 - the server is launched once before the spawn point is changed, to verify that it can run and to create a world if one doesn't exist
@@ -255,12 +263,10 @@ Corrodias:
 1.0.0
 - initial release
 
------------------------------------------------
-
-Notes:
+---
+**Notes**:<br>
 Due to changes in server beta 1.6, it now generates the nether as well as the world at the same time.
 However, Since beta 1.9 and Minecraft 1.0, the nether or the end is no longer generated.
 The "Server Generation Fix Mod" by Morlok8k can generate The Nether and The End.  Link: http://www.minecraftforum.net/topic/1378775-
 
 I recommend using MCEDIT to relight the map after you generate it. This will take a long time, but should fix all those incorrectly dark spots in your level.
-
